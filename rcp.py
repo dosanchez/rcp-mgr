@@ -1,11 +1,13 @@
-from flask import Flask
+from flask import Flask, render_template
+from flask_bootstrap import Bootstrap
 
 app=Flask(__name__)
+bootstrap = Bootstrap(app)
 
 @app.route('/')
-def index():
-    return '<h1>Hello World</h1>'
+def base():
+    return render_template ('base.html')
 
 
 if __name__ == '__main__':
-    app.shell()
+    app.run(debug=True)

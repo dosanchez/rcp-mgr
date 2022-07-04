@@ -1,3 +1,4 @@
+from crypt import methods
 from flask import Flask, render_template
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, IntegerField, SelectField, DecimalField
@@ -21,8 +22,24 @@ class Unitmeas(FlaskForm):
 def index():
     return render_template ('index.html')
 
-@app.route('/templates/unitmeas.html')
+@app.route('/templates/unitmeas.html', methods=['GET','POST'])
 def unitmeas():
+    qty_um = None
+    uni_symb = None
+    qty_base = None
+    uni_un_t = None
+
+
+    form = Unitmeas()
+    if form.validate_on_submit():
+        qty_um=form.qty_um.data
+        uni_symb=form.uni_symb.data
+        qty_base=form.qty_base.data
+        uni_un_t=form.uni_un_t.data
+        form.qty_um.data = ''
+        form.uni_symb.data = ''
+        form.qty_base.data = ''
+        form.uni_un_t.data = ''
     return render_template ('unitmeas.html')
 
 

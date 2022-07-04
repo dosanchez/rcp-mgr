@@ -1,14 +1,38 @@
 {%extends "base.html" %}
 
+{% block form_title %}
+<h2>Unit of measure</h2>
+<p>add, edit, delete unit of measures and create your own table of equivalents</p>
+{% endblock %}
+
 {% block form%}
-<form>
+<div class ="container bg-light">
+  <form method="POST">
+    
     <div class="row">
-      <div class="col">
-        <input type="text" class="form-control" placeholder="Enter email" name="email">
+      <div class="col-sm-3">
+        <label for="qty_um" class="form-label">Qty:</label>
+        <input type="number" id="qty_um" class="form-control" placeholder="Qty" name="qty_um">
       </div>
-      <div class="col">
-        <input type="password" class="form-control" placeholder="Enter password" name="pswd">
+      <div class="col-sm-3">
+        <label for="uni_symb" class="form-label">Equivalent</label>
+        <input type="text" id ="uni_symb"class="form-control" placeholder="Enter Unit of measure Abbr" name="uni_symb">
+      </div>
+      <div class="col-sm-1">
+        <h1>=</h1>
+      </div>
+      <div class="col-sm-3">
+        <label for="qty_base" class="form-label">Qty:</label>
+        <input type="number" id="qty_base" class="form-control" placeholder="Qty" name="qty_base">
+      </div>
+      <div class="col-sm-2">
+        <label for="uni_un_t" class="form-label">Select Base UM:</label>
+        <select class="form-select" id="uni_un_t" placeholder="Qty"name="uni_un_t">
+          <option>g</option>
+          <option>ml</option>
+        </select>
       </div>
     </div>
   </form>
+</div>
 {% endblock %}

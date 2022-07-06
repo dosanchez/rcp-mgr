@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Recipe Manager</title>
     <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+     <!-- Add icon library -->
+     <script src="https://kit.fontawesome.com/1bd0243bf7.js" crossorigin="anonymous"></script>
   </head>
   <body>
 
@@ -63,8 +65,26 @@
     </div>
   </header>
 <div class="container p-5 my-5 border rounded" >
-  {% block form_title %}{% endblock %}
-  
+  <div class="row">
+    <div class="col-sm-8">
+      {% block form_title %}{% endblock %}
+    
+    </div>
+    <div class="col-sm-4">
+      <button class="btn" id="exit">
+        <i class="fa-solid fa-door-open"></i>
+      </button>
+      <button class="btn" id="back">
+        <i class="fa-solid fa-circle-chevron-left"></i>
+      </button>
+      <button class="btn" id="next">
+        <i class="fa-solid fa-circle-chevron-right"></i>
+      </button>
+      <button class="btn" id="exit">
+        <i class="fa-solid fa-square-plus"></i>
+      </button>
+    </div>  
+  </div>
   {% block form %}
   {% endblock %}
 
@@ -72,4 +92,3 @@
   <script src="/static/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-ssssss

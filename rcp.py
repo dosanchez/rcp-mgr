@@ -1,8 +1,16 @@
+import mysql.connector
 from crypt import methods
 from flask import Flask, render_template
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, IntegerField, SelectField, DecimalField
 from wtforms.validators import DataRequired, AnyOf, Length, NumberRange
+
+
+#database connection
+conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
+                              host='192.168.100.254',
+                              database='std')
+db = conn.cursor()
 
 #initialization
 app=Flask(__name__)
@@ -15,7 +23,7 @@ class Unitmeas(FlaskForm):
     uni_symb = StringField('Unit of measure', validators=[DataRequired(),Length(max=8)])
     qty_base = DecimalField('Qty',validators=[DataRequired(), NumberRange(min=0.001)])
     uni_un_t = SelectField('UM Type', validators=[AnyOf(values=['g','ml'])])
-
+    nav = SelectField('UM Type', validators=[AnyOf(values=[-1,0,1])])
 
 
 @app.route('/')

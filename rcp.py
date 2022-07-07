@@ -7,7 +7,6 @@ from wtforms.validators import DataRequired, AnyOf, Length, NumberRange
 
 
 #database connection
-#'kX0/_9@whS'
 conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
                               host='192.168.100.254',
                               database='std')
@@ -41,19 +40,26 @@ def unitmeas():
 
     form = Unitmeas()
     if form.validate_on_submit():
-        qty_um=form.qty_um.data
+
         uni_symb=form.uni_symb.data
-        qty_base=form.qty_base.data
         uni_un_t=form.uni_un_t.data
+        uni_conv = form.qty_base.data / form.qty_um.data
         form.qty_um.data = ''
         form.uni_symb.data = ''
         form.qty_base.data = ''
         form.uni_un_t.data = ''
 
-        db.execute("INSERT INTO unitmeas (uni_symb, uni_conv, uni_un_t) VALUES (uni_symb, qty_base / qty_um, uni_un_t)")
+        sql = "INSERT INTO unitmeas (uni_symb, uni_conv, uni_un_t) VALUES (%, %, %)"
+        params = (uni_symb, uni_conv, uni_un_t)
+        db.execute(sql, params)
         db.commit()
         
-        list = db.execute("SELECT * FROM unitmeas")
+        sql = "Select * from unitmeas"
+        db.execute(sql)
+        results = db.fetchall()
+        list = db.fetchall()
+        for data in list:
+            print(data)
 
     return render_template ('unitmeas.html', form=form )
 

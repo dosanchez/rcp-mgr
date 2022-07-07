@@ -7,6 +7,7 @@ from wtforms.validators import DataRequired, AnyOf, Length, NumberRange
 
 
 #database connection
+#'kX0/_9@whS'
 conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
                               host='192.168.100.254',
                               database='std')
@@ -20,9 +21,9 @@ app.config['SECRET_KEY']="place a key here"
 class Unitmeas(FlaskForm):
     id = IntegerField ('Reg.No.')
     qty_um = DecimalField('Qty',validators=[DataRequired(), NumberRange(min=0.001)])
-    uni_symb = StringField('Unit of measure', validators=[DataRequired(),Length(max=8)])
+    uni_symb = StringField('Unit of measure', validators=[DataRequired(),Length(max=8)], render_kw={"placeholder": "Unit of measure"})
     qty_base = DecimalField('Qty',validators=[DataRequired(), NumberRange(min=0.001)])
-    uni_un_t = SelectField('UM Type', validators=[AnyOf(values=['g','ml'])])
+    uni_un_t = SelectField('UM Type', validators=[AnyOf(values=['g','ml'])], choices=['g','ml'])
     nav = SelectField('UM Type', validators=[AnyOf(values=[-1,0,1])])
 
 
@@ -35,8 +36,8 @@ def unitmeas():
     qty_um = None
     uni_symb = None
     qty_base = None
-    uni_un_t = None
-
+    uni_un_t = 'g'
+    nav = 0
 
     form = Unitmeas()
     if form.validate_on_submit():
@@ -48,7 +49,13 @@ def unitmeas():
         form.uni_symb.data = ''
         form.qty_base.data = ''
         form.uni_un_t.data = ''
-    return render_template ('unitmeas.html')
+
+        db.execute("INSERT INTO unitmeas (uni_symb, uni_conv, uni_un_t) VALUES (uni_symb, qty_base / qty_um, uni_un_t)")
+        db.commit()
+        
+        list = db.execute("SELECT * FROM unitmeas")
+
+    return render_template ('unitmeas.html', form=form )
 
 
 if __name__ == '__main__':

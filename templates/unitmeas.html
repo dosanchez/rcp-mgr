@@ -8,15 +8,15 @@
 {% block form%}
 <div class ="container bg-light">
   <form method="POST">
-    
+    {{ form.hidden_tag() }}
     <div class="row">
       <div class="col-sm-3">
         <label for="qty_um" class="form-label">Qty:</label>
         <input type="number" id="qty_um" class="form-control" placeholder="Qty" name="qty_um">
       </div>
       <div class="col-sm-3">
-        <label for="uni_symb" class="form-label">Equivalent</label>
-        <input type="text" id ="uni_symb"class="form-control" placeholder="Enter Unit of measure Abbr" name="uni_symb">
+        {{ form.uni_symb.label(class="form-label") }}
+        {{ form.uni_symb(class="form-control") }}
       </div>
       <div class="col-sm-1 align-items-center" style="margin:auto">
         <h1>=</h1>
@@ -25,19 +25,13 @@
         <label for="qty_base" class="form-label">Qty:</label>
         <input type="number" id="qty_base" class="form-control" placeholder="Qty" name="qty_base">
       </div>
-      <div class="col-sm-2">
-        <label for="uni_un_t" class="form-label">Select Base UM:</label>
-        <select class="form-select" id="uni_un_t" placeholder="Qty"name="uni_un_t">
-          <option>g</option>
-          <option>ml</option>
-        </select>
+      <div class="col-sm-2 mb-3">
+        {{ form.uni_un_t.label(class="form-label") }}
+        {{ form.uni_un_t(class="form-select") }}
       </div>
     </div>
-    <div class =row>
-      <div class = "col-sm">
-        <input type="submit" class="form-control" value="Submit Button">
-      </div>
-
+    <div style="float:right;">
+    <input type="submit" class="btn btn-primary" formmethod="POST" value="Submit">
     </div>
   </form>
 </div>

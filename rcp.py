@@ -10,7 +10,7 @@ from wtforms.validators import DataRequired, AnyOf, Length, NumberRange
 conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
                               host='192.168.100.254',
                               database='std')
-db = conn.cursor()
+db = conn.cursor(dictionary=True, buffered=True)
 
 #initialization
 app=Flask(__name__)
@@ -19,13 +19,17 @@ app.config['SECRET_KEY']="place a key here"
 #forms
 class Unitmeas(FlaskForm):
     id = IntegerField ('Reg.No.')
-    qty_um = DecimalField('Qty',validators=[DataRequired(), NumberRange(min=0.001)])
-    uni_symb = StringField('Unit of measure', validators=[DataRequired(),Length(max=8)], render_kw={"placeholder": "Unit of measure"})
-    qty_base = DecimalField('Qty',validators=[DataRequired(), NumberRange(min=0.001)])
-    uni_un_t = SelectField('UM Type', validators=[AnyOf(values=['g','ml'])], choices=['g','ml'])
+    qty_um = DecimalField('Qty',validators=[DataRequired(), NumberRange(min=0.001)], 
+        render_kw={"placeholder": "qty"}, default = 1)
+    uni_symb = StringField('Unit of measure', validators=[DataRequired(),Length(max=8)], 
+        render_kw={"placeholder": "Unit of measure"})
+    qty_base = DecimalField('Qty',validators=[DataRequired(), NumberRange(min=0.001)], 
+        render_kw={"placeholder": "qty"}, default = 1)
+    uni_un_t = SelectField('UM Type', validators=[AnyOf(values=['g','ml'])], 
+        choices=['g','ml'])
     #nav = SelectField('UM Type', validators=[AnyOf(values=[-1,0,1])], )
 
-
+#view funtions
 @app.route('/')
 def index():
     return render_template ('index.html')
@@ -40,7 +44,6 @@ def unitmeas():
 
     form = Unitmeas()
     if form.validate_on_submit():
-<<<<<<< HEAD
 
         uni_symb=form.uni_symb.data
         uni_un_t=form.uni_un_t.data
@@ -50,35 +53,31 @@ def unitmeas():
         form.qty_base.data = ''
         form.uni_un_t.data = ''
 
-        sql = "INSERT INTO unitmeas (uni_symb, uni_conv, uni_un_t) VALUES (%, %, %)"
+        #add record
+        sql = """INSERT INTO unitmeas (uni_symb, uni_conv, uni_un_t) 
+                VALUES (%s, %s, %s)"""
         params = (uni_symb, uni_conv, uni_un_t)
         db.execute(sql, params)
-        db.commit()
-=======
-        val_qty_um=form.qty_um.data
-        val_uni_symb = form.uni_symb.data
-        val_qty_base = form.qty_base.data
-        val_uni_un_t=form.uni_un_t.data
-        form.qty_um.data = ''
-        form.uni_symb.data = ''
-        form.qty_base.data = ''
-        form.uni_un_t.data = 'g'
-        #form.nav.data = 0
-        print (val_uni_symb, val_qty_base, val_qty_um)
-        db.execute("INSERT INTO unitmeas (uni_symb, uni_conv, uni_un_t) VALUES (val_uni_symb , 29 / 1, 'g')")
         conn.commit()
->>>>>>> 83cbb43ffcbec9933ada74f8a080280055140d6a
-        
-        sql = "Select * from unitmeas"
-        db.execute(sql)
-        results = db.fetchall()
-        list = db.fetchall()
-        for data in list:
-            print(data)
 
-    print (list)
+    #visualize registered units of measure
+    sql = "Select * from unitmeas"
+    db.execute(sql)
+    records = db.fetchall()
+    column_names = db.column_names
 
-    return render_template ('unitmeas.html', form=form, list=list )
+    for row in records:
+        for value in row.values():
+            print (value)
+    
+    for header in column_names:
+        if header == 'id':
+            continue
+        else:
+            print(header)
+
+
+    return render_template ('unitmeas.html', form=form, records=records, column_names=column_names)
 
 
 if __name__ == '__main__':

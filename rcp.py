@@ -1,6 +1,6 @@
 import mysql.connector
 from crypt import methods
-from flask import Flask, render_template
+from flask import Flask, render_template, session, redirect, url_for
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, IntegerField, SelectField, DecimalField
 from wtforms.validators import DataRequired, AnyOf, Length, NumberRange
@@ -21,7 +21,7 @@ class Unitmeas(FlaskForm):
     id = IntegerField ('Reg.No.')
     qty_um = DecimalField('Qty',validators=[DataRequired(), NumberRange(min=0.001)], 
         render_kw={"placeholder": "qty"}, default = 1)
-    uni_symb = StringField('Unit of measure', validators=[DataRequired(),Length(max=8)], 
+    uni_symb = StringField('Unit of measurement', validators=[DataRequired(),Length(max=8)], 
         render_kw={"placeholder": "Unit of measure"})
     qty_base = DecimalField('Qty',validators=[DataRequired(), NumberRange(min=0.001)], 
         render_kw={"placeholder": "qty"}, default = 1)
@@ -44,40 +44,34 @@ def unitmeas():
 
     form = Unitmeas()
     if form.validate_on_submit():
+        
+        #clears POST data
+        session['uni_symb'] = form.uni_symb.data
+        session['uni_conv'] = form.qty_base.data / form.qty_um.data
+        session['uni_un_t'] = form.uni_un_t.data
+        print(session.get('uni_symb'), session.get('uni_conv'),
+               session.get('uni_un_t'))
+        return redirect(url_for('unitmeas')) 
 
-        uni_symb=form.uni_symb.data
-        uni_un_t=form.uni_un_t.data
-        uni_conv = form.qty_base.data / form.qty_um.data
-        form.qty_um.data = ''
-        form.uni_symb.data = ''
-        form.qty_base.data = ''
-        form.uni_un_t.data = ''
+        form.uni_symb.data = '' #clears form field
 
-        #add record
+        #add new record
         sql = """INSERT INTO unitmeas (uni_symb, uni_conv, uni_un_t) 
                 VALUES (%s, %s, %s)"""
-        params = (uni_symb, uni_conv, uni_un_t)
+        params = (session.get('uni_symb'), session.get('uni_conv'),
+                    session.get('uni_un_t'))
         db.execute(sql, params)
         conn.commit()
 
-    #visualize registered units of measure
+    #visualize registered units of measurement
     sql = "Select * from unitmeas"
     db.execute(sql)
     records = db.fetchall()
     column_names = db.column_names
 
-    for row in records:
-        for value in row.values():
-            print (value)
-    
-    for header in column_names:
-        if header == 'id':
-            continue
-        else:
-            print(header)
 
-
-    return render_template ('unitmeas.html', form=form, records=records, column_names=column_names)
+    return render_template ('unitmeas.html', form=form, records=records,
+                                                column_names=column_names)
 
 
 if __name__ == '__main__':

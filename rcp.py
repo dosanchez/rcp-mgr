@@ -40,7 +40,6 @@ def unitmeas():
 
     form = Unitmeas()
     if form.validate_on_submit():
-<<<<<<< HEAD
 
         uni_symb=form.uni_symb.data
         uni_un_t=form.uni_un_t.data
@@ -54,20 +53,6 @@ def unitmeas():
         params = (uni_symb, uni_conv, uni_un_t)
         db.execute(sql, params)
         db.commit()
-=======
-        val_qty_um=form.qty_um.data
-        val_uni_symb = form.uni_symb.data
-        val_qty_base = form.qty_base.data
-        val_uni_un_t=form.uni_un_t.data
-        form.qty_um.data = ''
-        form.uni_symb.data = ''
-        form.qty_base.data = ''
-        form.uni_un_t.data = 'g'
-        #form.nav.data = 0
-        print (val_uni_symb, val_qty_base, val_qty_um)
-        db.execute("INSERT INTO unitmeas (uni_symb, uni_conv, uni_un_t) VALUES (val_uni_symb , 29 / 1, 'g')")
-        conn.commit()
->>>>>>> 83cbb43ffcbec9933ada74f8a080280055140d6a
         
         sql = "Select * from unitmeas"
         db.execute(sql)

@@ -16,6 +16,7 @@ db = conn.cursor(dictionary=True, buffered=True)
 app=Flask(__name__)
 app.config['SECRET_KEY']="place a key here"
 
+
 #forms
 class Unitmeas(FlaskForm):
     id = IntegerField ('Reg.No.')
@@ -27,7 +28,7 @@ class Unitmeas(FlaskForm):
         render_kw={"placeholder": "qty"}, default = 1)
     uni_un_t = SelectField('UM Type', validators=[AnyOf(values=['g','ml'])], 
         choices=['g','ml'])
-    #nav = SelectField('UM Type', validators=[AnyOf(values=[-1,0,1])], )
+    nav = IntegerField('UM Type',default = 0 )
 
 #view funtions
 @app.route('/')
@@ -41,9 +42,10 @@ def unitmeas():
     form = Unitmeas()
     if form.validate_on_submit():
 
-        sql = "SELECT COUNT(uni_symb) AS existe FROM unitmeas WHERE uni_symb = %s" %(form.uni_symb.data)
-        db.execute(sql)
-        if  db.fetchall().get('existe') == 1:
+        sql = "SELECT COUNT(uni_symb) AS existe FROM unitmeas WHERE uni_symb = %s"
+        db.execute(sql,(form.uni_symb.data,))
+        record = db.fetchone()
+        if  record.get('existe') == 1:
             #update existing record
             sql="""UPDATE unitmeas 
                     SET uni_conv = %s,
@@ -64,17 +66,28 @@ def unitmeas():
             db.execute(sql, params)
             conn.commit()
             form.uni_symb.data = '' #clears form field
-            print('agregué record')    
-            print('redirigí')
             return redirect(url_for('unitmeas'))# clears POST data 
 
 
-    #visualize registered units of measurement
+    #visualize registered units of measurement and moves form to nav target
+    
+    if form.nav.data == 0:
+        sql = "SELECT MAX(id) FROM unitmeas"
+        db.execute(sql)
+        max_id =db.fetchone().value('MAX(id)')
+        sql = "SELECT * FROM unitmeas WHERE id = max_id"
+        db.execute(sql)
+        records = db.fetchone()
+        form.qty_um.data = 1
+        form.uni_symb.data = records.get('uni_symb')
+        form.qty_base.data = records.get('uni_conv')
+        form.uni_un_t.data = records.get('uni_un_t')
+        form.nav.data = max_id
+    
     sql = "Select * from unitmeas"
     db.execute(sql)
     records = db.fetchall()
     column_names = db.column_names
-    print('imprimí reg unit of measures')
 
 
     return render_template ('unitmeas.html', form=form, records=records,

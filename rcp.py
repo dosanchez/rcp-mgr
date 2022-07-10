@@ -27,7 +27,7 @@ class Unitmeas(FlaskForm):
         render_kw={"placeholder": "qty"}, default = 1)
     uni_un_t = SelectField('UM Type', validators=[AnyOf(values=['g','ml'])], 
         choices=['g','ml'])
-    nav = SelectField('UM Type', validators=[AnyOf(values=[-1,0,1])], )
+    #nav = SelectField('UM Type', validators=[AnyOf(values=[-1,0,1])], )
 
 #view funtions
 @app.route('/')
@@ -41,11 +41,19 @@ def unitmeas():
     form = Unitmeas()
     if form.validate_on_submit():
 
-        sql = "SELECT COUNT(uni_symb) AS existe FROM unitmeas WHERE uni_symb = %s"
-        param = form.uni_symb.data
-        db.execute(sql, param)
-        if  db.fetchall().get('existe') = 1:
+        sql = "SELECT COUNT(uni_symb) AS existe FROM unitmeas WHERE uni_symb = %s" %(form.uni_symb.data)
+        db.execute(sql)
+        if  db.fetchall().get('existe') == 1:
             #update existing record
+            sql="""UPDATE unitmeas 
+                    SET uni_conv = %s,
+                        uni_un_t = %s
+                    WHERE uni_symb = %s""" 
+            params = (form.qty_base.data / form.qty_um.data, form.uni_un_t.data,
+                         form.uni_symb.data)
+            db.execute(sql, params)
+            conn.commit()
+            return redirect(url_for('unitmeas'))# clears POST data
 
         else:
             #add new record

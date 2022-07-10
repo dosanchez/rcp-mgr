@@ -40,19 +40,27 @@ def unitmeas():
 
     form = Unitmeas()
     if form.validate_on_submit():
-        print('validé form')
-  
-        #add new record
-        sql = """INSERT INTO unitmeas (uni_symb, uni_conv, uni_un_t) 
-                    VALUES (%s, %s, %s)"""
-        params = (form.uni_symb.data, form.qty_base.data / form.qty_um.data,
-                        form.uni_un_t.data)
-        db.execute(sql, params)
-        conn.commit()
-        form.uni_symb.data = '' #clears form field
-        print('agregué record')    
-        print('redirigí')
-        return redirect(url_for('unitmeas'))# clears POST data 
+
+        sql = "SELECT COUNT(uni_symb) AS existe FROM unitmeas WHERE uni_symb = %s"
+        param = form.uni_symb.data
+        db.execute(sql, param)
+        if  db.fetchall().get('existe') = 1:
+            #update existing record
+
+        else:
+            #add new record
+            sql = """INSERT INTO unitmeas (uni_symb, uni_conv, uni_un_t) 
+                        VALUES (%s, %s, %s)"""
+            params = (form.uni_symb.data, form.qty_base.data / form.qty_um.data,
+                            form.uni_un_t.data)
+            db.execute(sql, params)
+            conn.commit()
+            form.uni_symb.data = '' #clears form field
+            print('agregué record')    
+            print('redirigí')
+            return redirect(url_for('unitmeas'))# clears POST data 
+
+
 
 
     #visualize registered units of measurement

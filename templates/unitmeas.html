@@ -1,11 +1,30 @@
 {%extends "base.html" %}
 
-{% block form_title %}
-<h2>Unit of measure</h2>
-<small>add, edit, delete unit of measures and create your own table of equivalents</small>
+{% block title%}
+<div class="row">
+  <div class="col-sm-8">
+    <h2>Unit of measurement</h2>
+    <small>add, edit, delete unit of measures and create your own table of equivalents</small>
+  </div>
+  <div class="col-sm-4">
+    <button class="btn" id="exit">
+      <i class="fa-solid fa-door-open"></i>
+    </button>
+    <button class="btn" id="back">
+      <i class="fa-solid fa-circle-chevron-left"></i>
+    </button>
+    <button class="btn" id="next">
+      <i class="fa-solid fa-circle-chevron-right"></i>
+    </button>
+    <button class="btn" id="new">
+      <i class="fa-solid fa-square-plus"></i>
+    </button>
+  </div>  
+</div>
 {% endblock %}
 
 {% block form%}
+
 <div class ="container bg-light">
   <form method="POST">
     {{ form.hidden_tag() }}
@@ -38,7 +57,7 @@
 
   <div class="mt-5">
     {% block subform_title %}
-      <h4>Registered unit of measure</h4>
+      <h4>Registered unit of measurement</h4>
       <small>click to edit</small>
     {% endblock %}
     <div style="overflow:auto;">

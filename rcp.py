@@ -27,7 +27,7 @@ class Unitmeas(FlaskForm):
         render_kw={"placeholder": "qty"}, default = 1)
     uni_un_t = SelectField('UM Type', validators=[AnyOf(values=['g','ml'])], 
         choices=['g','ml'])
-    #nav = SelectField('UM Type', validators=[AnyOf(values=[-1,0,1])], )
+    nav = SelectField('UM Type', validators=[AnyOf(values=[-1,0,1])], )
 
 #view funtions
 @app.route('/')
@@ -36,42 +36,35 @@ def index():
 
 @app.route('/templates/unitmeas.html', methods=['GET','POST'])
 def unitmeas():
-    qty_um = None
-    uni_symb = None
-    qty_base = None
-    uni_un_t = None
-    #nav = None
+
 
     form = Unitmeas()
     if form.validate_on_submit():
-        
-        #clears POST data
-        session['uni_symb'] = form.uni_symb.data
-        session['uni_conv'] = form.qty_base.data / form.qty_um.data
-        session['uni_un_t'] = form.uni_un_t.data
-        print(session.get('uni_symb'), session.get('uni_conv'),
-               session.get('uni_un_t'))
-        return redirect(url_for('unitmeas')) 
-
-        form.uni_symb.data = '' #clears form field
-
+        print('validé form')
+  
         #add new record
         sql = """INSERT INTO unitmeas (uni_symb, uni_conv, uni_un_t) 
-                VALUES (%s, %s, %s)"""
-        params = (session.get('uni_symb'), session.get('uni_conv'),
-                    session.get('uni_un_t'))
+                    VALUES (%s, %s, %s)"""
+        params = (form.uni_symb.data, form.qty_base.data / form.qty_um.data,
+                        form.uni_un_t.data)
         db.execute(sql, params)
         conn.commit()
+        form.uni_symb.data = '' #clears form field
+        print('agregué record')    
+        print('redirigí')
+        return redirect(url_for('unitmeas'))# clears POST data 
+
 
     #visualize registered units of measurement
     sql = "Select * from unitmeas"
     db.execute(sql)
     records = db.fetchall()
     column_names = db.column_names
+    print('imprimí reg unit of measures')
 
 
     return render_template ('unitmeas.html', form=form, records=records,
-                                                column_names=column_names)
+                                                    column_names=column_names)
 
 
 if __name__ == '__main__':

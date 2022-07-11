@@ -75,26 +75,35 @@ def unitmeas():
     column_names = db.column_names
 
     regd_id =[row.get('id') for row in records] #making a list of ids
-    num_regd_id = len(regd_id) #calc id list lenght
-    
-  
-    print(session['id'])
+    num_regd_id = len(regd_id) #calc id list length
+
+    print('form.id.data',form.id.data)
+    print('num_regd_id',num_regd_id)
+    print('request.form.get(nav)',request.form.get("nav"))
+    print('regd_id[num_regd_id -1]',regd_id[num_regd_id -1])
+
     if form.id.data == None:
          form.id.data = regd_id[num_regd_id -1]
-    elif request.form.get('nav') == "first":
+    elif request.form.get("nav") == "first":
         form.id.data = regd_id[0] 
-    elif request.form.get('nav') == "last":
+    elif request.form.get("nav") == "last":
         form.id.data = regd_id[num_regd_id-1]
-    elif request.form.get('nav') == "back" and regd_id.index(form.id.data) > 0:
+    elif request.form.get("nav") == "back" and regd_id.index(form.id.data) > 0:
         form.id.data = regd_id[regd_id.index(form.id.data)-1]
-    elif request.form.get('nav') == "back" and regd_id.index(form.id.data) == 0:
+    elif request.form.get("nav") == "back" and regd_id.index(form.id.data) == 0:
         form.id.data = regd_id[0]
-    elif request.form.get('nav') == "next" and regd_id.index(form.id.data) < (len(regd_id) - 1):
+    elif request.form.get("nav") == "next" and regd_id.index(form.id.data) < (len(regd_id) - 1):
         form.id.data = regd_id[regd_id.index(form.id.data)+1]
-    elif request.form.get('nav') == "next" and regd_id.index(form.id.data) == (len(regd_id) - 1):
+    elif request.form.get("nav") == "next" and regd_id.index(form.id.data) == (len(regd_id) - 1):
         form.id.data = regd_id[num_regd_id-1]
     else:
         form.id.data =regd_id[num_regd_id-1]
+
+
+    print('form.id.data',form.id.data)
+    print('num_regd_id',num_regd_id)
+    print('request.form.get(nav)',request.form.get("nav"))
+    print('regd_id[num_regd_id -1]',regd_id[num_regd_id -1])
 
     #visualize the target record
     sql = "SELECT * FROM unitmeas WHERE id = %s"

@@ -11,15 +11,15 @@
         <small>add, edit, delete unit of measures and create your own table of equivalents</small>
       </div>
       <div class="col-sm-4" style ="float:right;">
-        <button type = "submit" value = "first" class="btn" name ="nav">
+        <button type = "submit" value = "out" class="btn" name ="nav">
           <i class="fa-solid fa-door-open"></i>
         </button>
         <button type = "submit" value = "first" class="btn" name ="nav">
           <i class="fa-solid fa-angles-left"></i>
         </button>
-        <button type = "submit" value = "back" class="btn" name ="nav">
-          <i class="fa-solid fa-circle-chevron-left"></i>
-        </button>
+        <input type = "submit" formmethod="POST" value = "back" class="btn" name ="nav">
+          <!--i class="fa-solid fa-circle-chevron-left"--><!--/i-->
+        </input>
         <button class="btn btn-outline-dark" id = "id" locked>
           {{ form.id.data }}
         </button>

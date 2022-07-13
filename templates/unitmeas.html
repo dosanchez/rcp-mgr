@@ -17,9 +17,9 @@
         <button type = "submit" value = "first" class="btn" name ="nav">
           <i class="fa-solid fa-angles-left"></i>
         </button>
-        <input type = "submit" formmethod="POST" value = "back" class="btn" name ="nav">
-          <!--i class="fa-solid fa-circle-chevron-left"--><!--/i-->
-        </input>
+        <button type = "submit" value = "back" formmethod ="post" class="btn" name ="nav">
+          <i class="fa-solid fa-circle-chevron-left"></i>
+        </button>
         <button class="btn btn-outline-dark" id = "id" locked>
           {{ form.id.data }}
         </button>
@@ -40,22 +40,22 @@
     <div class="row">
       <div class="col-sm-3">
         {{ form.qty_um.label(class="form-label") }}
-        {{ form.qty_um(class="form-select") }}
+        {{ form.qty_um(class="form-control", value = form.qty_um.data) }}
       </div>
       <div class="col-sm-3">
         {{ form.uni_symb.label(class="form-label") }}
-        {{ form.uni_symb(class="form-control") }}
+        {{ form.uni_symb(class="form-control", value = form.uni_symb.data) }}
       </div>
       <div class="col-sm-1 align-items-center" style="margin:auto">
         <h1>=</h1>
       </div>
       <div class="col-sm-3">
         {{ form.qty_base.label(class="form-label") }}
-        {{ form.qty_base(class="form-select") }}
+        {{ form.qty_base(class="form-control", value = form.qty_base.data) }}
       </div>
       <div class="col-sm-2 mb-3">
         {{ form.uni_un_t.label(class="form-label") }}
-        {{ form.uni_un_t(class="form-select") }}
+        {{ form.uni_un_t(class="form-select", value = form.uni_un_t.data) }}
       </div>
     </div>
     <div style="float:right;">

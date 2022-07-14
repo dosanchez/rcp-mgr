@@ -1,10 +1,11 @@
+from typing import Type
 import mysql.connector
 from crypt import methods
-from flask import Flask, render_template, request, session, redirect, url_for
+from flask import Flask, flash, render_template, request, session, redirect, url_for
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, IntegerField, SelectField, DecimalField, HiddenField
 from wtforms.validators import DataRequired, AnyOf, Length, NumberRange
-
+from data import DataHandler as dth
 
 #database connection
 conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
@@ -36,17 +37,17 @@ def index():
 
 @app.route('/templates/unitmeas.html', methods=['GET','POST'])
 def unitmeas():
-
     form = Unitmeas()
-    nav_button =  request.form.get('nav') #
+    nav_button =  request.form.get('nav') #saves form navigation data
     
     if form.validate_on_submit():
-        print(form.qty_um.data, form.uni_symb.data, form.qty_base.data, form.uni_un_t.data)
-        print('validé')
-
+        
+        #checks if record is on the database
         sql = "SELECT COUNT(uni_symb) AS existe FROM unitmeas WHERE uni_symb = %s"
         db.execute(sql,(form.uni_symb.data,))
         record = db.fetchone()
+        prueba = dth(db, {'table':'unitmeas','fields':{'uni_symb':form.uni_symb.data}})
+        print(prueba.chk_sngl_fld())
 
         if nav_button == None:
             if  record.get('existe') == 1:
@@ -59,9 +60,9 @@ def unitmeas():
                             form.uni_symb.data)
                 db.execute(sql, params)
                 conn.commit()
-                print(form.qty_um.data, form.uni_symb.data, form.qty_base.data, form.uni_un_t.data)
-                print('mofifiqué')
-
+                flash('Record sucessfully updated!')
+                session['lst_rcd'] = form.id.data
+                print(type(form))
                 return redirect(url_for('unitmeas'))# clears POST data
 
             else:
@@ -72,8 +73,7 @@ def unitmeas():
                                 form.uni_un_t.data)
                 db.execute(sql, params)
                 conn.commit()
-                
-                print('agregué')
+                flash('Record sucessfully added!')
                 return redirect(url_for('unitmeas'))# clears POST data 
 
 
@@ -83,14 +83,12 @@ def unitmeas():
     db.execute(sql)
     records = db.fetchall()
     column_names = db.column_names
-    print(form.qty_um.data, form.uni_symb.data, form.qty_base.data, form.uni_un_t.data)
-    print('paso records y column_names')
+
 
     regd_id =[row.get('id') for row in records] #making a list of registered ids
     last_index = len(regd_id) -1 #calc id list length
     id = form.id.data
-    print(form.qty_um.data, form.uni_symb.data, form.qty_base.data, form.uni_un_t.data)
-    print('reviso la navegación')
+ 
     if id == None:
          id = regd_id[-1]
     elif nav_button == "first":
@@ -119,8 +117,7 @@ def unitmeas():
     form.uni_un_t.data = tgt_record.get('uni_un_t')
     form.id.data = tgt_record.get('id')
     tgt_record = db.fetchall()
-    print('visuaizo el target field')
-    print(nav_button, form.qty_um.data, form.uni_symb.data, form.qty_base.data, form.uni_un_t.data, form.id.data)
+
     return render_template ('unitmeas.html', form = form, records = records,
                             column_names = column_names)
 

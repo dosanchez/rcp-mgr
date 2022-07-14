@@ -14,18 +14,23 @@ class DataHandler():
             self.rcd = rcd    
         
 
-    def chk_sngl_fld(self): #checks if a single value already exists in a single table field
-        
+    def chk_sngl_fld(self): 
+        """checks if a single value already exists in a single table field"""
+
+        for k, v in self.rcd.get('fields').items():
+            if type(v) == str:
+                self.rcd.get('fields')[k] = \' +  v + \'
 
         if len(self.rcd.get('fields')) == 1: 
         
-            table = list(self.rcd.keys())[0]
+            table = list(self.rcd.values())[0]
             field = list(self.rcd.get('fields'))[0]
             value = self.rcd.get('fields').get(field)
-        
-            sql = "SELECT COUNT(%s) AS existe FROM %s WHERE %s = %s"
-            self.db.execute(sql,(field, table, field, value))
-            record = db.fetchone()
+            print(table, field, value)
+            sql = "SELECT COUNT(%s) AS existe FROM %s WHERE %s = '%s'" %(field, table, field, value)
+            print(sql)
+            self.db.execute(sql)
+            record = self.db.fetchone()
             if record.get('existe') == 1:
                 return True
             else:

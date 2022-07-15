@@ -17,9 +17,7 @@ class DataHandler():
     def chk_sngl_fld(self): 
         """checks if a single value already exists in a single table field"""
 
-        for k, v in self.rcd.get('fields').items():
-            if type(v) == str:
-                self.rcd.get('fields')[k] = \' +  v + \'
+
 
         if len(self.rcd.get('fields')) == 1: 
         
@@ -37,3 +35,7 @@ class DataHandler():
                 return False
 
         return False
+
+    # @classmethod
+    # def from_base(cls, rcd = None):
+        

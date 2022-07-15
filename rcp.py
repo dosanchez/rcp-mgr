@@ -46,7 +46,7 @@ def unitmeas():
         sql = "SELECT COUNT(uni_symb) AS existe FROM unitmeas WHERE uni_symb = %s"
         db.execute(sql,(form.uni_symb.data,))
         record = db.fetchone()
-        prueba = dth(db, {'table':'unitmeas','fields':{'uni_symb':form.uni_symb.data}})
+        prueba = dth(db, {'unitmeas':{'uni_symb':form.uni_symb.data}})
         print(prueba.chk_sngl_fld())
 
         if nav_button == None:

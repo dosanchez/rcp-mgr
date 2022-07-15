@@ -18,12 +18,11 @@ class DataHandler():
         """checks if a single value already exists in a single table field"""
 
 
-
-        if len(self.rcd.get('fields')) == 1: 
+        table = list(self.rcd.keys())[0]    
+        if len(self.rcd.get(table)) == 1: 
         
-            table = list(self.rcd.values())[0]
-            field = list(self.rcd.get('fields'))[0]
-            value = self.rcd.get('fields').get(field)
+            field = list(self.rcd.get(table).keys())[0]
+            value = self.rcd.get(table).get(field)
             print(table, field, value)
             sql = "SELECT COUNT(%s) AS existe FROM %s WHERE %s = '%s'" %(field, table, field, value)
             print(sql)
@@ -36,6 +35,7 @@ class DataHandler():
 
         return False
 
-    # @classmethod
-    # def from_base(cls, rcd = None):
+    #@classmethod
+    #def from_base(cls, rcd = None):
+
         

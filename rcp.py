@@ -42,15 +42,17 @@ def unitmeas():
     
     if form.validate_on_submit():
         
-        #checks if record is on the database
-        sql = "SELECT COUNT(uni_symb) AS existe FROM unitmeas WHERE uni_symb = %s"
-        db.execute(sql,(form.uni_symb.data,))
-        record = db.fetchone()
-        prueba = dth(db, {'unitmeas':{'uni_symb':form.uni_symb.data}})
-        print(prueba.chk_sngl_fld())
+        
 
         if nav_button == None:
-            if  record.get('existe') == 1:
+            
+            exist = dth.from_dict2sql(db, {
+                                        'unitmeas':[{
+                                            'id':form.id.data
+                                                    }]
+                                        }) #creates instance to chk if record exists
+            if  exist.chk_sgl_fld():   #chk if record exists
+                
                 #update existing record
                 sql="""UPDATE unitmeas 
                         SET uni_conv = %s,
@@ -62,7 +64,6 @@ def unitmeas():
                 conn.commit()
                 flash('Record sucessfully updated!')
                 session['lst_rcd'] = form.id.data
-                print(type(form))
                 return redirect(url_for('unitmeas'))# clears POST data
 
             else:

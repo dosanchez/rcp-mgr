@@ -1,4 +1,19 @@
-a = {'unitmeas':{'uni_symb':'tonne','field2':15,'field3':'tres'},'unitdos':{'uni_sdos':'tonnedos','field2dos':30,'field3dos':'tresdos'}}
+rcd = {'unitmeas':[{
+                    'uni_symb':'tonne11',
+                    'field12':12,
+                    'field13':'primer tres'
+                    },
+                 {
+                    'uni_symb':'tonne21',
+                    'field22':22,
+                    'field13':'segundo tres'
+                    }],
+
+    'pedido':[{
+        'uni_sdos':'tonnedos',
+        'field2dos':30,
+        'field3dos':'tresdos'
+        }]}
 
 # print (a.get('fields'))
 # b = a.get('fields')
@@ -11,16 +26,21 @@ a = {'unitmeas':{'uni_symb':'tonne','field2':15,'field3':'tres'},'unitdos':{'uni
 # print (a.get('fields'))   
 
 
-for k, v in a.items():
-    for fk, fv in v.items():
-        if isinstance(fv, str):
-            v[fk]='\'' + fv + '\''
+for t, r in rcd.items():
+    print(t, r)
+    for ea_rcd in r:
+        print (ea_rcd)
+        for fn, fv in ea_rcd.items():
+            if isinstance(fv, str):
+                ea_rcd[fn]='\'' + fv + '\''
+        print(ea_rcd)
+    
 
 #value = a.get(table).get(field)
 #tam = len(a.get(table))
 #print(table, field, value)
 
 #print (tam)
-print(a)
+# print(a)
 # print(field)
 #print(value)

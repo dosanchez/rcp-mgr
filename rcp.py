@@ -46,24 +46,26 @@ def unitmeas():
 
         if nav_button == None:
             
-            exist = dth.from_dict2sql(db, {
+            record = dth.from_dict2sql(db, {
                                         'unitmeas':[{
-                                            'id':form.id.data
+                                            'id':int(form.id.data)
                                                     }]
                                         }) #creates instance to chk if record exists
-            if  exist.chk_sgl_fld():   #chk if record exists
+            if  record.chk_sgl_fld():   #chk if record exists
                 
                 #update existing record
-                sql="""UPDATE unitmeas 
-                        SET uni_conv = %s,
-                            uni_un_t = %s
-                        WHERE uni_symb = %s""" 
-                params = (form.qty_base.data / form.qty_um.data, form.uni_un_t.data,
-                            form.uni_symb.data)
-                db.execute(sql, params)
-                conn.commit()
-                flash('Record sucessfully updated!')
-                session['lst_rcd'] = form.id.data
+                uni_conv = form.qty_base.data / form.qty_um.data
+                record = dth.from_dict2sql(conn, {
+                                        'unitmeas':[{
+                                            'id':int(form.id.data),
+                                            'uni_conv':uni_conv,
+                                            'uni_un_t':form.uni_un_t.data,
+                                            'uni_symb':form.uni_symb.data 
+                                                    }]
+                                        })
+
+                record.update()
+                session['lst_rcd'] = int(form.id.data)
                 return redirect(url_for('unitmeas'))# clears POST data
 
             else:

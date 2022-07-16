@@ -1,46 +1,44 @@
-rcd = {'unitmeas':[{
+rcd = {'unitmeas':[
+                    {
                     'uni_symb':'tonne11',
-                    'field12':12,
-                    'field13':'primer tres'
-                    },
-                 {
+                    'field1':12,
+                    'field2':'primer tres',
+                    'id':1
+                },
+                    {
                     'uni_symb':'tonne21',
-                    'field22':22,
-                    'field13':'segundo tres'
-                    }],
+                    'field1':22,
+                    'field2':'segundo tres',
+                    'id':2
+                }
+        ],
 
-    'pedido':[{
-        'uni_sdos':'tonnedos',
-        'field2dos':30,
-        'field3dos':'tresdos'
-        }]}
+        'pedido':[
+                    {
+                    'uni_symb':'tonnedos',
+                    'field1':30,
+                    'field2':'tresdos',
+                    'id':10
+                }
+        ]
+    }
 
-# print (a.get('fields'))
-# b = a.get('fields')
-# print (type(b))
-# for k,v in b.items():
-#     if isinstance(v, str):
-#         b[k]='\'' + v + '\''
-#         print(b[k])
-    
-# print (a.get('fields'))   
-
+sql =""
 
 for t, r in rcd.items():
-    print(t, r)
     for ea_rcd in r:
-        print (ea_rcd)
         for fn, fv in ea_rcd.items():
             if isinstance(fv, str):
                 ea_rcd[fn]='\'' + fv + '\''
-        print(ea_rcd)
+
     
+print (rcd)
 
-#value = a.get(table).get(field)
-#tam = len(a.get(table))
-#print(table, field, value)
-
-#print (tam)
-# print(a)
-# print(field)
-#print(value)
+for t, r in rcd.items():
+    for ea_rcd in r:
+        sql = "UPDATE %s SET " %(t)
+        for fn, fv in ea_rcd.items():
+            if not fn == 'id':
+                sql += "%s = %s, " %(fn, fv)
+        sql += "WHERE id = %s" %(ea_rcd['id'])
+        print (sql)

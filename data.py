@@ -1,5 +1,6 @@
 from genericpath import exists
 from sqlite3 import paramstyle
+import sqlite3
 import mysql.connector
 from flask import Flask, flash, render_template, request, session, redirect, url_for
 
@@ -36,11 +37,22 @@ class DataHandler():
                 return False
         return False
 
-    def upd_rcd(self):
-        """update record in table given a list of dicts with tbl, fld and vals"""
+    def update(self):
+        """update record in table based on dict with tbl, fld and vals"""
+        """NEEDS an id field for update condition"""
+        for t, r in self.rcd.items():
+            for ea_rcd in r:
+                sql = "UPDATE %s SET " %(t)
+                for fn, fv in ea_rcd.items():
+                    if not fn == 'id':
+                        sql += "%s = %s, " %(fn, fv)    
+                sql += "WHERE id = %s" %(ea_rcd['id'])
+                sql = sql.replace(", WHERE id =", " WHERE id =") #removes last ,
+                self.db.cursor(dictionary=True, buffered=True).execute(sql)
+                self.db.commit()
+        
+        flash('Sucessfully updated!')
 
-        for record in self.rcd:
-            pass
 
 
     @classmethod

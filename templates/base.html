@@ -72,9 +72,10 @@
       </div>
       {% endfor %}
       {% block form %}
-      {% endblock %}
+      {% endblock form %}
     </div>
-    <script src="/static/js/bootstrap.bundle.min.js"></script>
-  
+    {% block script%}
+      <script src="/static/js/bootstrap.bundle.min.js"></script>
+    {% endblock script%}
   </body>
 </html>

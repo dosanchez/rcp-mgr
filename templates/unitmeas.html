@@ -3,7 +3,7 @@
 {% block form%}
 
 <div class ="container bg-light">
-  <form method="POST">
+  <form method="POST" id="nav_form">
     {{ form.hidden_tag() }}
     <div class="row mb-3" >
       <div class="col-sm-8">
@@ -29,7 +29,7 @@
         <button type = "submit" value = "last" class="btn" name ="nav">
           <i class="fa-solid fa-angles-right"></i>
         </button>
-        <button type = "submit" value = "new" class="btn" name ="nav">
+        <button type = "button" value = "new" class="btn" name ="nav" onclick="newrecord()">
           <i class="fa-solid fa-square-plus"></i>
         </button>
       </div>  
@@ -44,7 +44,7 @@
       </div>
       <div class="col-sm-3">
         {{ form.uni_symb.label(class="form-label") }}
-        {{ form.uni_symb(class="form-control", value = form.uni_symb.data) }}
+        {{ form.uni_symb(class="form-control", value = form.uni_symb.data, id="uni_symb") }}
       </div>
       <div class="col-sm-1 align-items-center" style="margin:auto">
         <h1>=</h1>
@@ -67,29 +67,40 @@
   <div class="container mt-5">
     {% block subform_title %}
       <h4>Registered unit of measurement</h4>
-      <small>click to edit</small>
     {% endblock subform_title %}
     <div style="height:445px; overflow:auto;">
       {% block subform %}
-      <table class="table">
+      <table class="table table-hover">
         <thead class = "bg-light" style="position: sticky;top: 0">
           <tr>
             {% for header in column_names %}
-             {% if not header == 'id' %}
-              <th>{{ header }}</th>
+              {% if header == 'id' %}
+              <th></th>
+              {% else %}
+                <th>{{ header }}</th>
               {% endif %}
             {% endfor %}
           </tr>
         </thead>
         <tbody>
           {% for row in records %}
-          <tr>
-          {% for key, value in row.items() %}
-            {% if not key == 'id' %}
-              <td>{{ value }}</td>
-            {% endif %}    
-          {% endfor %}
-          </tr>
+            <tr>
+              {% for key, value in row.items() %}
+                {% if key == 'id' %}
+                  <td>
+                    <button type = "submit" value = {{ value }} form ="nav_form" formmethod ="post" class="btn btn-sm btn-primary" name ="nav">
+                      <small>edit</small>
+                    </button>
+                  </td>
+                {% else %}
+                  {% if key == 'Unit of Measurement' %}
+                    <td style:"text-align: center;"> 1 {{ value }}  <bold>=</bold></td>
+                  {% else %}
+                    <td>{{ value }}</td>
+                  {% endif %}  
+                {% endif %}    
+              {% endfor %}
+            </tr>
           {% endfor %}
         </tbody>
       </table>
@@ -98,4 +109,12 @@
     </div>
   </div>
 </div>  
-{% endblock %}
+{% endblock form%}
+{% block script%}
+{{ super() }}
+  <script>
+     function newrecord() {
+        document.getElementById("uni_symb").value = "";
+        }
+  </script>
+{% endblock script%}

@@ -42,7 +42,12 @@ def index():
 def unitmeas():
     form = Unitmeas()
     nav_button =  request.form.get('nav') #saves form navigation data
+    try:
+        nav_button = int(nav_button)
+    except:
+        pass
     
+
     if form.validate_on_submit():
         uni_conv = form.qty_base.data / form.qty_um.data
         record = dth.from_dict2sql(conn, {
@@ -64,7 +69,6 @@ def unitmeas():
                                         }
             ) #creates instance to chk if record exist
             if  existe.chk_sgl_fld():   #chk if record exists
-                print(existe.chk_sgl_fld())
                 
                 #update existing record
                 record.update()
@@ -84,15 +88,17 @@ def unitmeas():
     db.execute(sql)
     records = db.fetchall()
     column_names = db.column_names
-    print(column_names)
-    print(records)
 
     regd_id =[row.get('id') for row in records] #making a list of registered ids
     last_index = len(regd_id) -1 #calc id list length
     id = form.id.data
- 
+    
+    #resolve id value of the target record
+
     if id == None:
-         id = regd_id[-1]
+        id = regd_id[-1]
+    elif isinstance(nav_button,(int)):
+        id = nav_button
     elif nav_button == "first":
         id = regd_id[0] 
     elif nav_button == "last":
@@ -108,6 +114,7 @@ def unitmeas():
     else:
         id = regd_id[-1]
 
+    session['ID'] = id
 
     #visualize the target record
     sql = "SELECT * FROM unitmeas WHERE id = %s"

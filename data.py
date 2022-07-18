@@ -7,9 +7,9 @@ from flask import Flask, flash, render_template, request, session, redirect, url
 
 class DataHandler():
 
-    def __init__(self, db, rcd = None):
+    def __init__(self, conn, rcd = None):
         
-        self.db = db
+        self.conn = conn
         if not rcd:
             self.rcd ={}
         else:
@@ -27,36 +27,67 @@ class DataHandler():
             
             sql = """SELECT EXISTS (SELECT * FROM %s WHERE %s = %s) 
                         AS existe""" %(table, field, value)
-
-            self.db.execute(sql)
-            record = self.db.fetchall()
             
-            if record[0].get('existe') == 1:
+            db = self.conn.cursor(dictionary=True, buffered=True)
+            db.execute(sql)
+            record = db.fetchall()
+
+            if record[0].get('existe') >= 1:
                 return True
             else:
                 return False
         return False
 
     def update(self):
-        """update record in table based on dict with tbl, fld and vals"""
-        """NEEDS an id field for update condition"""
+        """update record in table based on dict with tbl, fld and vals
+            NEEDS an id field for update condition"""
+        counter = 0
         for t, r in self.rcd.items():
             for ea_rcd in r:
+                counter += 1
                 sql = "UPDATE %s SET " %(t)
                 for fn, fv in ea_rcd.items():
                     if not fn == 'id':
                         sql += "%s = %s, " %(fn, fv)    
                 sql += "WHERE id = %s" %(ea_rcd['id'])
                 sql = sql.replace(", WHERE id =", " WHERE id =") #removes last ,
-                self.db.cursor(dictionary=True, buffered=True).execute(sql)
-                self.db.commit()
+                self.conn.cursor(dictionary=True, buffered=True).execute(sql)
+                self.conn.commit()
         
-        flash('Sucessfully updated!')
+        if counter > 1:
+            flash('Records updated!')
+        elif counter == 1:
+            flash('Record updated!')
+        else:
+            pass
 
+    def add_new(self):
+        """adds record in table based on dict with tbl, fld and vals"""
+        counter = 0
+        value_str = ') VALUES('
+        for t, r in self.rcd.items():
+            for ea_rcd in r:
+                counter += 1
+                sql = "INSERT INTO %s (" %(t)
+                for fn, fv in ea_rcd.items():
+                    if not fn == 'id':
+                        sql += "%s, " %(fn)
+                        value_str += "%s, " %(fv)   
+                sql +=value_str + ')'
+                sql = sql.replace(", )", ")") #removes extra ,
+                self.conn.cursor(dictionary=True, buffered=True).execute(sql)
+                self.conn.commit()
+        
+        if counter > 1:
+            flash('Records added!')
+        elif counter == 1:
+            flash('Record added!')
+        else:
+            pass
 
 
     @classmethod
-    def from_dict2sql(cls, db, rcd = None):
+    def from_dict2sql(cls, conn, rcd = None):
         """put str dict data between quotes for SQL statement"""
         if rcd:
             for t, r in rcd.items():
@@ -65,7 +96,7 @@ class DataHandler():
                         if isinstance(fv, str):
                             ea_rcd[fn]="\'" + fv + "\'"
             
-            return cls(db, rcd)
+            return cls(conn, rcd)
         else:
             rcd = {}
         

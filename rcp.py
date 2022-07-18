@@ -41,52 +41,49 @@ def unitmeas():
     nav_button =  request.form.get('nav') #saves form navigation data
     
     if form.validate_on_submit():
-        
-        
-
-        if nav_button == None:
-            
-            record = dth.from_dict2sql(db, {
-                                        'unitmeas':[{
-                                            'id':int(form.id.data)
-                                                    }]
-                                        }) #creates instance to chk if record exists
-            if  record.chk_sgl_fld():   #chk if record exists
-                
-                #update existing record
-                uni_conv = form.qty_base.data / form.qty_um.data
-                record = dth.from_dict2sql(conn, {
+        uni_conv = form.qty_base.data / form.qty_um.data
+        record = dth.from_dict2sql(conn, {
                                         'unitmeas':[{
                                             'id':int(form.id.data),
                                             'uni_conv':uni_conv,
                                             'uni_un_t':form.uni_un_t.data,
                                             'uni_symb':form.uni_symb.data 
                                                     }]
-                                        })
+                                        }
+        )
 
+        if nav_button == None: #not a nav post
+            
+            existe = dth.from_dict2sql(conn, {
+                                        'unitmeas':[{
+                                            'uni_symb':form.uni_symb.data
+                                                    }]
+                                        }
+            ) #creates instance to chk if record exists
+
+            if  existe.chk_sgl_fld():   #chk if record exists
+                print(existe.chk_sgl_fld())
+                
+                #update existing record
                 record.update()
-                session['lst_rcd'] = int(form.id.data)
                 return redirect(url_for('unitmeas'))# clears POST data
 
             else:
-                #add new record
-                sql = """INSERT INTO unitmeas (uni_symb, uni_conv, uni_un_t) 
-                            VALUES (%s, %s, %s)"""
-                params = (form.uni_symb.data, form.qty_base.data / form.qty_um.data,
-                                form.uni_un_t.data)
-                db.execute(sql, params)
-                conn.commit()
-                flash('Record sucessfully added!')
+                
+                record.add_new()
                 return redirect(url_for('unitmeas'))# clears POST data 
 
 
     #visualize registered U.M and moves form to nav target
     
-    sql = "Select * from unitmeas"
+    sql = """Select id, uni_symb AS 'Unit of Measurement', 
+                    uni_conv AS 'Qty', uni_un_t AS 'UM type' 
+             from unitmeas"""
     db.execute(sql)
     records = db.fetchall()
     column_names = db.column_names
-
+    print(column_names)
+    print(records)
 
     regd_id =[row.get('id') for row in records] #making a list of registered ids
     last_index = len(regd_id) -1 #calc id list length
@@ -120,6 +117,7 @@ def unitmeas():
     form.uni_un_t.data = tgt_record.get('uni_un_t')
     form.id.data = tgt_record.get('id')
     tgt_record = db.fetchall()
+
 
     return render_template ('unitmeas.html', form = form, records = records,
                             column_names = column_names)

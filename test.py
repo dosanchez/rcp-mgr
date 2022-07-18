@@ -23,22 +23,5 @@ rcd = {'unitmeas':[
         ]
     }
 
-sql =""
-
-for t, r in rcd.items():
-    for ea_rcd in r:
-        for fn, fv in ea_rcd.items():
-            if isinstance(fv, str):
-                ea_rcd[fn]='\'' + fv + '\''
-
-    
-print (rcd)
-
-for t, r in rcd.items():
-    for ea_rcd in r:
-        sql = "UPDATE %s SET " %(t)
-        for fn, fv in ea_rcd.items():
-            if not fn == 'id':
-                sql += "%s = %s, " %(fn, fv)
-        sql += "WHERE id = %s" %(ea_rcd['id'])
-        print (sql)
+for k in rcd.keys():
+    print(k)

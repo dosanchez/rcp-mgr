@@ -64,15 +64,15 @@
   </form>
 
 
-  <div class="mt-5">
+  <div class="container mt-5">
     {% block subform_title %}
       <h4>Registered unit of measurement</h4>
       <small>click to edit</small>
-    {% endblock %}
-    <div style="overflow:auto;">
+    {% endblock subform_title %}
+    <div style="height:200px; overflow:auto;">
       {% block subform %}
       <table class="table">
-        <thead>
+        <thead class = "bg-light" style="position: sticky;top: 0">
           <tr>
             {% for header in column_names %}
             <th>{{ header }}</th>
@@ -90,7 +90,7 @@
         </tbody>
       </table>
     </div> 
-      {% endblock %}
+      {% endblock subform%}
     </div>
   </div>
 </div>  

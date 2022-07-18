@@ -59,8 +59,7 @@ def unitmeas():
                                             'uni_symb':form.uni_symb.data
                                                     }]
                                         }
-            ) #creates instance to chk if record exists
-
+            ) #creates instance to chk if record exist
             if  existe.chk_sgl_fld():   #chk if record exists
                 print(existe.chk_sgl_fld())
                 

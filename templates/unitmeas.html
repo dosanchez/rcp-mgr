@@ -69,21 +69,25 @@
       <h4>Registered unit of measurement</h4>
       <small>click to edit</small>
     {% endblock subform_title %}
-    <div style="height:200px; overflow:auto;">
+    <div style="height:445px; overflow:auto;">
       {% block subform %}
       <table class="table">
         <thead class = "bg-light" style="position: sticky;top: 0">
           <tr>
             {% for header in column_names %}
-            <th>{{ header }}</th>
+             {% if not header == 'id' %}
+              <th>{{ header }}</th>
+              {% endif %}
             {% endfor %}
           </tr>
         </thead>
         <tbody>
           {% for row in records %}
           <tr>
-          {% for value in row.values() %}
-            <td>{{ value }}</td>
+          {% for key, value in row.items() %}
+            {% if not key == 'id' %}
+              <td>{{ value }}</td>
+            {% endif %}    
           {% endfor %}
           </tr>
           {% endfor %}

@@ -114,19 +114,17 @@ def unitmeas():
     else:
         id = regd_id[-1]
 
-    session['ID'] = id
-
     #visualize the target record
     sql = "SELECT * FROM unitmeas WHERE id = %s"
     db.execute(sql, (id,))
     tgt_record = db.fetchone()
     form.qty_um.data = 1
-    form.uni_symb.data = tgt_record.get('uni_symb')
-    form.qty_base.data = tgt_record.get('uni_conv')
-    form.uni_un_t.data = tgt_record.get('uni_un_t')
-    form.id.data = tgt_record.get('id')
+    form.uni_symb.data = session['uni_symb'] = tgt_record.get('uni_symb')
+    form.qty_base.data = session['uni_conv'] = tgt_record.get('uni_conv')
+    form.uni_un_t.data = session['uni_un_t'] = tgt_record.get('uni_un_t')
+    form.id.data = session['id'] = tgt_record.get('id')
     tgt_record = db.fetchall()
-
+    print (session['uni_symb'])
 
     return render_template ('unitmeas.html', form = form, records = records,
                             column_names = column_names)

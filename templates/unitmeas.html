@@ -26,10 +26,10 @@
         <button type = "submit" value = "next" class="btn" name ="nav">
           <i class="fa-solid fa-circle-chevron-right"></i>
         </button>
-        <button type = "submit" value = "last" class="btn" name ="nav">
+        <button type = "button" class="btn" onclick="Lastrecord('\'' +{{ session['uni_symb'] }} +'\'')">
           <i class="fa-solid fa-angles-right"></i>
         </button>
-        <button type = "button" value = "new" class="btn" name ="nav" onclick="newrecord()">
+        <button type = "button" value = "new" class="btn" name ="nav" onclick="Newrecord()">
           <i class="fa-solid fa-square-plus"></i>
         </button>
       </div>  
@@ -59,7 +59,7 @@
       </div>
     </div>
     <div style="float:right;">
-    <input type="submit" class="btn btn-primary" formmethod="POST" value="Submit">
+    <input type="submit" id ="submit_button" class="btn btn-primary" formmethod="POST" value="Submit">
     </div>
   </form>
 
@@ -113,8 +113,17 @@
 {% block script%}
 {{ super() }}
   <script>
-     function newrecord() {
+    function Newrecord() {
         document.getElementById("uni_symb").value = "";
+        document.getElementById("qty_um").value = "";
+        document.getElementById("qty_base").value = "";
+        document.getElementById("uni_un_t").value = "";
+
+        }
+    function Lastrecord(ID) {
+        alert(ID);
+ 
+
         }
   </script>
 {% endblock script%}

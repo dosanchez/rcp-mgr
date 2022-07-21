@@ -124,7 +124,7 @@ def unitmeas():
     form.uni_un_t.data = session['uni_un_t'] = tgt_record.get('uni_un_t')
     form.id.data = session['id'] = tgt_record.get('id')
     tgt_record = db.fetchall()
-    print (session['uni_symb'])
+    print (session['uni_symb'],type(session['uni_symb']))
 
     return render_template ('unitmeas.html', form = form, records = records,
                             column_names = column_names)

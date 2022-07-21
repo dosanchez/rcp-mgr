@@ -26,7 +26,7 @@
         <button type = "submit" value = "next" class="btn" name ="nav">
           <i class="fa-solid fa-circle-chevron-right"></i>
         </button>
-        <button type = "button" class="btn" onclick="Lastrecord('\'' +{{ session['uni_symb'] }} +'\'')">
+        <button type = "button" class="btn" onclick="Lastrecord({{session['id']}}, '{{session['uni_symb']}}', {{session['uni_conv']}}, '{{session['uni_un_t']}}')">
           <i class="fa-solid fa-angles-right"></i>
         </button>
         <button type = "button" value = "new" class="btn" name ="nav" onclick="Newrecord()">
@@ -120,9 +120,11 @@
         document.getElementById("uni_un_t").value = "";
 
         }
-    function Lastrecord(ID) {
-        alert(ID);
- 
+    function Lastrecord(ID,UNISYMB,UNICONV, UNIUNT) {
+        document.getElementById("uni_symb").value = UNISYMB;
+        document.getElementById("qty_um").value = 1;
+        document.getElementById("qty_base").value = UNICONV;
+        document.getElementById("uni_un_t").value = UNIUNT;
 
         }
   </script>

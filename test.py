@@ -1,3 +1,5 @@
+from nav import tg_rcd
+
 rcd = {'unitmeas':[
                     {
                     'uni_symb':'tonne11',
@@ -23,5 +25,5 @@ rcd = {'unitmeas':[
         ]
     }
 
-for k in rcd.keys():
-    print(k)
+
+tg_rcd("Donaldo", "Sanchez")

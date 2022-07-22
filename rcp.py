@@ -1,9 +1,7 @@
-from typing import Type
 import mysql.connector
-from crypt import methods
 from flask import Flask, flash, render_template, request, session, redirect, url_for
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, IntegerField, SelectField, DecimalField, HiddenField
+from wtforms import StringField, SelectField, DecimalField, HiddenField
 from wtforms.validators import DataRequired, AnyOf, Length, NumberRange
 from data import DataHandler as dth
 
@@ -112,11 +110,14 @@ def unitmeas():
     elif nav_button == "next" and regd_id.index(int(id)) == last_index:
         id = regd_id[-1]
     elif nav_button == "out":
+        conn.close()
         return render_template ('index.html')
     else:
         id = regd_id[-1]
 
-    #visualize the target record
+
+
+    #visualize the target record on main form
     sql = "SELECT * FROM unitmeas WHERE id = %s"
     db.execute(sql, (id,))
     tgt_record = db.fetchone()

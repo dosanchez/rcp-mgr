@@ -1,8 +1,5 @@
-from genericpath import exists
-from sqlite3 import paramstyle
-import sqlite3
 import mysql.connector
-from flask import Flask, flash, render_template, request, session, redirect, url_for
+from flask import flash
 
 
 class DataHandler():

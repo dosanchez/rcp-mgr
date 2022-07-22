@@ -60,7 +60,7 @@ def unitmeas():
                                         }
         )
 
-        if nav_button == None: #not a nav post
+        if nav_button == "submit": #not a nav post
             
             existe = dth.from_dict2sql(conn, {
                                         'unitmeas':[{
@@ -93,7 +93,7 @@ def unitmeas():
     last_index = len(regd_id) -1 #calc id list length
     id = form.id.data
     
-    #resolve id value of the target record
+    #resolve id value of navigation target record
 
     if id == None:
         id = regd_id[-1]
@@ -111,6 +111,8 @@ def unitmeas():
         id = regd_id[regd_id.index(int(id)) + 1]
     elif nav_button == "next" and regd_id.index(int(id)) == last_index:
         id = regd_id[-1]
+    elif nav_button == "out":
+        return render_template ('index.html')
     else:
         id = regd_id[-1]
 
@@ -124,7 +126,6 @@ def unitmeas():
     form.uni_un_t.data = session['uni_un_t'] = tgt_record.get('uni_un_t')
     form.id.data = session['id'] = tgt_record.get('id')
     tgt_record = db.fetchall()
-    print (session['uni_symb'],type(session['uni_symb']))
 
     return render_template ('unitmeas.html', form = form, records = records,
                             column_names = column_names)

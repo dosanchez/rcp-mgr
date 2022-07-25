@@ -13,3 +13,9 @@ class Unitmeas(FlaskForm):
         render_kw={"placeholder": "qty"}, default = 1)
     uni_un_t = SelectField('UM Type', validators=[AnyOf(values=['g','ml'])], 
         choices=['g','ml'])
+
+class Almacen(FlaskForm):
+    """wtform for Warehouses"""
+    id = HiddenField()
+    alm_name = StringField('Warehouse', validators=[DataRequired(),Length(max=16)], 
+        render_kw={"placeholder": "e.g. Branch 01"})

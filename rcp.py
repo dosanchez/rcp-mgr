@@ -2,7 +2,7 @@ import mysql.connector
 from flask import Flask, flash, render_template, request, session, redirect, url_for
 from data import DataHandler as dth
 from nav import navigate_to
-from forms import Unitmeas
+from forms import Unitmeas, Almacen
 
 
 #database connection
@@ -73,6 +73,53 @@ def unitmeas():
     return render_template ('unitmeas.html', form = form, records = records,
                             column_names = column_names)
 
+
+@app.route('/templates/almacen.html', methods=['GET','POST'])
+def almacen():
+    form = Almacen()
+    sqltable = 'almacen'
+    nav_button =  request.form.get('nav') #saves form navigation request
+    try:
+        nav_button = int(nav_button)
+    except:
+        pass
+    
+
+    if form.validate_on_submit():
+
+        record = dth.from_dict2sql(conn, {
+                                        sqltable:[{
+                                            'id':int(form.id.data),
+                                            'alm_name':form.alm_name.data
+                                                    }]
+                                        }
+        )
+
+        if nav_button == "submit": #not a nav post
+            #creates instance to chk if record exist
+            existe = dth.from_dict2sql(conn, {
+                                        sqltable:[{
+                                            'alm_name':form.alm_name.data
+                                                    }]
+                                        }
+            ) 
+            if  existe.chk_sgl_fld():   #chk if record exists
+                
+                #update existing record
+                record.update()
+                return redirect(url_for('almacen'))# clears POST data
+
+            else:
+                #adds new record
+                record.add_new()
+                return redirect(url_for('almacen'))# clears POST data 
+
+
+    records = navigate_to(nav_button, db, form, sqltable)
+    column_names =['', 'Warehouse']
+
+    return render_template ('almacen.html', form = form, records = records,
+                            column_names = column_names)
 
 if __name__ == '__main__':
     app.run(debug=True)

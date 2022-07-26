@@ -10,18 +10,27 @@ def navigate_to(nav_button, db, form, sqltable):
 
     #visualize registered U.M and moves form to nav target
 
-    sql = "Select * from {}".format(sqltable)
+    sql = "Select * from {}".format(sqltable) 
     db.execute(sql)
     records = db.fetchall()
-    column_names = db.column_names
+    # column_names = db.column_names
 
     regd_id =[row.get('id') for row in records] #making a list of registered ids
     last_index = len(regd_id) -1 #calc id list length
-    id = form.id.data
     
+    #checks for first time form entry
+    if form.id.data:
+        id = form.id.data
+    else:
+        id = form.id.data = 0
 
-    #resolve id value of navigation target record
-    if id == None:
+    print('lista de entradas', len(regd_id))
+    print('id', id)
+
+    #resolve id value of navigation target record (if any rcd)
+    if not len(regd_id):
+        pass
+    elif id == None:
         id = regd_id[-1]
     elif isinstance(nav_button,(int)):
         id = nav_button
@@ -43,20 +52,23 @@ def navigate_to(nav_button, db, form, sqltable):
         id = regd_id[-1]
     
 
-    #visualize the target record on main form
-    sql = "SELECT * FROM %s WHERE id = %s"%(sqltable, id)
-    db.execute(sql)
-    tgt_record = db.fetchone()
+    #visualize the target record on main form (if any rcd)
+    if not len(regd_id):
+        pass
+    else:
+        sql = "SELECT * FROM %s WHERE id = %s"%(sqltable, id)
+        db.execute(sql)
+        tgt_record = db.fetchone()
 
-    for i in form:
-        if not i.id == 'csrf_token':
-                if i.id == "qty_um" and sqltable == 'unitmeas':
-                    i.data = 1
-                elif i.id == "qty_base" and sqltable == 'unitmeas':
-                    i.data = session['uni_conv'] = tgt_record.get('uni_conv')
-                else:
-                    i.data = session[i.id] = tgt_record.get(i.id)
+        for i in form:
+            if not i.id == 'csrf_token':
+                    if i.id == "qty_um" and sqltable == 'unitmeas':#exception for unitmeas form
+                        i.data = 1
+                    elif i.id == "qty_base" and sqltable == 'unitmeas':#exception for unitmeas form
+                        i.data = session['uni_conv'] = tgt_record.get('uni_conv')
+                    else:
+                        i.data = session[i.id] = tgt_record.get(i.id)
 
-    tgt_record = db.fetchall()
+        tgt_record = db.fetchall()
 
     return records

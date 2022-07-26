@@ -44,8 +44,7 @@ def unitmeas():
                                             'uni_un_t':form.uni_un_t.data,
                                             'uni_symb':form.uni_symb.data 
                                                     }]
-                                        }
-        )
+                                        })
 
         if nav_button == "submit": #not a nav post
             #creates instance to chk if record exist
@@ -55,8 +54,7 @@ def unitmeas():
                                                     }]
                                         }
             ) 
-            if  existe.chk_sgl_fld():   #chk if record exists
-                
+            if  existe.chk_sgl_fld():   #chk if record exists   
                 #update existing record
                 record.update()
                 return redirect(url_for('unitmeas'))# clears POST data
@@ -68,7 +66,7 @@ def unitmeas():
 
 
     records = navigate_to(nav_button, db, form, sqltable)
-    column_names =['', 'Ud. base', 'Qty', 'Unit of measurement']
+    column_names =['', 'Ud. base', 'Qty', 'Unit of measurement', 'Enable']
 
     return render_template ('unitmeas.html', form = form, records = records,
                             column_names = column_names)
@@ -92,8 +90,7 @@ def almacen():
                                             'id':int(form.id.data),
                                             'alm_name':form.alm_name.data
                                                     }]
-                                        }
-        )
+                                        })
 
         if nav_button == "submit": #not a nav post
             #creates instance to chk if record exist
@@ -103,8 +100,7 @@ def almacen():
                                                     }]
                                         }
             ) 
-            if  existe.chk_sgl_fld():   #chk if record exists
-                
+            if  existe.chk_sgl_fld():   #chk if record exists   
                 #update existing record
                 record.update()
                 return redirect(url_for('almacen'))# clears POST data
@@ -116,7 +112,7 @@ def almacen():
 
 
     records = navigate_to(nav_button, db, form, sqltable)
-    column_names =['', 'Warehouse']
+    column_names =['', 'Warehouse', 'Enable']
 
     return render_template ('almacen.html', form = form, records = records,
                             column_names = column_names)

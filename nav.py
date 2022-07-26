@@ -1,9 +1,26 @@
 import mysql.connector
+from flask import session
+from flask_wtf import FlaskForm
+from flask import render_template
+from forms import Unitmeas
 
 
-def tg_id(id, nav_button,regd_id):
+def navigate_to(nav_button, db, form, sqltable):
+    
+
+    #visualize registered U.M and moves form to nav target
+
+    sql = "Select * from {}".format(sqltable)
+    db.execute(sql)
+    records = db.fetchall()
+    column_names = db.column_names
+
+    regd_id =[row.get('id') for row in records] #making a list of registered ids
+    last_index = len(regd_id) -1 #calc id list length
+    id = form.id.data
+    
+
     #resolve id value of navigation target record
-
     if id == None:
         id = regd_id[-1]
     elif isinstance(nav_button,(int)):
@@ -21,8 +38,25 @@ def tg_id(id, nav_button,regd_id):
     elif nav_button == "next" and regd_id.index(int(id)) == last_index:
         id = regd_id[-1]
     elif nav_button == "out":
-        conn.close()
         return render_template ('index.html')
     else:
         id = regd_id[-1]
     
+
+    #visualize the target record on main form
+    sql = "SELECT * FROM %s WHERE id = %s"%(sqltable, id)
+    db.execute(sql)
+    tgt_record = db.fetchone()
+
+    for i in form:
+        if not i.id == 'csrf_token':
+                if i.id == "qty_um" and sqltable == 'unitmeas':
+                    i.data = 1
+                elif i.id == "qty_base" and sqltable == 'unitmeas':
+                    i.data = session['uni_conv'] = tgt_record.get('uni_conv')
+                else:
+                    i.data = session[i.id] = tgt_record.get(i.id)
+
+    tgt_record = db.fetchall()
+
+    return records

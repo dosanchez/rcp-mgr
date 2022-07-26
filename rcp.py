@@ -9,7 +9,7 @@ from forms import Unitmeas, Almacen
 conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
                               host='192.168.100.254',
                               database='std')
-# conn = mysql.connector.connect(user='root', password='Ds002011!!',
+# conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
 #                               host='200.125.169.75',
 #                               database='std')
 db = conn.cursor(dictionary=True, buffered=True)

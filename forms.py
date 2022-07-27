@@ -21,3 +21,12 @@ class Almacen(FlaskForm):
     alm_name = StringField('Warehouse', validators=[DataRequired(),Length(max=16)], 
         render_kw={"placeholder": "e.g. Branch 01"})
     alm_ebld = BooleanField('Enabled', default = True, false_values=('',))
+
+class Ingredient(FlaskForm):
+    """wtform for Ingredients"""
+    id = HiddenField()
+    ing_name = StringField('Ingredient', validators=[DataRequired(),Length(max=16)], 
+        render_kw={"placeholder": "e.g. Paprika"})
+    uni_unit = SelectField('Common unit of measurement', validators=[DataRequired()], 
+        default = 'g')
+    

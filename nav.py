@@ -24,9 +24,6 @@ def navigate_to(nav_button, db, form, sqltable):
     else:
         id = form.id.data = 0
 
-    print('lista de entradas', len(regd_id))
-    print('id', id)
-
     #resolve id value of navigation target record (if any rcd)
     if not len(regd_id):
         pass

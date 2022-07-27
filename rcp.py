@@ -68,8 +68,6 @@ def unitmeas():
 
     records = navigate_to(nav_button, db, form, sqltable)
     column_names =['', 'Ud. base', 'Qty', 'Unit of measurement', 'Enabled']
-    for row in records:
-        print(row['uni_ebld'])
 
     return render_template ('unitmeas.html', form = form, records = records,
                             column_names = column_names)
@@ -91,7 +89,8 @@ def almacen():
         record = dth.from_dict2sql(conn, {
                                         sqltable:[{
                                             'id':int(form.id.data),
-                                            'alm_name':form.alm_name.data
+                                            'alm_name':form.alm_name.data,
+                                            'alm_ebld':form.alm_ebld.data
                                                     }]
                                         })
 

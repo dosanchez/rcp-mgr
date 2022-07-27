@@ -20,3 +20,4 @@ class Almacen(FlaskForm):
     id = HiddenField()
     alm_name = StringField('Warehouse', validators=[DataRequired(),Length(max=16)], 
         render_kw={"placeholder": "e.g. Branch 01"})
+    alm_ebld = BooleanField('Enabled', default = True, false_values=('',))

@@ -53,9 +53,13 @@
       {{ form.id() }}
     </div>
     <div class="row">
-      <div class="col-sm-12 mb-3">
+      <div class="col-sm-10 mb-3">
         {{ form.alm_name.label(class="form-label") }}
         {{ form.alm_name(class="form-control", value = form.alm_name.data) }}
+      </div>
+            <div class="col-sm-2 mt-3 pt-4" style="text-align:right;">
+        {{ form.alm_ebld.label(class="form-check-label") }}
+        {{ form.alm_ebld(class="form-check-input", value = form.alm_ebld.data, onclick="Submit()") }}
       </div>
     </div>
     <div style="float:right;">
@@ -84,7 +88,11 @@
         </thead>
         <tbody>
           {% for row in records %}
+            {% if row['alm_ebld'] %}  <!-- styles disabled records-->
             <tr>
+            {% else %}
+            <tr style="opacity: 0.5;">
+            {% endif %}
               {% for key, value in row.items() %}
                 {% if key == 'id' %}
                   <td>
@@ -93,7 +101,13 @@
                     </button>
                   </td>
                 {% else %}
-                  <td>{{ value }}</td>  
+                  {% if key == 'alm_ebld' and value %}<!-- exception display enable/disable icon-->
+                    <td><i class="fa-solid fa-check"></i></td>
+                  {% elif key == 'alm_ebld' and not value %}<!-- exception display enable/disable icon-->
+                    <td><i class="fa-solid fa-xmark"></i></td>
+                  {% else %}
+                    <td>{{ value }}</td>
+                  {% endif %}  
                 {% endif %}    
               {% endfor %}
             </tr>
@@ -111,11 +125,15 @@
   <script>
     function Newrecord() {
         document.getElementById("alm_name").value = "";
-
         }
+
     function Navrecord(NAV, ALMNAME) {
         document.getElementById("alm_name").value = ALMNAME;
         document.getElementById("submit_button").value = NAV;
+        document.getElementById("submit_button").click();
+        }
+    
+    function Submit() {
         document.getElementById("submit_button").click();
         }
   </script>

@@ -42,7 +42,8 @@ def unitmeas():
                                             'id':int(form.id.data),
                                             'uni_conv':uni_conv,
                                             'uni_un_t':form.uni_un_t.data,
-                                            'uni_symb':form.uni_symb.data 
+                                            'uni_symb':form.uni_symb.data,
+                                            'uni_ebld':form.uni_ebld.data 
                                                     }]
                                         })
 
@@ -66,7 +67,9 @@ def unitmeas():
 
 
     records = navigate_to(nav_button, db, form, sqltable)
-    column_names =['', 'Ud. base', 'Qty', 'Unit of measurement', 'Enable']
+    column_names =['', 'Ud. base', 'Qty', 'Unit of measurement', 'Enabled']
+    for row in records:
+        print(row['uni_ebld'])
 
     return render_template ('unitmeas.html', form = form, records = records,
                             column_names = column_names)
@@ -112,7 +115,7 @@ def almacen():
 
 
     records = navigate_to(nav_button, db, form, sqltable)
-    column_names =['', 'Warehouse', 'Enable']
+    column_names =['', 'Warehouse', 'Enabled']
 
     return render_template ('almacen.html', form = form, records = records,
                             column_names = column_names)

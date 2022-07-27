@@ -63,7 +63,7 @@
       {{ form.id() }}
     </div>
     <div class="row">
-      <div class="col-sm-3">
+      <div class="col-sm-1">
         {{ form.qty_um.label(class="form-label") }}
         {{ form.qty_um(class="form-control", value = form.qty_um.data) }}
       </div>
@@ -74,13 +74,17 @@
       <div class="col-sm-1 align-items-center" style="margin:auto">
         <h1>=</h1>
       </div>
-      <div class="col-sm-3">
+      <div class="col-sm-2">
         {{ form.qty_base.label(class="form-label") }}
         {{ form.qty_base(class="form-control", value = form.qty_base.data) }}
       </div>
       <div class="col-sm-2 mb-3">
         {{ form.uni_un_t.label(class="form-label") }}
         {{ form.uni_un_t(class="form-select", value = form.uni_un_t.data) }}
+      </div>
+      <div class="col-sm-2 mt-3 pt-4">
+        {{ form.uni_ebld.label(class="form-check-label") }}
+        {{ form.uni_ebld(class="form-check-input", value = form.uni_un_t.data) }}
       </div>
     </div>
     <div style="float:right;">
@@ -109,8 +113,12 @@
         </thead>
         <tbody>
           {% for row in records %}
-            <tr>
-              {% for key, value in row.items() %}
+          {% if row['uni_ebld'] %}  
+          <tr>
+          {% else %}
+          <tr style="opacity: 0.5;">
+          {% endif%}
+            {% for key, value in row.items() %}
                 {% if key == 'id' %}
                   <td>
                     <button type = "submit" value = {{ value }} form ="nav_form" formmethod ="post" class="btn btn-sm btn-primary" name ="nav">
@@ -120,6 +128,10 @@
                 {% else %}
                   {% if key == 'uni_symb' %}<!-- just an exception for this form-->
                     <td style:"text-align: center;"> 1 {{ value }}  <bold>=</bold></td>
+                  {% elif key == 'uni_ebld' and value %}<!-- just an exception for this form-->
+                    <td><i class="fa-solid fa-check"></i></td>
+                  {% elif key == 'uni_ebld' and not value %}<!-- just an exception for this form-->
+                    <td><i class="fa-solid fa-xmark"></i></td>
                   {% else %}
                     <td>{{ value }}</td>
                   {% endif %}  

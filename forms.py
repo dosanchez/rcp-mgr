@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, DecimalField, HiddenField
+from wtforms import StringField, SelectField, DecimalField, HiddenField, BooleanField
 from wtforms.validators import DataRequired, AnyOf, Length, NumberRange
 
 class Unitmeas(FlaskForm):
@@ -13,6 +13,7 @@ class Unitmeas(FlaskForm):
         render_kw={"placeholder": "qty"}, default = 1)
     uni_un_t = SelectField('UM Type', validators=[AnyOf(values=['g','ml'])], 
         choices=['g','ml'])
+    uni_ebld = BooleanField('Enabled', default = True, false_values=('',))
 
 class Almacen(FlaskForm):
     """wtform for Warehouses"""

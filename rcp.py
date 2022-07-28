@@ -1,8 +1,8 @@
 import mysql.connector
-from flask import Flask, flash, render_template, request, session, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for
 from data import DataHandler as dth
 from nav import navigate_to
-from forms import Unitmeas, Almacen
+from forms import Ingredient, Unitmeas, Almacen
 
 
 #database connection
@@ -117,6 +117,58 @@ def almacen():
     column_names =['', 'Warehouse', 'Enabled']
 
     return render_template ('almacen.html', form = form, records = records,
+                            column_names = column_names)
+
+
+@app.route('/templates/ingredient.html', methods=['GET','POST'])
+def ingredient():
+    form = Ingredient()
+    sqltable = 'ingredient'
+    nav_button =  request.form.get('nav') #saves form navigation request
+    try:
+        nav_button = int(nav_button)
+    except:
+        pass
+    
+
+    if form.validate_on_submit():
+        uni_conv = form.qty_base.data / form.qty_um.data
+        record = dth.from_dict2sql(conn, {
+                                        sqltable:[{
+                                            'id':int(form.id.data),
+                                            'ing_name':form.ing_name.data,
+                                            'ing_unit':form.ing_unit.data,
+                                            'ing_dens':form.ing_dens.data,
+                                            'ing_denu':form.ing_denu.data,
+                                            'ing_rece':form.ing_rece.data,
+                                            'ing_ebld':form.ing_ebld.data  
+                                                    }]
+                                        })
+
+        if nav_button == "submit": #not a nav post
+            #creates instance to chk if record exist
+            existe = dth.from_dict2sql(conn, {
+                                        sqltable:[{
+                                            'id':int(form.id.data)
+                                                    }]
+                                        }
+            ) 
+            if  existe.chk_sgl_fld():   #chk if record exists   
+                #update existing record
+                record.update()
+                return redirect(url_for('ingredient'))# clears POST data
+
+            else:
+                #adds new record
+                record.add_new()
+                return redirect(url_for('ingredient'))# clears POST data 
+
+
+    records = navigate_to(nav_button, db, form, sqltable)
+    column_names =['', 'Ingredient', 'Common UM', 'Density', 'Densi UM',
+                     'Recipe','Enabled']
+
+    return render_template ('ingredient.html', form = form, records = records,
                             column_names = column_names)
 
 if __name__ == '__main__':

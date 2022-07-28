@@ -7,31 +7,40 @@
     {{ form.hidden_tag() }}
     <div class="row mb-3" >
       <div class="col-sm-8">
-        <h2>Unit of measurement</h2>
-        <small>add, edit, delete unit of measures and create your own table of equivalents</small>
+        <h2>Ingredients</h2>
+        <small>add, edit, activate Ingredients</small>
       </div>
       <div class="col-sm-4" style ="float:right;">
         <button type = "button" class="btn" onclick="Navrecord(
           'out', 
-          '{{session['uni_symb']}}', 
-          {{session['uni_conv']}}, 
-          '{{session['uni_un_t']}}'
+          '{{session['ing_name']}}', 
+          '{{session['ing_unit']}}', 
+           {{session['ing_dens']}},
+          '{{session['ing_denu']}}', 
+          '{{session['ing_rece']}}',
+          '{{session['ing_ebld']}}'
           )">
           <i class="fa-solid fa-door-open"></i>
         </button>
         <button type = "button" class="btn" onclick="Navrecord(
           'first', 
-          '{{session['uni_symb']}}', 
-          {{session['uni_conv']}}, 
-          '{{session['uni_un_t']}}'
+          '{{session['ing_name']}}', 
+          '{{session['ing_unit']}}', 
+           {{session['ing_dens']}},
+          '{{session['ing_denu']}}', 
+          '{{session['ing_rece']}}',
+          '{{session['ing_ebld']}}'
           )">
           <i class="fa-solid fa-angles-left"></i>
         </button>
         <button type = "button" class="btn" onclick="Navrecord(
           'back',
-          '{{session['uni_symb']}}', 
-          {{session['uni_conv']}}, 
-          '{{session['uni_un_t']}}'
+          '{{session['ing_name']}}', 
+          '{{session['ing_unit']}}', 
+           {{session['ing_dens']}},
+          '{{session['ing_denu']}}', 
+          '{{session['ing_rece']}}',
+          '{{session['ing_ebld']}}'
           )">
           <i class="fa-solid fa-circle-chevron-left"></i>
         </button>
@@ -40,17 +49,23 @@
         </button>
         <button type = "button" class="btn" onclick="Navrecord(
           'next', 
-          '{{session['uni_symb']}}', 
-          {{session['uni_conv']}}, 
-          '{{session['uni_un_t']}}'
+          '{{session['ing_name']}}', 
+          '{{session['ing_unit']}}', 
+           {{session['ing_dens']}},
+          '{{session['ing_denu']}}', 
+          '{{session['ing_rece']}}',
+          '{{session['ing_ebld']}}'
           )">
           <i class="fa-solid fa-circle-chevron-right"></i>
         </button>
         <button type = "button" class="btn" onclick="Navrecord(
           'last',  
-          '{{session['uni_symb']}}', 
-          {{session['uni_conv']}}, 
-          '{{session['uni_un_t']}}'
+          '{{session['ing_name']}}', 
+          '{{session['ing_unit']}}', 
+           {{session['ing_dens']}},
+          '{{session['ing_denu']}}', 
+          '{{session['ing_rece']}}',
+          '{{session['ing_ebld']}}'
           )">
           <i class="fa-solid fa-angles-right"></i>
         </button>
@@ -63,28 +78,29 @@
       {{ form.id() }}
     </div>
     <div class="row">
-      <div class="col-sm-2">
-        {{ form.qty_um.label(class="form-label") }}
-        {{ form.qty_um(class="form-control", value = form.qty_um.data) }}
-      </div>
       <div class="col-sm-3">
-        {{ form.uni_symb.label(class="form-label") }}
-        {{ form.uni_symb(class="form-control", value = form.uni_symb.data) }}
-      </div>
-      <div class="col-sm-1 align-items-center" style="margin:auto">
-        <h1>=</h1>
+        {{ form.ing_name.label(class="form-label") }}
+        {{ form.ing_name(class="form-control", value = form.ing_name.data) }}
       </div>
       <div class="col-sm-2">
-        {{ form.qty_base.label(class="form-label") }}
-        {{ form.qty_base(class="form-control", value = form.qty_base.data) }}
+        {{ form.ing_unit.label(class="form-label") }}
+        {{ form.ing_unit(class="form-control", value = form.ing_unit.data) }}
       </div>
-      <div class="col-sm-2 mb-3">
-        {{ form.uni_un_t.label(class="form-label") }}
-        {{ form.uni_un_t(class="form-select", value = form.uni_un_t.data) }}
+      <div class="col-sm-2">
+        {{ form.ing_dens.label(class="form-label") }}
+        {{ form.ing_dens(class="form-control", value = form.ing_dens.data) }}
       </div>
-      <div class="col-sm-2 mt-3 pt-4" style="float:right;">
-        {{ form.uni_ebld.label(class="form-check-label") }}
-        {{ form.uni_ebld(class="form-check-input", value = form.uni_un_t.data, onclick="Submit()") }}
+      <div class="col-sm-1">
+        {{ form.ing_denu.label(class="form-label") }}
+        {{ form.ing_denu(class="form-select", value = form.ing_denu.data) }}
+      </div>
+      <div class="col-sm-1">
+        {{ form.ing_ebld.label(class="form-check-label") }}
+        {{ form.ing_ebld(class="form-check-input", value = form.ing_ebld.data, onclick="Submit()") }}
+      </div>
+      <div class="col-sm-1">
+        {{ form.ing_rece.label(class="form-check-label") }}
+        {{ form.ing_rece(class="form-check-input", value = form.ing_rece.data) }}
       </div>
     </div>
     <div style="float:right;">
@@ -95,7 +111,7 @@
 
   <div class="container mt-5">
     {% block subform_title %}
-      <h4>Registered unit of measurement</h4>
+      <h4>Registered Ingredients</h4>
     {% endblock subform_title %}
     <div style="height:445px; overflow:auto;">
       {% block subform %}
@@ -113,7 +129,7 @@
         </thead>
         <tbody>
           {% for row in records %}
-          {% if row['uni_ebld'] %}  <!-- styles disabled records-->
+          {% if row['ing_ebld'] or not row['ing_rece'] %}  <!-- styles disabled records-->
           <tr>
           {% else %}
           <tr style="opacity: 0.5;">
@@ -126,11 +142,13 @@
                     </button>
                   </td>
                 {% else %}
-                  {% if key == 'uni_symb' %}<!-- just an exception for this form-->
-                    <td style:"text-align: center;"> 1 {{ value }}  <bold>=</bold></td>
-                  {% elif key == 'uni_ebld' and value %}<!-- just an exception for this form-->
+                  {% if key == 'uni_ebld' and value %}<!-- just an exception for this form-->
                     <td><i class="fa-solid fa-check"></i></td>
                   {% elif key == 'uni_ebld' and not value %}<!-- just an exception for this form-->
+                    <td><i class="fa-solid fa-xmark"></i></td>
+                    {% elif key == 'uni_rece' and value %}<!-- just an exception for this form-->
+                    <td><i class="fa-solid fa-check"></i></td>
+                  {% elif key == 'uni_rece' and not value %}<!-- just an exception for this form-->
                     <td><i class="fa-solid fa-xmark"></i></td>
                   {% else %}
                     <td>{{ value }}</td>
@@ -151,17 +169,21 @@
 {{ super() }}
   <script>
     function Newrecord() {
-        document.getElementById("uni_symb").value = "";
-        document.getElementById("qty_um").value = "";
-        document.getElementById("qty_base").value = "";
-        document.getElementById("uni_un_t").value = "";
+        document.getElementById("ing_name").value = "";
+        document.getElementById("ing_unit").value = "";
+        document.getElementById("ing_dens").value = "";
+        document.getElementById("ing_denu").value = "";
+        document.getElementById("ing_rece").value = "";
+        document.getElementById("ing_ebld").value = "";
         }
 
-    function Navrecord(NAV, UNISYMB,UNICONV, UNIUNT) {
-        document.getElementById("uni_symb").value = UNISYMB;
-        document.getElementById("qty_um").value = 1;
-        document.getElementById("qty_base").value = UNICONV;
-        document.getElementById("uni_un_t").value = UNIUNT;
+    function Navrecord(NAV, INGNAME,INGUNIT, INGDENS, INGDENU, INGRECE, INGEBLD) {
+        document.getElementById("ing_name").value = INGNAME;
+        document.getElementById("ing_unit").value = INGUNIT;
+        document.getElementById("ing_dens").value = INGDENS;
+        document.getElementById("ing_denu").value = INGDENU;
+        document.getElementById("ing_rece").value = INGRECE;
+        document.getElementById("ing_ebld").value = INGEBLD;
         document.getElementById("submit_button").value = NAV;
         document.getElementById("submit_button").click();
         }

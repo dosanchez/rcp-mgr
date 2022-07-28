@@ -18,7 +18,7 @@
           </a>
 
           <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-            <li> <a href="/templates/index.html" class="nav-link px-2 link-dark">Overview</a></li>
+            <li> <a href="{{ url_for('index') }}" class="nav-link px-2 link-dark">Overview</a></li>
             <li class= "nav-item dropdown"><a href="#" class="nav-link dropdown-toggle px-2 link-dark" data-bs-toggle="dropdown">Inventory Control</a>
               <ul class="dropdown-menu dropdown-menu-end">
                 <li><a class="dropdown-item" href="#">Receive Items</a></li>
@@ -28,7 +28,7 @@
             </li>
             <li class= "nav-item dropdown"><a href="#" class="nav-link dropdown-toggle px-2 link-dark" data-bs-toggle="dropdown">Recipes</a>
               <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" href="#">Ingredients</a></li>
+                <li><a class="dropdown-item" href="{{ url_for('ingredient') }}">Ingredients</a></li>
                 <li><a class="dropdown-item" href="#">Recipes</a></li>
               </ul>
             </li>
@@ -39,8 +39,8 @@
             </li>
             <li class= "nav-item dropdown"><a href="#" class="nav-link dropdown-toggle px-2 link-dark" data-bs-toggle="dropdown">Settings</a>
               <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" href="/templates/unitmeas.html">Units of measure</a></li>
-                <li><a class="dropdown-item" href="/templates/almacen.html">Warehouse Setup </a></li>
+                <li><a class="dropdown-item" href="{{ url_for('unitmeas') }}">Units of measure</a></li>
+                <li><a class="dropdown-item" href="{{ url_for('almacen') }}">Warehouse Setup </a></li>
               </ul>
             </li>
           </ul>

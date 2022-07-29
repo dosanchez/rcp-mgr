@@ -27,7 +27,7 @@ class Ingredient(FlaskForm):
     id = HiddenField()
     ing_name = StringField('Ingredient', validators=[DataRequired(),Length(max=16)], 
         render_kw={"placeholder": "e.g. Paprika"})
-    ing_unit = SelectField('Common unit of measurement', validators=[DataRequired()], 
+    ing_unit = SelectField('Common UM', validators=[DataRequired()], 
         default = 'g')
     ing_dens = DecimalField('Ingredient density',validators=[DataRequired()], 
         render_kw={"placeholder": "Density"}, default = 1)

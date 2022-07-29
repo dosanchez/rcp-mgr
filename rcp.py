@@ -1,5 +1,5 @@
 import mysql.connector
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, session, request, redirect, url_for
 from data import DataHandler as dth
 from nav import navigate_to
 from forms import Ingredient, Unitmeas, Almacen
@@ -124,6 +124,23 @@ def almacen():
 def ingredient():
     form = Ingredient()
     sqltable = 'ingredient'
+    
+    #Queries for Selectfields active choices
+    sql = """SELECT id, uni_symb 
+            FROM unitmeas
+            WHERE uni_ebld = True"""
+    
+    db.execute(sql)
+    form.ing_unit.choices = sorted([(d['id'],
+     d['uni_symb']) for d in list(db.fetchall())], key = lambda fld: fld[1])
+
+    #Queries for all Selectfields choices
+    sql = """SELECT id, uni_symb 
+            FROM unitmeas"""
+    db.execute(sql)
+    ing_unit_choices = [(d['id'], d['uni_symb']) for d in list(db.fetchall())]
+
+        
     nav_button =  request.form.get('nav') #saves form navigation request
     try:
         nav_button = int(nav_button)
@@ -132,7 +149,8 @@ def ingredient():
     
 
     if form.validate_on_submit():
-        uni_conv = form.qty_base.data / form.qty_um.data
+        #Selectfield values
+
         record = dth.from_dict2sql(conn, {
                                         sqltable:[{
                                             'id':int(form.id.data),
@@ -168,8 +186,14 @@ def ingredient():
     column_names =['', 'Ingredient', 'Common UM', 'Density', 'Densi UM',
                      'Recipe','Enabled']
 
+
+    print(records)
+    print(form.ing_unit.choices)
+    print(form.ing_unit.data)
+    print(ing_unit_choices)
+
     return render_template ('ingredient.html', form = form, records = records,
-                            column_names = column_names)
+                            column_names = column_names, ing_unit_choices = ing_unit_choices)
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -3,7 +3,7 @@
 {% block form%}
 
 <div class ="container bg-light">
-  <form method="POST" id="nav_form">
+  <form method="POST" id="nav_form" >
     {{ form.hidden_tag() }}
     <div class="row mb-3" >
       <div class="col-sm-8">
@@ -78,29 +78,29 @@
       {{ form.id() }}
     </div>
     <div class="row">
-      <div class="col-sm-3">
+      <div class="col-sm-4">
         {{ form.ing_name.label(class="form-label") }}
         {{ form.ing_name(class="form-control", value = form.ing_name.data) }}
       </div>
-      <div class="col-sm-2">
+      <div class="col-sm-4">
         {{ form.ing_unit.label(class="form-label") }}
-        {{ form.ing_unit(class="form-control", value = form.ing_unit.data) }}
+        {{ form.ing_unit(class="form-select", value = form.ing_unit.data) }}
       </div>
-      <div class="col-sm-2">
-        {{ form.ing_dens.label(class="form-label") }}
-        {{ form.ing_dens(class="form-control", value = form.ing_dens.data) }}
-      </div>
-      <div class="col-sm-1">
-        {{ form.ing_denu.label(class="form-label") }}
-        {{ form.ing_denu(class="form-select", value = form.ing_denu.data) }}
-      </div>
-      <div class="col-sm-1">
+      <div class="form-check col-sm-4 pt-5 mb-3">
         {{ form.ing_ebld.label(class="form-check-label") }}
         {{ form.ing_ebld(class="form-check-input", value = form.ing_ebld.data, onclick="Submit()") }}
       </div>
-      <div class="col-sm-1">
+      <div class="col-sm-4">
+        {{ form.ing_dens.label(class="form-label") }}
+        {{ form.ing_dens(class="form-control", value = form.ing_dens.data) }}
+      </div>
+      <div class="col-sm-4">
+        {{ form.ing_denu.label(class="form-label") }}
+        {{ form.ing_denu(class="form-select", value = form.ing_denu.data) }}
+      </div>
+      <div class="form-check col-sm-4 pt-5" style="opacity: 0.5;">
         {{ form.ing_rece.label(class="form-check-label") }}
-        {{ form.ing_rece(class="form-check-input", value = form.ing_rece.data) }}
+        {{ form.ing_rece(class="form-check-input ", value = form.ing_rece.data) }}
       </div>
     </div>
     <div style="float:right;">
@@ -120,38 +120,44 @@
           <tr>
             {% for header in column_names %}
               {% if header == 'id' %}
-                <th></th>
+                <th style="text-align: center;"></th>
               {% else %}
-                <th>{{ header }}</th>
+                <th style="text-align: center;">{{ header }}</th>
               {% endif %}
             {% endfor %}
           </tr>
         </thead>
         <tbody>
           {% for row in records %}
-          {% if row['ing_ebld'] or not row['ing_rece'] %}  <!-- styles disabled records-->
-          <tr>
-          {% else %}
-          <tr style="opacity: 0.5;">
-          {% endif %}
+            {% if row['ing_ebld'] or not row['ing_rece'] %}  <!-- styles disabled records-->
+              <tr>
+            {% else %}
+              <tr style="opacity: 0.5;">
+            {% endif %}
             {% for key, value in row.items() %}
                 {% if key == 'id' %}
-                  <td>
+                  <td style="text-align: center;" class="pt-2">
                     <button type = "submit" value = {{ value }} form ="nav_form" formmethod ="post" class="btn btn-sm btn-primary" name ="nav">
                       <small>edit</small>
                     </button>
                   </td>
                 {% else %}
-                  {% if key == 'uni_ebld' and value %}<!-- just an exception for this form-->
-                    <td><i class="fa-solid fa-check"></i></td>
-                  {% elif key == 'uni_ebld' and not value %}<!-- just an exception for this form-->
-                    <td><i class="fa-solid fa-xmark"></i></td>
-                    {% elif key == 'uni_rece' and value %}<!-- just an exception for this form-->
-                    <td><i class="fa-solid fa-check"></i></td>
-                  {% elif key == 'uni_rece' and not value %}<!-- just an exception for this form-->
-                    <td><i class="fa-solid fa-xmark"></i></td>
+                  {% if key == 'ing_ebld' and value %}<!-- just an exception for this form-->
+                    <td style="text-align: center;"><i class="fa-solid fa-check"></i></td>
+                  {% elif key == 'ing_ebld' and not value %}<!-- just an exception for this form-->
+                    <td style="text-align: center;"><i class="fa-solid fa-xmark"></i></td>
+                  {% elif key == 'ing_rece' and value %}<!-- just an exception for this form-->
+                    <td style="text-align: center;"><i class="fa-solid fa-check"></i></td>
+                  {% elif key == 'ing_rece' and not value %}<!-- just an exception for this form-->
+                    <td style="text-align: center;"><i class="fa-solid fa-xmark "></i></td>
+                  {% elif key == 'ing_unit' %}<!-- just an exception for this form-->
+                      {% for choice in ing_unit_choices %}
+                        {% if choice[0] == value %}
+                          <td style="text-align: center;">{{ choice[1] }}</td>
+                        {% endif %}
+                      {% endfor %}
                   {% else %}
-                    <td>{{ value }}</td>
+                    <td style="text-align: center;">{{ value }}</td>
                   {% endif %}  
                 {% endif %}    
               {% endfor %}
@@ -160,12 +166,12 @@
         </tbody>
       </table>
     </div> 
-      {% endblock subform%}
+      {% endblock subform %}
     </div>
   </div>
 </div>  
-{% endblock form%}
-{% block script%}
+{% endblock form %}
+{% block script %}
 {{ super() }}
   <script>
     function Newrecord() {

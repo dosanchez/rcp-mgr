@@ -104,9 +104,9 @@
           <tr>
             {% for header in column_names %}
               {% if header == 'id' %}
-                <th></th>
+                <th style="text-align: center;"></th>
               {% else %}
-                <th>{{ header }}</th>
+                <th style="text-align: center;">{{ header }}</th>
               {% endif %}
             {% endfor %}
           </tr>
@@ -120,20 +120,20 @@
           {% endif %}
             {% for key, value in row.items() %}
                 {% if key == 'id' %}
-                  <td>
+                  <td style="text-align: center;" class="pt-0">
                     <button type = "submit" value = {{ value }} form ="nav_form" formmethod ="post" class="btn btn-sm btn-primary" name ="nav">
                       <small>edit</small>
                     </button>
                   </td>
                 {% else %}
                   {% if key == 'uni_symb' %}<!-- just an exception for this form-->
-                    <td style:"text-align: center;"> 1 {{ value }}  <bold>=</bold></td>
+                    <td style="text-align: center;"> 1 {{ value }}  <bold>=</bold></td>
                   {% elif key == 'uni_ebld' and value %}<!-- just an exception for this form-->
-                    <td><i class="fa-solid fa-check"></i></td>
+                    <td style="text-align: center;"><i class="fa-solid fa-check"></i></td>
                   {% elif key == 'uni_ebld' and not value %}<!-- just an exception for this form-->
-                    <td><i class="fa-solid fa-xmark"></i></td>
+                    <td style="text-align: center;"><i class="fa-solid fa-xmark"></i></td>
                   {% else %}
-                    <td>{{ value }}</td>
+                    <td style="text-align: center;">{{ value }}</td>
                   {% endif %}  
                 {% endif %}    
               {% endfor %}

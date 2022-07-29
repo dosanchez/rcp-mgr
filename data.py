@@ -35,6 +35,7 @@ class DataHandler():
                 return False
         return False
 
+
     def update(self):
         """update record in table based on dict with tbl, fld and vals
             NEEDS an id field for update condition"""

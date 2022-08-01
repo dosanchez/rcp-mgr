@@ -11,7 +11,7 @@ class Recet_de(Form):
     rcd_ing = SelectField('Ingredient', validators=[DataRequired()])
     rcd_qty = DecimalField('Ingredient density',validators=[DataRequired()],
                             default = 1)
-    rcd_ing = SelectField('Ingredient UM', validators=[DataRequired()])
+    rcd_unit = SelectField('Ingredient UM', validators=[DataRequired()])
     rcd_yiel = DecimalField('Ingredient yield', validators=[DataRequired()],
                             default = 0.98)
     
@@ -67,7 +67,6 @@ class Recet_en(FlaskForm):
         choices=['g/ml','g/unit'], default ='g/unit')
     rct_yiel = DecimalField('Standard Cost',validators=[DataRequired()], 
         render_kw = {'disabled':''}, default = 1)
-    rct_unit = SelectField('Common UM', validators=[DataRequired()], 
-        default = 'g')
+    rct_unit = SelectField('Common UM', validators=[DataRequired()])
     rct_ebld = BooleanField('Enabled', default = True, false_values=('',))
     rct_subf = FormField(Recet_de)

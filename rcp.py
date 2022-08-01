@@ -199,17 +199,29 @@ def recipe():
     sql = """SELECT id, uni_symb 
             FROM unitmeas
             WHERE uni_ebld = True"""
-    
     db.execute(sql)
-    form.ing_unit.choices = sorted([(d['id'],
-     d['uni_symb']) for d in list(db.fetchall())], key = lambda fld: fld[1])
+    form.rcd_unit.choices = sorted([(d['id'], 
+        d['uni_symb']) for d in list(db.fetchall())], key = lambda fld: fld[1])
+
+    sql = """SELECT id, ing_name 
+            FROM ingredient
+            WHERE ing_ebld = True""" 
+    db.execute(sql)
+    form.rcd_ing.choices = sorted([(d['id'], 
+        d['ing_name']) for d in list(db.fetchall())], key = lambda fld: fld[1])
+
 
     #Queries for all possible Selectfields choices
     sql = """SELECT id, uni_symb 
             FROM unitmeas"""
     db.execute(sql)
-    ing_unit_choices = [(d['id'], d['uni_symb']) for d in list(db.fetchall())]
+    rcd_unit_choices = rct_unit_choices = [(d['id'], d['uni_symb']) for d in list(db.fetchall())]
 
+    sql = """SELECT id, ing_name 
+            FROM ingredient""" 
+    db.execute(sql)
+    rcd_ing_choices = [(d['id'], d['uni_symb']) for d in list(db.fetchall())]
+    
         
     nav_button =  request.form.get('nav') #saves form navigation request
     try:
@@ -224,13 +236,24 @@ def recipe():
         record = dth.from_dict2sql(conn, {
                                         sqltable:[{
                                             'id':int(form.id.data),
-                                            'ing_name':form.ing_name.data,
-                                            'ing_unit':form.ing_unit.data,
-                                            'ing_dens':form.ing_dens.data,
-                                            'ing_denu':form.ing_denu.data,
-                                            'ing_rece':form.ing_rece.data,
-                                            'ing_ebld':form.ing_ebld.data  
+                                            'rct_name':form.rct_name.data,
+                                            'rct_cost':form.rct_cost.data,
+                                            'rct_cosc':form.rct_cosc.data,
+                                            'rct_unit':form.rct_unit.data,
+                                            'rct_dens':form.rct_dens.data,
+                                            'rct_denu':form.rct_denu.data,
+                                            'rct_yiel':form.rct_yiel.data,
+                                            'ing_ebld':form.rct_ebld.data  
+                                                    }],
+                                        sqltable1:[{
+                                            'id':int(form.id.data),
+                                            'rcd_enca':form.rcd_enca.data,
+                                            'rcd_unit':form.rcd_unit.data,
+                                            'rcd_qty':form.rcd_qty.data,
+                                            'rct_denu':form.rct_denu.data,
+                                            'rcd_yiel':form.rcd_yiel.data  
                                                     }]
+                                        
                                         })
 
         if nav_button == "submit": #not a nav post
@@ -253,10 +276,10 @@ def recipe():
 
 
     records = navigate_to(nav_button, db, form, sqltable)
-    column_names =['', 'Ingredient', 'Common UM', 'Density', 'Densi UM',
-                     'Recipe','Enabled']
+    column_names =['', 'Name', 'Actual Cost', 'Std Cost', 'Density',
+                     'Dens. UM', 'Recipe yield','Common UM','Enabled']
 
-    return render_template ('ingredient.html', form = form, records = records,
+    return render_template ('recipe.html', form = form, records = records,
                             column_names = column_names, ing_unit_choices = ing_unit_choices)
 if __name__ == '__main__':
     app.run(debug=True)

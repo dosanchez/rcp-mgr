@@ -2,7 +2,7 @@ import mysql.connector
 from flask import Flask, render_template, session, request, redirect, url_for
 from data import DataHandler as dth
 from nav import navigate_to
-from forms import Ingredient, Unitmeas, Almacen
+from forms import Ingredient, Unitmeas, Almacen, Recet_en
 
 
 #database connection
@@ -200,27 +200,34 @@ def recipe():
             FROM unitmeas
             WHERE uni_ebld = True"""
     db.execute(sql)
-    form.rcd_unit.choices = sorted([(d['id'], 
-        d['uni_symb']) for d in list(db.fetchall())], key = lambda fld: fld[1])
+    choice = db.fetchall()  
+    form.rct_unit.choices = sorted([(d['id'], 
+        d['uni_symb']) for d in list(choice)], key = lambda fld: fld[1])
+    for iter in form.rct_subf:
+        iter.rcd_unit.choices = sorted([(d['id'], 
+            d['uni_symb']) for d in list(choice)], key = lambda fld: fld[1])
 
     sql = """SELECT id, ing_name 
             FROM ingredient
             WHERE ing_ebld = True""" 
     db.execute(sql)
-    form.rcd_ing.choices = sorted([(d['id'], 
-        d['ing_name']) for d in list(db.fetchall())], key = lambda fld: fld[1])
-
+    choice = db.fetchall() 
+    for iter in form.rct_subf:
+        iter.rcd_ing.choices = sorted([(d['id'], 
+            d['ing_name']) for d in list(choice)], key = lambda fld: fld[1])
 
     #Queries for all possible Selectfields choices
     sql = """SELECT id, uni_symb 
             FROM unitmeas"""
     db.execute(sql)
-    rcd_unit_choices = rct_unit_choices = [(d['id'], d['uni_symb']) for d in list(db.fetchall())]
+    choice = db.fetchall()
+    rcd_unit_choices = rct_unit_choices = [(d['id'], d['uni_symb']) for d in list(choice)]
 
     sql = """SELECT id, ing_name 
             FROM ingredient""" 
     db.execute(sql)
-    rcd_ing_choices = [(d['id'], d['uni_symb']) for d in list(db.fetchall())]
+    choice = db.fetchall()
+    rcd_ing_choices = [(d['id'], d['ing_name']) for d in list(choice)]
     
         
     nav_button =  request.form.get('nav') #saves form navigation request
@@ -229,7 +236,7 @@ def recipe():
     except:
         pass
     
-
+    print(nav_button)
     if form.validate_on_submit():
         #Selectfield values
 
@@ -243,11 +250,11 @@ def recipe():
                                             'rct_dens':form.rct_dens.data,
                                             'rct_denu':form.rct_denu.data,
                                             'rct_yiel':form.rct_yiel.data,
-                                            'ing_ebld':form.rct_ebld.data  
+                                            'rct_ebld':form.rct_ebld.data  
                                                     }],
                                         sqltable1:[{
                                             'id':int(form.id.data),
-                                            'rcd_enca':form.rcd_enca.data,
+                                            'rcd_enca':int(form.rcd_enca.data),
                                             'rcd_unit':form.rcd_unit.data,
                                             'rcd_qty':form.rcd_qty.data,
                                             'rct_denu':form.rct_denu.data,
@@ -255,7 +262,7 @@ def recipe():
                                                     }]
                                         
                                         })
-
+        
         if nav_button == "submit": #not a nav post
             #creates instance to chk if record exist
             existe = dth.from_dict2sql(conn, {
@@ -267,19 +274,24 @@ def recipe():
             if  existe.chk_sgl_fld():   #chk if record exists   
                 #update existing record
                 record.update()
-                return redirect(url_for('ingredient'))# clears POST data
+                return redirect(url_for('recipe'))# clears POST data
 
             else:
                 #adds new record
                 record.add_new()
-                return redirect(url_for('ingredient'))# clears POST data 
+                return redirect(url_for('recipe'))# clears POST data 
 
 
     records = navigate_to(nav_button, db, form, sqltable)
+
     column_names =['', 'Name', 'Actual Cost', 'Std Cost', 'Density',
                      'Dens. UM', 'Recipe yield','Common UM','Enabled']
 
     return render_template ('recipe.html', form = form, records = records,
-                            column_names = column_names, ing_unit_choices = ing_unit_choices)
+                            column_names = column_names, 
+                            rcd_unit_choices = rcd_unit_choices ,
+                            rct_unit_choices = rct_unit_choices,
+                            rcd_ing_choices = rcd_ing_choices
+                            )
 if __name__ == '__main__':
     app.run(debug=True)

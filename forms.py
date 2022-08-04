@@ -9,9 +9,9 @@ class Recet_de(Form):
     id = HiddenField()
     rcd_enca = HiddenField()
     rcd_ing = SelectField('Ingredient', validators=[DataRequired()])
-    rcd_qty = DecimalField('Ingredient density',validators=[DataRequired()],
+    rcd_qty = DecimalField('Qty',validators=[DataRequired()],
                             default = 1)
-    rcd_unit = SelectField('Ingredient UM', validators=[DataRequired()])
+    rcd_unit = SelectField('Unit of measure', validators=[DataRequired()])
     rcd_yiel = DecimalField('Ingredient yield', validators=[DataRequired()],
                             default = 0.98)
     
@@ -57,9 +57,9 @@ class Recet_en(FlaskForm):
     id = HiddenField()
     rct_name = StringField('Recipe/Plate', validators=[DataRequired(),Length(max=16)], 
         render_kw={"placeholder": "e.g. French Fries Side"})
-    rct_cost = DecimalField('Actual Cost',validators=[DataRequired()], 
+    rct_cost = DecimalField('Actual Cost', 
         render_kw = {'disabled':''}, default = 0)
-    rct_cosc = DecimalField('Standard Cost',validators=[DataRequired()], 
+    rct_cosc = DecimalField('Standard Cost', 
         render_kw = {'disabled':''}, default = 0)
     rct_dens = DecimalField('Recipe/Plate density',validators=[DataRequired()], 
         render_kw={"placeholder": "density"}, default = 1)
@@ -69,4 +69,4 @@ class Recet_en(FlaskForm):
         render_kw = {'disabled':''}, default = 1)
     rct_unit = SelectField('Common UM', validators=[DataRequired()])
     rct_ebld = BooleanField('Enabled', default = True, false_values=('',))
-    rct_subf = FormField(Recet_de)
+    rct_subf = FieldList(FormField(Recet_de), min_entries = 1)

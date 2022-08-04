@@ -1,29 +1,7 @@
-from nav import tg_rcd
-
-rcd = {'unitmeas':[
-                    {
-                    'uni_symb':'tonne11',
-                    'field1':12,
-                    'field2':'primer tres',
-                    'id':1
-                },
-                    {
-                    'uni_symb':'tonne21',
-                    'field1':22,
-                    'field2':'segundo tres',
-                    'id':2
-                }
-        ],
-
-        'pedido':[
-                    {
-                    'uni_symb':'tonnedos',
-                    'field1':30,
-                    'field2':'tresdos',
-                    'id':10
-                }
-        ]
-    }
+import mysql.connector
+from flask import Flask, render_template, session, request, redirect, url_for
+from data import DataHandler as dth
+from nav import navigate_to
+from forms import Ingredient, Unitmeas, Almacen, Recet_en
 
 
-tg_rcd("Donaldo", "Sanchez")

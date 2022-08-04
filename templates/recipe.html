@@ -1,0 +1,255 @@
+{%extends "base.html" %}
+
+{% block form%}
+
+<div class ="container bg-light">
+  <form method="POST" id="nav_form" >
+    {{ form.hidden_tag() }}
+    <div class="row mb-3" >
+      <div class="col-sm-8">
+        <h2>Recipes</h2>
+        <small>add, edit, activate Recipes</small>
+      </div>
+      <div class="col-sm-4" style ="float:right;">
+        <button type = "button" class="btn" onclick="Navrecord(
+          'out', 
+          '{{session['rct_name']}}', 
+          '{{session['rct_cost']}}', 
+           {{session['rct_cosc']}},
+          '{{session['rct_dens']}}',
+          '{{session['rct_denu']}}', 
+          '{{session['rct_yiel']}}',
+          '{{session['rct_unit']}}',
+          '{{session['rct_ebld']}}',
+          '{{session['rct_subf']}}'
+          )">
+          <i class="fa-solid fa-door-open"></i>
+        </button>
+        <button type = "button" class="btn" onclick="Navrecord(
+          'first', 
+          '{{session['rct_name']}}', 
+          '{{session['rct_cost']}}', 
+           {{session['rct_cosc']}},
+          '{{session['rct_dens']}}',
+          '{{session['rct_denu']}}', 
+          '{{session['rct_yiel']}}',
+          '{{session['rct_unit']}}',
+          '{{session['rct_ebld']}}',
+          '{{session['rct_subf']}}'
+          )">
+          <i class="fa-solid fa-angles-left"></i>
+        </button>
+        <button type = "button" class="btn" onclick="Navrecord(
+          'back',
+          '{{session['rct_name']}}', 
+          '{{session['rct_cost']}}', 
+           {{session['rct_cosc']}},
+          '{{session['rct_dens']}}',
+          '{{session['rct_denu']}}', 
+          '{{session['rct_yiel']}}',
+          '{{session['rct_unit']}}',
+          '{{session['rct_ebld']}}',
+          '{{session['rct_subf']}}'
+          )">
+          <i class="fa-solid fa-circle-chevron-left"></i>
+        </button>
+        <button type ="button" class="btn btn-outline-dark" id = "id" locked>
+          {{ form.id.data }}
+        </button>
+        <button type = "button" class="btn" onclick="Navrecord(
+          'next', 
+          '{{session['rct_name']}}', 
+          '{{session['rct_cost']}}', 
+           {{session['rct_cosc']}},
+          '{{session['rct_dens']}}',
+          '{{session['rct_denu']}}', 
+          '{{session['rct_yiel']}}',
+          '{{session['rct_unit']}}',
+          '{{session['rct_ebld']}}',
+          '{{session['rct_subf']}}'
+          )">
+          <i class="fa-solid fa-circle-chevron-right"></i>
+        </button>
+        <button type = "button" class="btn" onclick="Navrecord(
+          'last',  
+          '{{session['rct_name']}}', 
+          '{{session['rct_cost']}}', 
+           {{session['rct_cosc']}},
+          '{{session['rct_dens']}}',
+          '{{session['rct_denu']}}', 
+          '{{session['rct_yiel']}}',
+          '{{session['rct_unit']}}',
+          '{{session['rct_ebld']}}',
+          '{{session['rct_subf']}}'
+          )">
+          <i class="fa-solid fa-angles-right"></i>
+        </button>
+        <button type = "button" value = "new" class="btn" name ="nav" onclick="Newrecord()">
+          <i class="fa-solid fa-square-plus"></i>
+        </button>
+      </div>  
+    </div>
+    <div>
+      {{ form.id() }}
+    </div>
+    <div class="row">
+      <div class="col-sm-3">
+        {{ form.rct_name.label(class="form-label") }}
+        {{ form.rct_name(class="form-control", value = form.rct_name.data) }}
+      </div>
+      <div class="col-sm-3">
+        {{ form.rct_cost.label(class="form-label") }}
+        {{ form.rct_cost(class="form-control", value = form.rct_cost.data) }}
+      </div>
+      <div class="col-sm-3">
+        {{ form.rct_cosc.label(class="form-label") }}
+        {{ form.rct_cosc(class="form-control", value = form.rct_cosc.data) }}
+      </div>
+      <div class="form-check col-sm-3 pt-5 mb-3">
+        {{ form.rct_ebld.label(class="form-check-label") }}
+        {{ form.rct_ebld(class="form-check-input", value = form.rct_ebld.data, onclick="Submit()") }}
+      </div>
+      <div class="col-sm-3">
+        {{ form.rct_dens.label(class="form-label") }}
+        {{ form.rct_dens(class="form-control", value = form.rct_dens.data) }}
+      </div>
+      <div class="col-sm-3">
+        {{ form.rct_denu.label(class="form-label") }}
+        {{ form.rct_denu(class="form-select", value = form.rct_denu.data) }}
+      </div>
+      <div class="col-sm-3">
+        {{ form.rct_yiel.label(class="form-label") }}
+        {{ form.rct_yiel(class="form-control", value = form.rct_yiel.data) }}
+      </div>
+      <div class="col-sm-3">
+        {{ form.rct_unit.label(class="form-label") }}
+        {{ form.rct_unit(class="form-select", value = form.rct_unit.data) }}
+      </div>
+      <div class="row">
+        {% for subform in form.rct_subf %}
+          <div>
+            {{ subform.id }}
+            {{ subform.rcd_enca }}
+          </div>
+          <div class="col-sm-3">
+            {{ subform.rcd_ing.label(class="form-label") }}
+            {{ subform.rcd_ing(class="form-select", value = subform.rcd_ing.data) }}
+          </div>
+          <div class="col-sm-3">
+            {{ subform.rcd_qty.label(class="form-label") }}
+            {{ subform.rcd_qty(class="form-control", value = subform.rcd_qty.data) }}
+          </div>
+          <div class="col-sm-3">
+            {{ subform.rcd_unit.label(class="form-label") }}
+            {{ subform.rcd_unit(class="form-select", value = subform.rcd_unit.data) }}
+          </div>
+          <div class="col-sm-3">
+            {{ subform.rcd_yiel.label(class="form-label") }}
+            {{ subform.rcd_yiel(class="form-control", value = subform.rcd_yiel.data) }}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+    <div style="float:right;">
+    <input type="submit" id ="submit_button" class="btn btn-primary" formmethod="POST" value="submit" name = "nav">
+    </div>
+  </form>
+  <div>
+  {% if form.errors %}
+    {{ form.errors }}
+  {% endif %}
+  </div>
+  <div class="container mt-5">
+    {% block subform_title %}
+      <h4>Registered Recipes</h4>
+    {% endblock subform_title %}
+    <div style="height:445px; overflow:auto;">
+      {% block subform %}
+      <table class="table table-hover">
+        <thead class = "bg-light" style="position: sticky;top: 0">
+          <tr>
+            {% for header in column_names %}
+              {% if header == 'id' %}
+                <th style="text-align: center;"></th>
+              {% else %}
+                <th style="text-align: center;">{{ header }}</th>
+              {% endif %}
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in records %}
+            {% if row['rct_ebld'] %}  <!-- styles disabled records-->
+              <tr>
+            {% else %}
+              <tr style="opacity: 0.5;">
+            {% endif %}
+            {% for key, value in row.items() %}
+                {% if key == 'id' %}
+                  <td style="text-align: center;" class="pt-2">
+                    <button type = "submit" value = {{ value }} form ="nav_form" formmethod ="post" class="btn btn-sm btn-primary" name ="nav">
+                      <small>edit</small>
+                    </button>
+                  </td>
+                {% else %}
+                  {% if key == 'rct_ebld' and value %}<!-- just an exception for this form-->
+                    <td style="text-align: center;"><i class="fa-solid fa-check"></i></td>
+                  {% elif key == 'rct_ebld' and not value %}<!-- just an exception for this form-->
+                    <td style="text-align: center;"><i class="fa-solid fa-xmark"></i></td>
+                  {% elif key == 'rct_unit' %}<!-- just an exception for this form-->
+                      {% for choice in rct_unit_choices %}
+                        {% if choice[0] == value %}
+                          <td style="text-align: center;">{{ choice[1] }}</td>
+                        {% endif %}
+                      {% endfor %}
+                  {% else %}
+                    <td style="text-align: center;">{{ value }}</td>
+                  {% endif %}  
+                {% endif %}    
+              {% endfor %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div> 
+      {% endblock subform %}
+    </div>
+  </div>
+</div>  
+{% endblock form %}
+{% block script %}
+{{ super() }}
+  <script>
+    function Newrecord() {
+        document.getElementById("rct_name").value = "";
+        document.getElementById("rct_cosc").value = "";
+        document.getElementById("rct_cost").value = "";
+        document.getElementById("rct_dens").value = "";
+        document.getElementById("rct_denu").value = "";
+        document.getElementById("rct_yiel").value = "";
+        document.getElementById("rct_unit").value = "";
+        document.getElementById("rct_subf").value = "";
+        document.getElementById("rct_ebld").value = "";
+        }
+
+    function Navrecord(NAV, RCTNAME, RCTCOST, RCTCOSC, 
+                      RCTDENS, RCTDENU, RCTYIEL, RCTUNIT, 
+                      RCTEBLD, RCTSUBF) {
+        document.getElementById("rct_name").value = RCTNAME;
+        document.getElementById("rct_cosc").value = RCTCOSC;
+        document.getElementById("rct_cost").value = RCTCOST;
+        document.getElementById("rct_dens").value = RCTDENS;
+        document.getElementById("rct_denu").value = RCTDENU;
+        document.getElementById("rct_yiel").value = RCTYIEL;
+        document.getElementById("rct_unit").value = RCTUNIT;
+        document.getElementById("rct_subf").value = RCTSUBF;
+        document.getElementById("rct_ebld").value = RCTEBLD;
+        document.getElementById("submit_button").value = NAV;
+        document.getElementById("submit_button").click();
+        }
+
+        function Submit() {
+        document.getElementById("submit_button").click();
+        }
+  </script>
+{% endblock script%}

@@ -232,8 +232,14 @@ def recipe():
     print(nav_button)
     print(form.validate_on_submit())
     if form.validate_on_submit():
+        print ("checkbox ebld", form.rct_ebld.data)
+        if not form.subform.rcd_enca.data: #first time entry exception
+            form.subform.rcd_enca.data = 0
+        
+
         #Selectfield values
-        print(form.subform.id.data)
+        print(form.subform.idx.data)
+        print(form.subform.rcd_enca.data)
         record = dth.from_dict2sql(conn, {
                                         sqltable:[{
                                             'id':int(form.id.data),
@@ -247,11 +253,11 @@ def recipe():
                                             'rct_ebld':form.rct_ebld.data  
                                                     }],
                                         sqltable1:[{
-                                            'id':int(form.subform.id.data),
-                                            'rcd_enca':int(form.subform.rcd_enca.data),
-                                            'rcd_unit':form.subform.rcd_unit.data,
+                                            'id':int(form.subform.idx.data),
+                                            'id_enca':int(form.subform.rcd_enca.data),
+                                            'rcd_ing':form.subform.rcd_ing.data,
                                             'rcd_qty':form.subform.rcd_qty.data,
-                                            'rct_denu':form.subform.rcd_denu.data,
+                                            'rcd_unit':form.subform.rcd_unit.data,
                                             'rcd_yiel':form.subform.rcd_yiel.data  
                                                     }]
                                         
@@ -272,6 +278,7 @@ def recipe():
 
             else:
                 #adds new record
+                print ("checkbox ebld", form.rct_ebld.data)
                 record.add_new()
                 return redirect(url_for('recipe'))# clears POST data 
 

@@ -6,7 +6,7 @@ from wtforms.validators import DataRequired, Length, NumberRange
 
 class Recet_de(Form):
     """wtform for recipe form details"""
-    id = HiddenField()
+    idx = HiddenField()
     rcd_enca = HiddenField()
     rcd_ing = SelectField('Ingredient', validators=[DataRequired()])
     rcd_qty = DecimalField('Qty',validators=[DataRequired()],

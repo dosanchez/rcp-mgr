@@ -62,19 +62,30 @@ class DataHandler():
     def add_new(self):
         """adds record in table based on dict with tbl, fld and vals"""
         counter = 0
-        value_str = ') VALUES('
         for t, r in self.rcd.items():
+            value_str = ') VALUES('
+            counter += 1
             for ea_rcd in r:
-                counter += 1
                 sql = "INSERT INTO %s (" %(t)
                 for fn, fv in ea_rcd.items():
-                    if not fn == 'id':
+                    
+                    if fn == "id_enca" and counter > 1:
                         sql += "%s, " %(fn)
-                        value_str += "%s, " %(fv)   
+                        value_str += "%s, " %(parent_last_row_id)
+                    elif not fn == 'id':
+                        sql += "%s, " %(fn)
+                        value_str += "%s, " %(fv)
+
                 sql +=value_str + ')'
-                sql = sql.replace(", )", ")") #removes extra ,
-                self.conn.cursor(dictionary=True, buffered=True).execute(sql)
+                sql = sql.replace(", )", ")") #removes trailing ,
+                print (sql)
+                Cursor = self.conn.cursor(dictionary=True, buffered=True)
+                Cursor.execute(sql)
+                if counter == 1:
+                    parent_last_row_id = Cursor.lastrowid
+                    print(parent_last_row_id )
                 self.conn.commit()
+  
         
         if counter > 1:
             flash('Records added!')

@@ -6,7 +6,6 @@ from forms import Unitmeas
 
 
 def navigate_to(nav_button, db, form, sqltable):
-    print(form.id.id)
 
     #visualize registered U.M and moves form to nav target
 
@@ -25,10 +24,13 @@ def navigate_to(nav_button, db, form, sqltable):
         id = form.id.data = 0
 
     #checks for first time form entry (child form)
-    if form.subform.id.data:
-        subid = form.subform.id.data
+    if form.subform.idx.data:
+        subid = form.subform.idx.data
     else:
-        subid = form.subform.id.data = 0
+        try:
+            subid = form.subform.idx.data = 0
+        except:
+            pass
 
     #resolve id value of navigation target record (if any rcd)
     if not len(regd_id):
@@ -70,6 +72,7 @@ def navigate_to(nav_button, db, form, sqltable):
                     elif i.id == "qty_base" and sqltable == 'unitmeas':#exception for unitmeas form
                         i.data = session['uni_conv'] = tgt_record.get('uni_conv')
                     else:
+                        print(i)
                         i.data = session[i.id] = tgt_record.get(i.id)
 
         tgt_record = db.fetchall()

@@ -69,4 +69,4 @@ class Recet_en(FlaskForm):
         render_kw = {'disabled':''}, default = 1)
     rct_unit = SelectField('Common UM', validators=[DataRequired()])
     rct_ebld = BooleanField('Enabled', default = True, false_values=('',))
-    rct_subf = FieldList(FormField(Recet_de), min_entries = 1)
+    subform = FormField(Recet_de)

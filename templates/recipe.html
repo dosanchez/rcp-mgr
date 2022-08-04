@@ -126,28 +126,26 @@
         {{ form.rct_unit(class="form-select", value = form.rct_unit.data) }}
       </div>
       <div class="row">
-        {% for subform in form.rct_subf %}
-          <div>
-            {{ subform.id }}
-            {{ subform.rcd_enca }}
-          </div>
-          <div class="col-sm-3">
-            {{ subform.rcd_ing.label(class="form-label") }}
-            {{ subform.rcd_ing(class="form-select", value = subform.rcd_ing.data) }}
-          </div>
-          <div class="col-sm-3">
-            {{ subform.rcd_qty.label(class="form-label") }}
-            {{ subform.rcd_qty(class="form-control", value = subform.rcd_qty.data) }}
-          </div>
-          <div class="col-sm-3">
-            {{ subform.rcd_unit.label(class="form-label") }}
-            {{ subform.rcd_unit(class="form-select", value = subform.rcd_unit.data) }}
-          </div>
-          <div class="col-sm-3">
-            {{ subform.rcd_yiel.label(class="form-label") }}
-            {{ subform.rcd_yiel(class="form-control", value = subform.rcd_yiel.data) }}
-          </div>
-        {% endfor %}
+      <div>
+        {{ form.subform.id }}
+        {{ form.subform.rcd_enca }}
+      </div>
+      <div class="col-sm-3">
+        {{ form.subform.rcd_ing.label(class="form-label") }}
+        {{ form.subform.rcd_ing(class="form-select", value = form.subform.rcd_ing.data) }}
+      </div>
+      <div class="col-sm-3">
+        {{ form.subform.rcd_qty.label(class="form-label") }}
+        {{ form.subform.rcd_qty(class="form-control", value = form.subform.rcd_qty.data) }}
+      </div>
+      <div class="col-sm-3">
+        {{ form.subform.rcd_unit.label(class="form-label") }}
+        {{ form.subform.rcd_unit(class="form-select", value = form.subform.rcd_unit.data) }}
+      </div>
+      <div class="col-sm-3">
+        {{ form.subform.rcd_yiel.label(class="form-label") }}
+        {{ form.subform.rcd_yiel(class="form-control", value = form.subform.rcd_yiel.data) }}
+      </div>
       </div>
     </div>
     <div style="float:right;">

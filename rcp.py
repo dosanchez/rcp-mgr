@@ -200,34 +200,27 @@ def recipe():
             FROM unitmeas
             WHERE uni_ebld = True"""
     db.execute(sql)
-    choice = db.fetchall()  
-    form.rct_unit.choices = sorted([(d['id'], 
-        d['uni_symb']) for d in list(choice)], key = lambda fld: fld[1])
-    for iter in form.rct_subf:
-        iter.rcd_unit.choices = sorted([(d['id'], 
-            d['uni_symb']) for d in list(choice)], key = lambda fld: fld[1])
+    form.rct_unit.choices = form.subform.rcd_unit.choices = sorted([(d['id'], 
+        d['uni_symb']) for d in list(db.fetchall())], key = lambda fld: fld[1])
+
 
     sql = """SELECT id, ing_name 
             FROM ingredient
             WHERE ing_ebld = True""" 
     db.execute(sql)
-    choice = db.fetchall() 
-    for iter in form.rct_subf:
-        iter.rcd_ing.choices = sorted([(d['id'], 
-            d['ing_name']) for d in list(choice)], key = lambda fld: fld[1])
+    form.subform.rcd_ing.choices = sorted([(d['id'], 
+            d['ing_name']) for d in list(db.fetchall() )], key = lambda fld: fld[1])
 
     #Queries for all possible Selectfields choices
     sql = """SELECT id, uni_symb 
             FROM unitmeas"""
     db.execute(sql)
-    choice = db.fetchall()
-    rcd_unit_choices = rct_unit_choices = [(d['id'], d['uni_symb']) for d in list(choice)]
+    rcd_unit_choices = rct_unit_choices = [(d['id'], d['uni_symb']) for d in list(db.fetchall())]
 
     sql = """SELECT id, ing_name 
             FROM ingredient""" 
     db.execute(sql)
-    choice = db.fetchall()
-    rcd_ing_choices = [(d['id'], d['ing_name']) for d in list(choice)]
+    rcd_ing_choices = [(d['id'], d['ing_name']) for d in list(db.fetchall())]
     
         
     nav_button =  request.form.get('nav') #saves form navigation request
@@ -237,9 +230,10 @@ def recipe():
         pass
     
     print(nav_button)
+    print(form.validate_on_submit())
     if form.validate_on_submit():
         #Selectfield values
-
+        print(form.subform.id.data)
         record = dth.from_dict2sql(conn, {
                                         sqltable:[{
                                             'id':int(form.id.data),
@@ -253,12 +247,12 @@ def recipe():
                                             'rct_ebld':form.rct_ebld.data  
                                                     }],
                                         sqltable1:[{
-                                            'id':int(form.id.data),
-                                            'rcd_enca':int(form.rcd_enca.data),
-                                            'rcd_unit':form.rcd_unit.data,
-                                            'rcd_qty':form.rcd_qty.data,
-                                            'rct_denu':form.rct_denu.data,
-                                            'rcd_yiel':form.rcd_yiel.data  
+                                            'id':int(form.subform.id.data),
+                                            'rcd_enca':int(form.subform.rcd_enca.data),
+                                            'rcd_unit':form.subform.rcd_unit.data,
+                                            'rcd_qty':form.subform.rcd_qty.data,
+                                            'rct_denu':form.subform.rcd_denu.data,
+                                            'rcd_yiel':form.subform.rcd_yiel.data  
                                                     }]
                                         
                                         })

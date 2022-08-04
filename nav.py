@@ -6,7 +6,7 @@ from forms import Unitmeas
 
 
 def navigate_to(nav_button, db, form, sqltable):
-    
+    print(form.id.id)
 
     #visualize registered U.M and moves form to nav target
 
@@ -18,11 +18,17 @@ def navigate_to(nav_button, db, form, sqltable):
     regd_id =[row.get('id') for row in records] #making a list of registered ids
     last_index = len(regd_id) -1 #calc id list length
     
-    #checks for first time form entry
+    #checks for first time form entry (parent form)
     if form.id.data:
         id = form.id.data
     else:
         id = form.id.data = 0
+
+    #checks for first time form entry (child form)
+    if form.subform.id.data:
+        subid = form.subform.id.data
+    else:
+        subid = form.subform.id.data = 0
 
     #resolve id value of navigation target record (if any rcd)
     if not len(regd_id):

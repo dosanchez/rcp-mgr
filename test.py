@@ -1,7 +1,19 @@
 import mysql.connector
-from flask import Flask, render_template, session, request, redirect, url_for
-from data import DataHandler as dth
-from nav import navigate_to
-from forms import Ingredient, Unitmeas, Almacen, Recet_en
+
+conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
+                              host='192.168.100.254',
+                              database='std')
+# conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
+#                               host='200.125.169.75',
+#                               database='std')
+db = conn.cursor(dictionary=True, buffered=True)
+
+sql = "Select * from ingredient"
+db.execute(sql)
+records = db.fetchall()
+conn.close()
 
 
+print (type(records))
+print (records)
+print(records[0]['ing_dens'])

@@ -233,9 +233,12 @@ def recipe():
     print(form.validate_on_submit())
     if form.validate_on_submit():
         print ("checkbox ebld", form.rct_ebld.data)
+        if not form.id.data: #first time entry exception
+            form.id.data = 0
+        if not form.subform.idx.data: #first time entry exception
+            form.subform.idx.data = 0
         if not form.subform.rcd_enca.data: #first time entry exception
             form.subform.rcd_enca.data = 0
-        
 
         #Selectfield values
         print(form.subform.idx.data)

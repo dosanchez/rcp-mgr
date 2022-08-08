@@ -2,7 +2,7 @@
 
 {% block form%}
 
-<div class ="container bg-light">
+<div class ="container bg-light border-2">
   <form method="POST" id="nav_form" >
     {{ form.hidden_tag() }}
     <div class="row mb-3" >
@@ -140,7 +140,13 @@
         {{ form.rct_unit.label(class="form-label") }}
         {{ form.rct_unit(class="form-select", value = form.rct_unit.data) }}
       </div>
-      <div class="row">
+    </div>
+    <div class="mt-2" style="float:right;">
+    <input type="submit" id ="submit_button" class="btn btn-primary" formmethod="POST" value="submit" name = "nav">
+    </div>
+  </form>
+  <div>
+    <div class="row mt-5">
       <div>
         {{ form.subform.idx }}
         {{ form.subform.rcd_enca }}
@@ -161,73 +167,68 @@
         {{ form.subform.rcd_yiel.label(class="form-label") }}
         {{ form.subform.rcd_yiel(class="form-control", value = form.subform.rcd_yiel.data) }}
       </div>
-      </div>
     </div>
-    <div style="float:right;">
-    <input type="submit" id ="submit_button" class="btn btn-primary" formmethod="POST" value="submit" name = "nav">
+    <div>
+    {% if form.errors %}
+      {{ form.errors }}
+    {% endif %}
     </div>
-  </form>
-  <div>
-  {% if form.errors %}
-    {{ form.errors }}
-  {% endif %}
-  </div>
-  <div class="container mt-5">
-    {% block subform_title %}
-      <h4>Recipes Ingredients</h4>
-    {% endblock subform_title %}
-    <div style="height:445px; overflow:auto;">
-      {% block subform %}
-      <table class="table table-hover">
-        <thead class = "bg-light" style="position: sticky;top: 0">
-          <tr>
-            {% for header in column_names %}
-              {% if header == 'id' %}
-                <th style="text-align: center;"></th>
-              {% else %}
-                <th style="text-align: center;">{{ header }}</th>
-              {% endif %}
-            {% endfor %}
-          </tr>
-        </thead>
-        <tbody>
-          {% for row in records %}
-            {% if row['rct_ebld'] %}  <!-- styles disabled records-->
-              <tr>
-            {% else %}
-              <tr style="opacity: 0.5;">
-            {% endif %}
-            {% for key, value in row.items() %}
-                {% if key == 'id' %}
-                  <td style="text-align: center;" class="pt-2">
-                    <button type = "submit" value = {{ value }} form ="nav_form" formmethod ="post" class="btn btn-sm btn-primary" name ="nav">
-                      <small>edit</small>
-                    </button>
-                  </td>
+    <div class="container mt-5">
+      
+      {% for sub in column_names %}
+        <h4>{{ sub[0] }}</h4>
+      <div style="height:445px; overflow:auto;">
+        <table class="table table-hover">
+          <thead class = "bg-light" style="position: sticky;top: 0">
+            <tr>
+              {% for header in sub[1] %}
+                {% if header == 'id' %}
+                  <th style="text-align: center;"></th>
                 {% else %}
-                  {% if key == 'rct_ebld' and value %}<!-- just an exception for this form-->
-                    <td style="text-align: center;"><i class="fa-solid fa-check"></i></td>
-                  {% elif key == 'rct_ebld' and not value %}<!-- just an exception for this form-->
-                    <td style="text-align: center;"><i class="fa-solid fa-xmark"></i></td>
-                  {% elif key == 'rct_unit' %}<!-- just an exception for this form-->
-                      {% for choice in rct_unit_choices %}
-                        {% if choice[0] == value %}
-                          <td style="text-align: center;">{{ choice[1] }}</td>
-                        {% endif %}
-                      {% endfor %}
-                  {% else %}
-                    <td style="text-align: center;">{{ value }}</td>
-                  {% endif %}  
-                {% endif %}    
+                  <th style="text-align: center;">{{ header }}</th>
+                {% endif %}
               {% endfor %}
             </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div> 
-      {% endblock subform %}
+          </thead>
+          <tbody>
+            {% for row in records[0] %}
+              {% if row['rct_ebld'] %}  <!-- styles disabled records-->
+                <tr>
+              {% else %}
+                <tr style="opacity: 0.5;">
+              {% endif %}
+              {% for key, value in row.items() %}
+                  {% if key == 'id' %}
+                    <td style="text-align: center;" class="pt-2">
+                      <button type = "submit" value = {{ value }} form ="nav_form" formmethod ="post" class="btn btn-sm btn-primary" name ="nav">
+                        <small>edit</small>
+                      </button>
+                    </td>
+                  {% else %}
+                    {% if key == 'rct_ebld' and value %}<!-- just an exception for this form-->
+                      <td style="text-align: center;"><i class="fa-solid fa-check"></i></td>
+                    {% elif key == 'rct_ebld' and not value %}<!-- just an exception for this form-->
+                      <td style="text-align: center;"><i class="fa-solid fa-xmark"></i></td>
+                    {% elif key == 'rct_unit' %}<!-- just an exception for this form-->
+                        {% for choice in rct_unit_choices %}
+                          {% if choice[0] == value %}
+                            <td style="text-align: center;">{{ choice[1] }}</td>
+                          {% endif %}
+                        {% endfor %}
+                    {% else %}
+                      <td style="text-align: center;">{{ value }}</td>
+                    {% endif %}  
+                  {% endif %}    
+                {% endfor %}
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div> 
+      {% endfor %}
+      </div>
     </div>
-  </div>
+  </div> 
 </div>  
 {% endblock form %}
 {% block script %}

@@ -70,7 +70,6 @@ def navigate_to(nav_button, db, form, table_list):
                             , table_list[counter])
                         db.execute(sql)
                         relation.append(db.fetchall())
-                        print(relation[counter])
                         sql = """SELECT b.* 
                                 FROM {} AS h
                                 INNER JOIN {} AS b
@@ -89,6 +88,7 @@ def navigate_to(nav_button, db, form, table_list):
                     else:
                         i.data = session[i.id] = tgt_record.get(i.id)
     
-    rcds.append(relation)  
+    rcds.append(relation) 
+    print(len(rcds)) 
     print (rcds)
     return rcds

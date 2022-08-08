@@ -78,12 +78,10 @@ class DataHandler():
 
                 sql +=value_str + ')'
                 sql = sql.replace(", )", ")") #removes trailing ,
-                print (sql)
                 Cursor = self.conn.cursor(dictionary=True, buffered=True)
                 Cursor.execute(sql)
                 if counter == 1:
                     parent_last_row_id = Cursor.lastrowid
-                    print(parent_last_row_id )
                 self.conn.commit()
   
         

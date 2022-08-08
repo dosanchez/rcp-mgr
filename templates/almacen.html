@@ -69,15 +69,14 @@
 
 
   <div class="container mt-5">
-    {% block subform_title %}
-      <h4>Registered warehouses</h4>
-    {% endblock subform_title %}
+    {% for sub in column_names %}
+        <h4>{{ sub[0] }}</h4>
     <div style="height:445px; overflow:auto;">
-      {% block subform %}
+
       <table class="table table-hover">
         <thead class = "bg-light" style="position: sticky;top: 0">
           <tr>
-            {% for header in column_names %}
+            {% for header in sub[1] %}
               {% if header == 'id' %}
               <th style="text-align: center;"></th>
               {% else %}
@@ -87,7 +86,7 @@
           </tr>
         </thead>
         <tbody>
-          {% for row in records %}
+          {% for row in records[0] %}
             {% if row['alm_ebld'] %}  <!-- styles disabled records-->
             <tr>
             {% else %}
@@ -115,7 +114,7 @@
         </tbody>
       </table>
     </div> 
-      {% endblock subform%}
+    {% endfor %}
     </div>
   </div>
 </div>  

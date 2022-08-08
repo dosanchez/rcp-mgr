@@ -70,9 +70,9 @@ def unitmeas():
 
 
     records = navigate_to(nav_button, db, form, table_list)
-    column_names =['', 'Ud. base', 'Qty', 'Unit of measurement', 'Enabled']
+    column_names =[['Registered unit of measurement', ['', 'Ud. base', 'Qty', 'Unit of measurement', 'Enabled']]]
 
-    return render_template ('unitmeas.html', form = form, records = records[0],
+    return render_template ('unitmeas.html', form = form, records = records,
                             column_names = column_names)
 
 
@@ -118,9 +118,9 @@ def almacen():
 
 
     records = navigate_to(nav_button, db, form, table_list)
-    column_names =['', 'Warehouse', 'Enabled']
+    column_names =[['Registered Warehouses',['', 'Warehouse', 'Enabled']]]
 
-    return render_template ('almacen.html', form = form, records = records[0],
+    return render_template ('almacen.html', form = form, records = records,
                             column_names = column_names)
 
 
@@ -187,10 +187,10 @@ def ingredient():
 
 
     records = navigate_to(nav_button, db, form, table_list)
-    column_names =['', 'Ingredient', 'Common UM', 'Density', 'Densi UM',
-                     'Recipe','Enabled']
+    column_names =[['Registered Ingredients',['', 'Ingredient', 'Common UM', 'Density', 'Densi UM',
+                     'Recipe','Enabled']]]
 
-    return render_template ('ingredient.html', form = form, records = records[0],
+    return render_template ('ingredient.html', form = form, records = records,
                             column_names = column_names, ing_unit_choices = ing_unit_choices)
 
 @app.route('/templates/recipe.html', methods=['GET','POST'])
@@ -242,8 +242,7 @@ def recipe():
             form.subform.idx.data = 0
         if not form.subform.rcd_enca.data: #first time entry exception
             form.subform.rcd_enca.data = 0
-        print('form.id.data', form.id.data)
-        print('form.subform.idx.data', form.subform.idx.data)
+
         #Selectfield values
         record = dth.from_dict2sql(conn, {
                                         table_list[0]:[{
@@ -283,21 +282,20 @@ def recipe():
 
             else:
                 #adds new record
-                print ("checkbox ebld", form.rct_ebld.data)
                 record.add_new()
                 return redirect(url_for('recipe'))# clears POST data 
 
 
     records = navigate_to(nav_button, db, form, table_list)
 
-    column_names =['', 'Ingredient', 'Qty', 'Unit of measure',
-                     'Ingredient yield', '']
+    column_names =[['Recipe ingredients',['', 'Ingredient', 'Qty', 'Unit of measure',
+                     'Ingredient yield', '']]]
 
-    return render_template ('recipe.html', form = form, records = records[0],
+    return render_template ('recipe.html', form = form, records = records,
                             column_names = column_names, 
                             rcd_unit_choices = rcd_unit_choices ,
                             rct_unit_choices = rct_unit_choices,
-                            rcd_ing_choices = rcd_ing_choices
-                            )
+                            rcd_ing_choices = rcd_ing_choices)
+
 if __name__ == '__main__':
     app.run(debug=True)

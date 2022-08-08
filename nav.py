@@ -8,6 +8,7 @@ from forms import Unitmeas
 def navigate_to(nav_button, db, form, table_list):
     """visualize registered U.M and moves form to nav target"""
     rcds =[]
+    relation=[None]
     counter = 0
     while counter < len(table_list):
         if counter == 0:   
@@ -68,14 +69,14 @@ def navigate_to(nav_button, db, form, table_list):
                             AND REFERENCED_COLUMN_NAME = 'id'""".format(table_list[0]
                             , table_list[counter])
                         db.execute(sql)
-                        relation = db.fetchall()
-
+                        relation.append(db.fetchall())
+                        print(relation[counter])
                         sql = """SELECT b.* 
                                 FROM {} AS h
                                 INNER JOIN {} AS b
                                 ON h.id = b.{} 
                                 """.format(table_list[0], table_list[counter],
-                                relation[0].get('child_tbl_fld'))
+                                relation[counter][0].get('child_tbl_fld'))
                         db.execute(sql)
                         rcds.append(db.fetchall())
                         for ii in i:
@@ -83,11 +84,11 @@ def navigate_to(nav_button, db, form, table_list):
                                 fld_tbl = 'id'
                             else:
                                 fld_tbl = ii.short_name
-                            #ii.data = session[ii.short_name] = rcds[counter][-1].get(fld_tbl)
-                            print(ii.data, ii.id, ii.short_name, rcds[counter][-1].get(fld_tbl))
-                            print(session[ii.short_name])
+                            ii.data = session[ii.short_name] = rcds[counter][-1].get(fld_tbl)
                         counter += 1
                     else:
                         i.data = session[i.id] = tgt_record.get(i.id)
-       
+    
+    rcds.append(relation)  
+    print (rcds)
     return rcds

@@ -15,22 +15,14 @@ sql ="""SELECT TABLE_NAME AS child_tbl,
                 REFERENCED_COLUMN_NAME AS parent_tbl_fld 
         FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE 
         WHERE TABLE_SCHEMA = 'std'
-        AND REFERENCED_TABLE_NAME IS NOT NULL
-        AND """
+        AND REFERENCED_TABLE_NAME IS NOT NULL"""
 
-        sql ="""SELECT TABLE_NAME AS child_tbl, 
-                                COLUMN_NAME AS child_tbl_fld, 
-                                REFERENCED_TABLE_NAME AS parent_tbl, 
-                                REFERENCED_COLUMN_NAME AS parent_tbl_fld 
-                                FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE 
-                                WHERE TABLE_SCHEMA = 'std'
-                                AND REFERENCED_TABLE_NAME = {}
-                                AND TABLE_NAME = {}
-                                AND REFERENCED_COLUMN_NAME = 'id'""".format(table_list[0], table_list[counter])
+
 db.execute(sql)
 relation = db.fetchall()
 
-
-print(relation)
+prueba = [None]
+prueba.append('hey')
+print(prueba)
 
 conn.close()

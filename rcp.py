@@ -14,6 +14,9 @@ conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
 #                               database='std')
 db = conn.cursor(dictionary=True, buffered=True)
 
+# database parent-child table
+
+
 #Flask initialization
 app=Flask(__name__)
 app.config['SECRET_KEY']="place a key here"
@@ -27,7 +30,7 @@ def index():
 @app.route('/templates/unitmeas.html', methods=['GET','POST'])
 def unitmeas():
     form = Unitmeas()
-    sqltable = 'unitmeas'
+    table_list = ['unitmeas']
     nav_button =  request.form.get('nav') #saves form navigation request
     try:
         nav_button = int(nav_button)
@@ -38,7 +41,7 @@ def unitmeas():
     if form.validate_on_submit():
         uni_conv = form.qty_base.data / form.qty_um.data
         record = dth.from_dict2sql(conn, {
-                                        sqltable:[{
+                                        table_list[0]:[{
                                             'id':int(form.id.data),
                                             'uni_conv':uni_conv,
                                             'uni_un_t':form.uni_un_t.data,
@@ -50,7 +53,7 @@ def unitmeas():
         if nav_button == "submit": #not a nav post
             #creates instance to chk if record exist
             existe = dth.from_dict2sql(conn, {
-                                        sqltable:[{
+                                        table_list[0]:[{
                                             'uni_symb':form.uni_symb.data
                                                     }]
                                         }
@@ -66,17 +69,18 @@ def unitmeas():
                 return redirect(url_for('unitmeas'))# clears POST data 
 
 
-    records = navigate_to(nav_button, db, form, sqltable)
+    records = navigate_to(nav_button, db, form, table_list)
     column_names =['', 'Ud. base', 'Qty', 'Unit of measurement', 'Enabled']
 
-    return render_template ('unitmeas.html', form = form, records = records,
+    return render_template ('unitmeas.html', form = form, records = records[0],
                             column_names = column_names)
 
 
 @app.route('/templates/almacen.html', methods=['GET','POST'])
 def almacen():
     form = Almacen()
-    sqltable = 'almacen'
+    table_list = ['almacen']
+
     nav_button =  request.form.get('nav') #saves form navigation request
     try:
         nav_button = int(nav_button)
@@ -87,7 +91,7 @@ def almacen():
     if form.validate_on_submit():
 
         record = dth.from_dict2sql(conn, {
-                                        sqltable:[{
+                                        table_list[0]:[{
                                             'id':int(form.id.data),
                                             'alm_name':form.alm_name.data,
                                             'alm_ebld':form.alm_ebld.data
@@ -97,7 +101,7 @@ def almacen():
         if nav_button == "submit": #not a nav post
             #creates instance to chk if record exist
             existe = dth.from_dict2sql(conn, {
-                                        sqltable:[{
+                                        table_list[0]:[{
                                             'alm_name':form.alm_name.data
                                                     }]
                                         }
@@ -113,17 +117,17 @@ def almacen():
                 return redirect(url_for('almacen'))# clears POST data 
 
 
-    records = navigate_to(nav_button, db, form, sqltable)
+    records = navigate_to(nav_button, db, form, table_list)
     column_names =['', 'Warehouse', 'Enabled']
 
-    return render_template ('almacen.html', form = form, records = records,
+    return render_template ('almacen.html', form = form, records = records[0],
                             column_names = column_names)
 
 
 @app.route('/templates/ingredient.html', methods=['GET','POST'])
 def ingredient():
     form = Ingredient()
-    sqltable = 'ingredient'
+    table_list = ['ingredient']
     
     #Queries for Selectfields active choices
     sql = """SELECT id, uni_symb 
@@ -152,7 +156,7 @@ def ingredient():
         #Selectfield values
 
         record = dth.from_dict2sql(conn, {
-                                        sqltable:[{
+                                        table_list[0]:[{
                                             'id':int(form.id.data),
                                             'ing_name':form.ing_name.data,
                                             'ing_unit':form.ing_unit.data,
@@ -166,7 +170,7 @@ def ingredient():
         if nav_button == "submit": #not a nav post
             #creates instance to chk if record exist
             existe = dth.from_dict2sql(conn, {
-                                        sqltable:[{
+                                        table_list[0]:[{
                                             'id':int(form.id.data)
                                                     }]
                                         }
@@ -182,19 +186,18 @@ def ingredient():
                 return redirect(url_for('ingredient'))# clears POST data 
 
 
-    records = navigate_to(nav_button, db, form, sqltable)
+    records = navigate_to(nav_button, db, form, table_list)
     column_names =['', 'Ingredient', 'Common UM', 'Density', 'Densi UM',
                      'Recipe','Enabled']
 
-    return render_template ('ingredient.html', form = form, records = records,
+    return render_template ('ingredient.html', form = form, records = records[0],
                             column_names = column_names, ing_unit_choices = ing_unit_choices)
 
 @app.route('/templates/recipe.html', methods=['GET','POST'])
 def recipe():
     form = Recet_en()
-    sqltable = 'recet_en'
-    sqltable1 = 'recet_de'
-
+    table_list = ['recet_en', 'recet_de']
+  
     #Queries for Selectfields active choices
     sql = """SELECT id, uni_symb 
             FROM unitmeas
@@ -239,12 +242,11 @@ def recipe():
             form.subform.idx.data = 0
         if not form.subform.rcd_enca.data: #first time entry exception
             form.subform.rcd_enca.data = 0
-
+        print('form.id.data', form.id.data)
+        print('form.subform.idx.data', form.subform.idx.data)
         #Selectfield values
-        print(form.subform.idx.data)
-        print(form.subform.rcd_enca.data)
         record = dth.from_dict2sql(conn, {
-                                        sqltable:[{
+                                        table_list[0]:[{
                                             'id':int(form.id.data),
                                             'rct_name':form.rct_name.data,
                                             'rct_cost':form.rct_cost.data,
@@ -255,9 +257,9 @@ def recipe():
                                             'rct_yiel':form.rct_yiel.data,
                                             'rct_ebld':form.rct_ebld.data  
                                                     }],
-                                        sqltable1:[{
+                                        table_list[1]:[{
                                             'id':int(form.subform.idx.data),
-                                            'id_enca':int(form.subform.rcd_enca.data),
+                                            'rcd_enca':int(form.subform.rcd_enca.data),
                                             'rcd_ing':form.subform.rcd_ing.data,
                                             'rcd_qty':form.subform.rcd_qty.data,
                                             'rcd_unit':form.subform.rcd_unit.data,
@@ -265,11 +267,11 @@ def recipe():
                                                     }]
                                         
                                         })
-        
+
         if nav_button == "submit": #not a nav post
             #creates instance to chk if record exist
             existe = dth.from_dict2sql(conn, {
-                                        sqltable:[{
+                                        table_list[0]:[{
                                             'id':int(form.id.data)
                                                     }]
                                         }
@@ -286,12 +288,12 @@ def recipe():
                 return redirect(url_for('recipe'))# clears POST data 
 
 
-    records = navigate_to(nav_button, db, form, sqltable)
+    records = navigate_to(nav_button, db, form, table_list)
 
-    column_names =['', 'Name', 'Actual Cost', 'Std Cost', 'Density',
-                     'Dens. UM', 'Recipe yield','Common UM','Enabled']
+    column_names =['', 'Ingredient', 'Qty', 'Unit of measure',
+                     'Ingredient yield', '']
 
-    return render_template ('recipe.html', form = form, records = records,
+    return render_template ('recipe.html', form = form, records = records[0],
                             column_names = column_names, 
                             rcd_unit_choices = rcd_unit_choices ,
                             rct_unit_choices = rct_unit_choices,

@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SelectField, DecimalField, HiddenField
-from wtforms import BooleanField, Form, FormField, FieldList
+from wtforms import BooleanField, Form, FormField
 from wtforms.validators import DataRequired, Length, NumberRange
 
 
@@ -55,7 +55,7 @@ class Ingredient(FlaskForm):
 class Recet_en(FlaskForm):
     """wtform for recipe form header"""
     id = HiddenField()
-    rct_name = StringField('Recipe/Plate', validators=[DataRequired(),Length(max=16)], 
+    rct_name = StringField('Recipe/Plate Name', validators=[DataRequired(),Length(max=16)], 
         render_kw={"placeholder": "e.g. French Fries Side"})
     rct_cost = DecimalField('Actual Cost', 
         render_kw = {'disabled':''}, default = 0)
@@ -65,8 +65,8 @@ class Recet_en(FlaskForm):
         render_kw={"placeholder": "density"}, default = 1)
     rct_denu = SelectField('Recipe/Plate density UM', validators=[DataRequired()], 
         choices=['g/ml','g/unit'], default ='g/unit')
-    rct_yiel = DecimalField('Standard Cost',validators=[DataRequired()], 
-        render_kw = {'disabled':''}, default = 1)
+    rct_yiel = DecimalField('Recipe yield',validators=[DataRequired()], 
+        render_kw={"placeholder": "e.g. 0.98"}, default = 1)
     rct_unit = SelectField('Common UM', validators=[DataRequired()])
     rct_ebld = BooleanField('Enabled', default = True, false_values=('',))
     subform = FormField(Recet_de)

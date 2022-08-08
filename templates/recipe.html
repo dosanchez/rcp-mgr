@@ -14,42 +14,51 @@
         <button type = "button" class="btn" onclick="Navrecord(
           'out', 
           '{{session['rct_name']}}', 
-          '{{session['rct_cost']}}', 
-           {{session['rct_cosc']}},
-          '{{session['rct_dens']}}',
+          {{session['rct_cost']}}, 
+          {{session['rct_cosc']}},
+          {{session['rct_dens']}},
           '{{session['rct_denu']}}', 
-          '{{session['rct_yiel']}}',
-          '{{session['rct_unit']}}',
-          '{{session['rct_ebld']}}',
-          '{{session['rct_subf']}}'
+          {{session['rct_yiel']}},
+          {{session['rct_unit']}},
+          {{session['rct_ebld']}},
+          {{session['rcd_enca']}},
+          {{session['rcd_ing']}},
+          {{session['rcd_qty']}},
+          {{session['rcd_yield']}}
           )">
           <i class="fa-solid fa-door-open"></i>
         </button>
         <button type = "button" class="btn" onclick="Navrecord(
           'first', 
           '{{session['rct_name']}}', 
-          '{{session['rct_cost']}}', 
-           {{session['rct_cosc']}},
-          '{{session['rct_dens']}}',
+          {{session['rct_cost']}}, 
+          {{session['rct_cosc']}},
+          {{session['rct_dens']}},
           '{{session['rct_denu']}}', 
-          '{{session['rct_yiel']}}',
-          '{{session['rct_unit']}}',
-          '{{session['rct_ebld']}}',
-          '{{session['rct_subf']}}'
+          {{session['rct_yiel']}},
+          {{session['rct_unit']}},
+          {{session['rct_ebld']}},
+          {{session['rcd_enca']}},
+          {{session['rcd_ing']}},
+          {{session['rcd_qty']}},
+          {{session['rcd_yield']}}
           )">
           <i class="fa-solid fa-angles-left"></i>
         </button>
         <button type = "button" class="btn" onclick="Navrecord(
           'back',
           '{{session['rct_name']}}', 
-          '{{session['rct_cost']}}', 
-           {{session['rct_cosc']}},
-          '{{session['rct_dens']}}',
+          {{session['rct_cost']}}, 
+          {{session['rct_cosc']}},
+          {{session['rct_dens']}},
           '{{session['rct_denu']}}', 
-          '{{session['rct_yiel']}}',
-          '{{session['rct_unit']}}',
-          '{{session['rct_ebld']}}',
-          '{{session['rct_subf']}}'
+          {{session['rct_yiel']}},
+          {{session['rct_unit']}},
+          {{session['rct_ebld']}},
+          {{session['rcd_enca']}},
+          {{session['rcd_ing']}},
+          {{session['rcd_qty']}},
+          {{session['rcd_yield']}}
           )">
           <i class="fa-solid fa-circle-chevron-left"></i>
         </button>
@@ -59,28 +68,34 @@
         <button type = "button" class="btn" onclick="Navrecord(
           'next', 
           '{{session['rct_name']}}', 
-          '{{session['rct_cost']}}', 
-           {{session['rct_cosc']}},
-          '{{session['rct_dens']}}',
+          {{session['rct_cost']}}, 
+          {{session['rct_cosc']}},
+          {{session['rct_dens']}},
           '{{session['rct_denu']}}', 
-          '{{session['rct_yiel']}}',
-          '{{session['rct_unit']}}',
-          '{{session['rct_ebld']}}',
-          '{{session['rct_subf']}}'
+          {{session['rct_yiel']}},
+          {{session['rct_unit']}},
+          {{session['rct_ebld']}},
+          {{session['rcd_enca']}},
+          {{session['rcd_ing']}},
+          {{session['rcd_qty']}},
+          {{session['rcd_yield']}}
           )">
           <i class="fa-solid fa-circle-chevron-right"></i>
         </button>
         <button type = "button" class="btn" onclick="Navrecord(
           'last',  
           '{{session['rct_name']}}', 
-          '{{session['rct_cost']}}', 
-           {{session['rct_cosc']}},
-          '{{session['rct_dens']}}',
+          {{session['rct_cost']}}, 
+          {{session['rct_cosc']}},
+          {{session['rct_dens']}},
           '{{session['rct_denu']}}', 
-          '{{session['rct_yiel']}}',
-          '{{session['rct_unit']}}',
-          '{{session['rct_ebld']}}',
-          '{{session['rct_subf']}}'
+          {{session['rct_yiel']}},
+          {{session['rct_unit']}},
+          {{session['rct_ebld']}},
+          {{session['rcd_enca']}},
+          {{session['rcd_ing']}},
+          {{session['rcd_qty']}},
+          {{session['rcd_yield']}}
           )">
           <i class="fa-solid fa-angles-right"></i>
         </button>
@@ -159,7 +174,7 @@
   </div>
   <div class="container mt-5">
     {% block subform_title %}
-      <h4>Registered Recipes</h4>
+      <h4>Recipes Ingredients</h4>
     {% endblock subform_title %}
     <div style="height:445px; overflow:auto;">
       {% block subform %}
@@ -228,6 +243,13 @@
         document.getElementById("rct_unit").value = "";
         document.getElementById("rct_subf").value = "";
         document.getElementById("rct_ebld").value = "";
+        document.getElementById("id").value = 0;
+        document.getElementById("rcd_ing").value = "";
+        document.getElementById("rcd_qty").value = "";
+        document.getElementById("rcd_unit").value = "";
+        document.getElementById("rcd_yiel").value = "";
+        document.getElementById("idx").value = 0;
+        document.getElementById("rcd_enca").value = 0;
         }
 
     function Navrecord(NAV, RCTNAME, RCTCOST, RCTCOSC, 

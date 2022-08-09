@@ -286,7 +286,10 @@ def recipe():
                 return redirect(url_for('recipe'))# clears POST data 
 
 
-    records = navigate_to(nav_button, db, form, table_list)
+    records, relation = navigate_to(nav_button, db, form, table_list)
+    print (relation)
+    records.pop(0) #form header records not needed
+    print (records)
 
     column_names =[['Recipe ingredients',['', 'Ingredient', 'Qty', 'Unit of measure',
                      'Ingredient yield', '']]]

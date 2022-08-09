@@ -10,19 +10,16 @@ conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
 db = conn.cursor(dictionary=True, buffered=True)
 
 sql ="""SELECT TABLE_NAME AS child_tbl, 
-                COLUMN_NAME AS child_tbl_fld, 
-                REFERENCED_TABLE_NAME AS parent_tbl, 
-                REFERENCED_COLUMN_NAME AS parent_tbl_fld 
-        FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE 
-        WHERE TABLE_SCHEMA = 'std'
-        AND REFERENCED_TABLE_NAME IS NOT NULL"""
-
-
+                            COLUMN_NAME AS child_tbl_fld, 
+                            REFERENCED_TABLE_NAME AS parent_tbl, 
+                            REFERENCED_COLUMN_NAME AS parent_tbl_fld 
+                            FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE 
+                            WHERE TABLE_SCHEMA = 'std'
+                            AND REFERENCED_TABLE_NAME IS NOT NULL """
 db.execute(sql)
 relation = db.fetchall()
 
-prueba = [None]
-prueba.append('hey')
-print(prueba)
+for i in relation:
+        print (i)
 
-conn.close()
+# conn.close()

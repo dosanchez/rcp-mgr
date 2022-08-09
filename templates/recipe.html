@@ -191,36 +191,34 @@
             </tr>
           </thead>
           <tbody>
-            {% for row in records[0] %}
-              {% if row['rct_ebld'] %}  <!-- styles disabled records-->
+            {% for sbfrm in records %}
+              {% for row in sbfrm %}
                 <tr>
-              {% else %}
-                <tr style="opacity: 0.5;">
-              {% endif %}
-              {% for key, value in row.items() %}
-                  {% if key == 'id' %}
-                    <td style="text-align: center;" class="pt-2">
-                      <button type = "submit" value = {{ value }} form ="nav_form" formmethod ="post" class="btn btn-sm btn-primary" name ="nav">
-                        <small>edit</small>
-                      </button>
-                    </td>
-                  {% else %}
-                    {% if key == 'rct_ebld' and value %}<!-- just an exception for this form-->
-                      <td style="text-align: center;"><i class="fa-solid fa-check"></i></td>
-                    {% elif key == 'rct_ebld' and not value %}<!-- just an exception for this form-->
-                      <td style="text-align: center;"><i class="fa-solid fa-xmark"></i></td>
-                    {% elif key == 'rct_unit' %}<!-- just an exception for this form-->
-                        {% for choice in rct_unit_choices %}
-                          {% if choice[0] == value %}
-                            <td style="text-align: center;">{{ choice[1] }}</td>
-                          {% endif %}
-                        {% endfor %}
+                  {% for key, value in row.items() %}
+                    {% if key == 'id' %}
+                      <td style="text-align: center;" class="pt-2">
+                        <button type = "submit" value = {{ value }} form ="nav_form" formmethod ="post" class="btn btn-sm btn-primary" name ="nav">
+                          <small>edit</small>
+                        </button>
+                      </td>
                     {% else %}
-                      <td style="text-align: center;">{{ value }}</td>
-                    {% endif %}  
-                  {% endif %}    
-                {% endfor %}
-              </tr>
+                      {% if key == 'rct_ebld' and value %}<!-- just an exception for this form-->
+                        <td style="text-align: center;"><i class="fa-solid fa-check"></i></td>
+                      {% elif key == 'rct_ebld' and not value %}<!-- just an exception for this form-->
+                        <td style="text-align: center;"><i class="fa-solid fa-xmark"></i></td>
+                      {% elif key == 'rct_unit' %}<!-- just an exception for this form-->
+                          {% for choice in rct_unit_choices %}
+                            {% if choice[0] == value %}
+                              <td style="text-align: center;">{{ choice[1] }}</td>
+                            {% endif %}
+                          {% endfor %}
+                      {% else %}
+                        <td style="text-align: center;">{{ value }}</td>
+                      {% endif %}  
+                    {% endif %}    
+                  {% endfor %}
+                </tr>
+              {% endfor %}
             {% endfor %}
           </tbody>
         </table>

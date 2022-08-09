@@ -8,7 +8,7 @@ from forms import Unitmeas
 def navigate_to(nav_button, db, form, table_list):
     """visualize registered U.M and moves form to nav target"""
     rcds =[]
-    relation=[None]
+    relation=[]
     counter = 0
     while counter < len(table_list):
         if counter == 0:   
@@ -75,7 +75,7 @@ def navigate_to(nav_button, db, form, table_list):
                                 INNER JOIN {} AS b
                                 ON h.id = b.{} 
                                 """.format(table_list[0], table_list[counter],
-                                relation[counter][0].get('child_tbl_fld'))
+                                relation[counter-1][0].get('child_tbl_fld'))
                         db.execute(sql)
                         rcds.append(db.fetchall())
                         for ii in i:
@@ -88,7 +88,4 @@ def navigate_to(nav_button, db, form, table_list):
                     else:
                         i.data = session[i.id] = tgt_record.get(i.id)
     
-    rcds.append(relation) 
-    print(len(rcds)) 
-    print (rcds)
-    return rcds
+    return rcds, relation

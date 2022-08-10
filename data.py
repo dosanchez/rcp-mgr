@@ -1,6 +1,42 @@
 import mysql.connector
 from flask import flash
 
+class select():
+    """Value functions for selctFields choices name rendering"""
+    
+    #Queries for active (ebld) choices
+    def UM_ebld(db):
+        
+        sql = """SELECT id, uni_symb 
+                FROM unitmeas
+                WHERE uni_ebld = True"""
+        db.execute(sql)
+        return sorted([(d['id'], d['uni_symb']) for d in list(db.fetchall())],
+                        key = lambda fld: fld[1])
+    
+    def ingred_ebld(db):
+        sql = """SELECT id, ing_name 
+            FROM ingredient
+            WHERE ing_ebld = True""" 
+        db.execute(sql)
+        return sorted([(d['id'], d['ing_name']) for d in list(db.fetchall() )], 
+                        key = lambda fld: fld[1])
+
+    #Queries for all choices
+    def UM_all(db):
+        
+        sql = """SELECT id, uni_symb 
+                FROM unitmeas"""
+        db.execute(sql)
+        return sorted([(d['id'], d['uni_symb']) for d in list(db.fetchall())],
+                        key = lambda fld: fld[1])
+
+    def ingred_all(db):
+        sql = """SELECT id, ing_name 
+            FROM ingredient""" 
+        db.execute(sql)
+        return sorted([(d['id'], d['ing_name']) for d in list(db.fetchall() )], 
+                        key = lambda fld: fld[1])
 
 class DataHandler():
 

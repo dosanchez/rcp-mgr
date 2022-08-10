@@ -1,6 +1,6 @@
 import mysql.connector
 from flask import Flask, render_template, session, request, redirect, url_for
-from data import DataHandler as dth
+from data import DataHandler as dth, select as sel
 from nav import navigate_to
 from forms import Ingredient, Unitmeas, Almacen, Recet_en
 
@@ -69,7 +69,7 @@ def unitmeas():
                 return redirect(url_for('unitmeas'))# clears POST data 
 
 
-    records = navigate_to(nav_button, db, form, table_list)
+    records, relation = navigate_to(nav_button, db, form, table_list)
     column_names =[['Registered unit of measurement', ['', 'Ud. base', 'Qty', 'Unit of measurement', 'Enabled']]]
 
     return render_template ('unitmeas.html', form = form, records = records,
@@ -117,7 +117,7 @@ def almacen():
                 return redirect(url_for('almacen'))# clears POST data 
 
 
-    records = navigate_to(nav_button, db, form, table_list)
+    records, relation = navigate_to(nav_button, db, form, table_list)
     column_names =[['Registered Warehouses',['', 'Warehouse', 'Enabled']]]
 
     return render_template ('almacen.html', form = form, records = records,
@@ -129,20 +129,8 @@ def ingredient():
     form = Ingredient()
     table_list = ['ingredient']
     
-    #Queries for Selectfields active choices
-    sql = """SELECT id, uni_symb 
-            FROM unitmeas
-            WHERE uni_ebld = True"""
-    
-    db.execute(sql)
-    form.ing_unit.choices = sorted([(d['id'],
-     d['uni_symb']) for d in list(db.fetchall())], key = lambda fld: fld[1])
-
-    #Queries for all Selectfields choices
-    sql = """SELECT id, uni_symb 
-            FROM unitmeas"""
-    db.execute(sql)
-    ing_unit_choices = [(d['id'], d['uni_symb']) for d in list(db.fetchall())]
+    form.ing_unit.choices = sel.UM_ebld(db) #Queries for Selectfields active choices
+    ing_unit_choices = sel.UM_all(db) #Queries for all Selectfields choices
 
         
     nav_button =  request.form.get('nav') #saves form navigation request
@@ -186,7 +174,7 @@ def ingredient():
                 return redirect(url_for('ingredient'))# clears POST data 
 
 
-    records = navigate_to(nav_button, db, form, table_list)
+    records, relation = navigate_to(nav_button, db, form, table_list)
     column_names =[['Registered Ingredients',['', 'Ingredient', 'Common UM', 'Density', 'Densi UM',
                      'Recipe','Enabled']]]
 
@@ -198,32 +186,12 @@ def recipe():
     form = Recet_en()
     table_list = ['recet_en', 'recet_de']
   
-    #Queries for Selectfields active choices
-    sql = """SELECT id, uni_symb 
-            FROM unitmeas
-            WHERE uni_ebld = True"""
-    db.execute(sql)
-    form.rct_unit.choices = form.subform.rcd_unit.choices = sorted([(d['id'], 
-        d['uni_symb']) for d in list(db.fetchall())], key = lambda fld: fld[1])
-
-
-    sql = """SELECT id, ing_name 
-            FROM ingredient
-            WHERE ing_ebld = True""" 
-    db.execute(sql)
-    form.subform.rcd_ing.choices = sorted([(d['id'], 
-            d['ing_name']) for d in list(db.fetchall() )], key = lambda fld: fld[1])
+    form.rct_unit.choices = form.subform.rcd_unit.choices = sel.UM_ebld(db) #Queries for Selectfields active choices
+    form.subform.rcd_ing.choices = sel.ingred_ebld(db) #Queries for Selectfields active choices
 
     #Queries for all possible Selectfields choices
-    sql = """SELECT id, uni_symb 
-            FROM unitmeas"""
-    db.execute(sql)
-    rcd_unit_choices = rct_unit_choices = [(d['id'], d['uni_symb']) for d in list(db.fetchall())]
-
-    sql = """SELECT id, ing_name 
-            FROM ingredient""" 
-    db.execute(sql)
-    rcd_ing_choices = [(d['id'], d['ing_name']) for d in list(db.fetchall())]
+    rcd_unit_choices = rct_unit_choices = sel.UM_all(db)
+    rcd_ing_choices = sel.ingred_all(db)
     
         
     nav_button =  request.form.get('nav') #saves form navigation request
@@ -233,9 +201,13 @@ def recipe():
         pass
     
     print(nav_button)
+
+    print('id', form.subform.id)
+    print('value', form.subform.data)
+
     print(form.validate_on_submit())
+
     if form.validate_on_submit():
-        print ("checkbox ebld", form.rct_ebld.data)
         if not form.id.data: #first time entry exception
             form.id.data = 0
         if not form.subform.idx.data: #first time entry exception
@@ -287,18 +259,18 @@ def recipe():
 
 
     records, relation = navigate_to(nav_button, db, form, table_list)
-    print (relation)
     records.pop(0) #form header records not needed
-    print (records)
-
-    column_names =[['Recipe ingredients',['', 'Ingredient', 'Qty', 'Unit of measure',
-                     'Ingredient yield', '']]]
+    column_names =[['Recipe ingredients',['', '', 'Ingredient', 'Qty', 'Unit of measure',
+                     'Ingredient yield']]]
+    rcd_len = len(records)
 
     return render_template ('recipe.html', form = form, records = records,
                             column_names = column_names, 
                             rcd_unit_choices = rcd_unit_choices ,
                             rct_unit_choices = rct_unit_choices,
-                            rcd_ing_choices = rcd_ing_choices)
+                            rcd_ing_choices = rcd_ing_choices,
+                            relation = relation,
+                            rcd_len = rcd_len)
 
 if __name__ == '__main__':
     app.run(debug=True)

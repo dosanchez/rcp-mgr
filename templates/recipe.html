@@ -2,7 +2,7 @@
 
 {% block form%}
 
-<div class ="container bg-light border-2">
+<div class ="form-group bg-light border-2">
   <form method="POST" id="nav_form" >
     {{ form.hidden_tag() }}
     <div class="row mb-3" >
@@ -120,33 +120,35 @@
         {{ form.rct_cosc.label(class="form-label") }}
         {{ form.rct_cosc(class="form-control", value = form.rct_cosc.data) }}
       </div>
-      <div class="form-check col-sm-3 pt-5 mb-3">
+      <div class="form-check col-sm-1 pt-4" style="padding-left: 30px;">
         {{ form.rct_ebld.label(class="form-check-label") }}
         {{ form.rct_ebld(class="form-check-input", value = form.rct_ebld.data, onclick="Submit()") }}
       </div>
-      <div class="col-sm-3">
+      <div class="col-sm-2 pt-3" style="text-align:center" >
+        <input type="submit" id ="submit_button" class="btn btn-primary" formmethod="POST" value="submit" name = "nav">
+      </div>
+      <div class="col-sm-3 pt-3">
         {{ form.rct_dens.label(class="form-label") }}
         {{ form.rct_dens(class="form-control", value = form.rct_dens.data) }}
       </div>
-      <div class="col-sm-3">
+      <div class="col-sm-3 pt-3">
         {{ form.rct_denu.label(class="form-label") }}
         {{ form.rct_denu(class="form-select", value = form.rct_denu.data) }}
       </div>
-      <div class="col-sm-3">
+      <div class="col-sm-3 pt-3">
         {{ form.rct_yiel.label(class="form-label") }}
         {{ form.rct_yiel(class="form-control", value = form.rct_yiel.data) }}
       </div>
-      <div class="col-sm-3">
+      <div class="col-sm-3 pt-3">
         {{ form.rct_unit.label(class="form-label") }}
         {{ form.rct_unit(class="form-select", value = form.rct_unit.data) }}
       </div>
     </div>
-    <div class="mt-2" style="float:right;">
-    <input type="submit" id ="submit_button" class="btn btn-primary" formmethod="POST" value="submit" name = "nav">
+    <div class="mt-10">
     </div>
   </form>
-  <div>
-    <div class="row mt-5">
+  <div class=" container-fluid rounded my-5 border border-dark border-1">
+    <div class=" row mt-5">
       <div>
         {{ form.subform.idx }}
         {{ form.subform.rcd_enca }}
@@ -166,6 +168,11 @@
       <div class="col-sm-3">
         {{ form.subform.rcd_yiel.label(class="form-label") }}
         {{ form.subform.rcd_yiel(class="form-control", value = form.subform.rcd_yiel.data) }}
+      </div>
+      <div class="col-sm-12 pt-3" style="text-align:center" >
+        <button type = "submit" value = {{ value }} form ="nav_form" formmethod ="post" class="btn btn-sm btn-primary" name ="nav">
+          <strong>add </strong><i class="fa-solid fa-circle-arrow-down"></i>
+        </button>
       </div>
     </div>
     <div>
@@ -191,8 +198,9 @@
             </tr>
           </thead>
           <tbody>
-            {% for sbfrm in records %}
-              {% for row in sbfrm %}
+            
+            {% for counter in range(rcd_len) %}
+              {% for row in records[counter] %}
                 <tr>
                   {% for key, value in row.items() %}
                     {% if key == 'id' %}
@@ -202,12 +210,20 @@
                         </button>
                       </td>
                     {% else %}
-                      {% if key == 'rct_ebld' and value %}<!-- just an exception for this form-->
-                        <td style="text-align: center;"><i class="fa-solid fa-check"></i></td>
-                      {% elif key == 'rct_ebld' and not value %}<!-- just an exception for this form-->
-                        <td style="text-align: center;"><i class="fa-solid fa-xmark"></i></td>
-                      {% elif key == 'rct_unit' %}<!-- just an exception for this form-->
-                          {% for choice in rct_unit_choices %}
+                      {% if key == relation[counter][0].get('child_tbl_fld') %} <!-- exception  hides parent-child field-->
+                        <td style="text-align: center;" class="pt-2">
+                          <button type = "submit" value = {{ value }} form ="nav_form" formmethod ="post" class="btn btn-sm btn-danger" name ="nav">
+                            <small>drop</small>
+                          </button>
+                        </td>
+                      {% elif key == 'rcd_ing' %} <!-- exception loops for ing name -->
+                        {% for choice in rcd_ing_choices %}
+                          {% if choice[0] == value %}
+                            <td style="text-align: center;">{{ choice[1] }}</td>
+                          {% endif %}
+                        {% endfor %}                        
+                      {% elif key == 'rcd_unit' %}<!-- exception loops for UM-->
+                          {% for choice in rcd_unit_choices %}
                             {% if choice[0] == value %}
                               <td style="text-align: center;">{{ choice[1] }}</td>
                             {% endif %}

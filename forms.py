@@ -1,6 +1,6 @@
+from email.policy import default
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, DecimalField, HiddenField
-from wtforms import BooleanField, Form, FormField
+from wtforms import StringField, SelectField, DecimalField, HiddenField, BooleanField, Form, FormField
 from wtforms.validators import DataRequired, Length, NumberRange
 
 
@@ -8,10 +8,10 @@ class Recet_de(Form):
     """wtform for recipe form details"""
     idx = HiddenField()
     rcd_enca = HiddenField()
-    rcd_ing = SelectField('Ingredient', validators=[DataRequired()])
+    rcd_ing = SelectField('Ingredient', validators=[DataRequired()], coerce= int)
     rcd_qty = DecimalField('Qty',validators=[DataRequired()],
                             default = 1)
-    rcd_unit = SelectField('Unit of measure', validators=[DataRequired()])
+    rcd_unit = SelectField('Unit of measure', validators=[DataRequired()], coerce = int)
     rcd_yiel = DecimalField('Ingredient yield', validators=[DataRequired()],
                             default = 0.98)
     
@@ -67,6 +67,6 @@ class Recet_en(FlaskForm):
         choices=['g/ml','g/unit'], default ='g/unit')
     rct_yiel = DecimalField('Recipe yield',validators=[DataRequired()], 
         render_kw={"placeholder": "e.g. 0.98"}, default = 1)
-    rct_unit = SelectField('Common UM', validators=[DataRequired()])
+    rct_unit = SelectField('Common UM', validators=[DataRequired()], coerce = int)
     rct_ebld = BooleanField('Enabled', default = True, false_values=('',))
-    subform = FormField(Recet_de)
+    subform = FormField(Recet_de)  

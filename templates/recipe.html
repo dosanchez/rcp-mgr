@@ -146,7 +146,7 @@
     </div>
     <div class="mt-10">
     </div>
-  </form>
+
   <div class=" container-fluid rounded my-5 border border-dark border-1">
     <div class=" row mt-5">
       <div>
@@ -169,12 +169,22 @@
         {{ form.subform.rcd_yiel.label(class="form-label") }}
         {{ form.subform.rcd_yiel(class="form-control", value = form.subform.rcd_yiel.data) }}
       </div>
-      <div class="col-sm-12 pt-3" style="text-align:center" >
-        <button type = "submit" value = {{ value }} form ="nav_form" formmethod ="post" class="btn btn-sm btn-primary" name ="nav">
-          <strong>add </strong><i class="fa-solid fa-circle-arrow-down"></i>
+      <div class="col-sm-12 pt-3 d-grid gap-5 d-sm-flex justify-content-md-center" >
+        <button type = "submit" value = "submit1" form ="nav_form" formmethod ="post" class="btn btn-md btn-primary" name ="nav">
+          <strong id = "lbl_but_sub">update </strong><i class="fa-solid fa-circle-arrow-down"></i>
+        </button>
+        <button type="button" class="btn btn-sm btn-primary" id = "sub"  value = "update" onclick="Newsub({{session['rcd_idx']}},
+                                                                                                          {{session['rcd_enca']}},
+                                                                                                          {{session['rcd_ing']}},
+                                                                                                          {{session['rcd_qty']}},
+                                                                                                          {{session['rcd_unit']}},
+                                                                                                          {{session['rcd_yield']}}
+                                                                                                          )">
+          UPDATE/ADD
         </button>
       </div>
     </div>
+  </form>
     <div>
     {% if form.errors %}
       {{ form.errors }}
@@ -201,7 +211,11 @@
             
             {% for counter in range(rcd_len) %}
               {% for row in records[counter] %}
+                {% if row['id'] == form.subform.idx.data %}
+                <tr class="table-active">
+                {% else %}
                 <tr>
+                {% endif %}  
                   {% for key, value in row.items() %}
                     {% if key == 'id' %}
                       <td style="text-align: center;" class="pt-2">
@@ -249,42 +263,64 @@
 {{ super() }}
   <script>
     function Newrecord() {
-        document.getElementById("rct_name").value = "";
-        document.getElementById("rct_cosc").value = "";
-        document.getElementById("rct_cost").value = "";
-        document.getElementById("rct_dens").value = "";
-        document.getElementById("rct_denu").value = "";
-        document.getElementById("rct_yiel").value = "";
-        document.getElementById("rct_unit").value = "";
-        document.getElementById("rct_subf").value = "";
-        document.getElementById("rct_ebld").value = "";
-        document.getElementById("id").value = 0;
-        document.getElementById("rcd_ing").value = "";
-        document.getElementById("rcd_qty").value = "";
-        document.getElementById("rcd_unit").value = "";
-        document.getElementById("rcd_yiel").value = "";
-        document.getElementById("idx").value = 0;
-        document.getElementById("rcd_enca").value = 0;
-        }
+      document.getElementById("rct_name").value = "";
+      document.getElementById("rct_cosc").value = "";
+      document.getElementById("rct_cost").value = "";
+      document.getElementById("rct_dens").value = "";
+      document.getElementById("rct_denu").value = "";
+      document.getElementById("rct_yiel").value = "";
+      document.getElementById("rct_unit").value = "";
+      document.getElementById("rct_subf").value = "";
+      document.getElementById("rct_ebld").value = "";
+      document.getElementById("id").value = 0;
+      document.getElementById("rcd_ing").value = "";
+      document.getElementById("rcd_qty").value = "";
+      document.getElementById("rcd_unit").value = "";
+      document.getElementById("rcd_yiel").value = "";
+      document.getElementById("idx").value = 0;
+      document.getElementById("rcd_enca").value = 0;
+      }
 
     function Navrecord(NAV, RCTNAME, RCTCOST, RCTCOSC, 
                       RCTDENS, RCTDENU, RCTYIEL, RCTUNIT, 
                       RCTEBLD, RCTSUBF) {
-        document.getElementById("rct_name").value = RCTNAME;
-        document.getElementById("rct_cosc").value = RCTCOSC;
-        document.getElementById("rct_cost").value = RCTCOST;
-        document.getElementById("rct_dens").value = RCTDENS;
-        document.getElementById("rct_denu").value = RCTDENU;
-        document.getElementById("rct_yiel").value = RCTYIEL;
-        document.getElementById("rct_unit").value = RCTUNIT;
-        document.getElementById("rct_subf").value = RCTSUBF;
-        document.getElementById("rct_ebld").value = RCTEBLD;
-        document.getElementById("submit_button").value = NAV;
-        document.getElementById("submit_button").click();
-        }
+      document.getElementById("rct_name").value = RCTNAME;
+      document.getElementById("rct_cosc").value = RCTCOSC;
+      document.getElementById("rct_cost").value = RCTCOST;
+      document.getElementById("rct_dens").value = RCTDENS;
+      document.getElementById("rct_denu").value = RCTDENU;
+      document.getElementById("rct_yiel").value = RCTYIEL;
+      document.getElementById("rct_unit").value = RCTUNIT;
+      document.getElementById("rct_subf").value = RCTSUBF;
+      document.getElementById("rct_ebld").value = RCTEBLD;
+      document.getElementById("submit_button").value = NAV;
+      document.getElementById("submit_button").click();
+      }
 
-        function Submit() {
-        document.getElementById("submit_button").click();
-        }
+    function Submit() {
+      document.getElementById("submit_button").click();
+      }
+
+    function Newsub(IDX, RCDENCA, RCDING, RCDQTY, RCDUNIT, RCDYIEL) {
+      if (document.getElementById("lbl_but_sub").innerHTML == "update "){
+        document.getElementById("lbl_but_sub").innerHTML = "add ";
+        document.getElementById("subform-idx").value = 0;
+        document.getElementById("subform-rcd_enca").value = 0;
+        document.getElementById("subform-rcd_ing").value = "";
+        document.getElementById("subform-rcd_qty").value = "";
+        document.getElementById("subform-rcd_unit").value = "";
+        document.getElementById("subform-rcd_yiel").value = "";
+        
+      }
+      else{
+        document.getElementById("lbl_but_sub").innerHTML = "update ";
+        document.getElementById("subform-idx").value = IDX;
+        document.getElementById("subform-rcd_enca").value = RCDENCA;
+        document.getElementById("subform-rcd_ing").value = RCDING;
+        document.getElementById("subform-rcd_qty").value = RCDQTY;
+        document.getElementById("subform-rcd_unit").value = RCDUNIT;
+        document.getElementById("subform-rcd_yiel").value = RCDYIEL;
+      }      
+    }
   </script>
 {% endblock script%}

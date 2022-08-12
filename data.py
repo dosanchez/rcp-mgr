@@ -1,8 +1,8 @@
 import mysql.connector
-from flask import flash
+from flask import flash, session
 
 class select():
-    """Value functions for selctFields choices name rendering"""
+    """Value functions for selectFields choices name rendering"""
     
     #Queries for active (ebld) choices
     def UM_ebld(db):
@@ -75,10 +75,9 @@ class DataHandler():
     def update(self):
         """update record in table based on dict with tbl, fld and vals
             NEEDS an id field for update condition"""
-        counter = 0
+
         for t, r in self.rcd.items():
             for ea_rcd in r:
-                counter += 1
                 sql = "UPDATE %s SET " %(t)
                 for fn, fv in ea_rcd.items():
                     if not fn == 'id':
@@ -87,13 +86,9 @@ class DataHandler():
                 sql = sql.replace(", WHERE id =", " WHERE id =") #removes last ,
                 self.conn.cursor(dictionary=True, buffered=True).execute(sql)
                 self.conn.commit()
-        
-        if counter > 1:
-            flash('Records updated!')
-        elif counter == 1:
+
             flash('Record updated!')
-        else:
-            pass
+
 
     def add_new(self):
         """adds record in table based on dict with tbl, fld and vals"""
@@ -105,7 +100,7 @@ class DataHandler():
                 sql = "INSERT INTO %s (" %(t)
                 for fn, fv in ea_rcd.items():
                     
-                    if fn == "id_enca" and counter > 1:
+                    if fn == "rcd_enca" and counter > 1:
                         sql += "%s, " %(fn)
                         value_str += "%s, " %(parent_last_row_id)
                     elif not fn == 'id':

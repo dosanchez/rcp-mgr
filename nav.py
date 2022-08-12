@@ -20,7 +20,6 @@ def navigate_to(nav_button, db, form, table_list):
             regd_id =[row.get('id') for row in rcds[0]] #making a list of registered ids
             last_index = len(regd_id) -1 #calc id list length
         
-
             #resolve list index value of navigation target record (if any rcd)
             if not len(regd_id):
                 pass
@@ -48,6 +47,7 @@ def navigate_to(nav_button, db, form, table_list):
 
         #visualize the target record on main form (if any rcd)
         if not len(regd_id):
+            counter += 1
             pass
         else:
             tgt_record = rcds[0][pos]
@@ -78,6 +78,7 @@ def navigate_to(nav_button, db, form, table_list):
                                 relation[counter-1][0].get('child_tbl_fld'))
                         db.execute(sql)
                         rcds.append(db.fetchall())
+                        
                         for ii in i:
                             if ii.short_name == 'idx':
                                 fld_tbl = 'id'

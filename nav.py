@@ -85,6 +85,7 @@ def navigate_to(nav_button, db, form, table_list):
                             else:
                                 fld_tbl = ii.short_name
                             ii.data = session[ii.short_name] = rcds[counter][-1].get(fld_tbl)
+                            print('session[{}]'.format(ii.short_name), session[ii.short_name])
                         counter += 1
                     else:
                         i.data = session[i.id] = tgt_record.get(i.id)

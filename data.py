@@ -103,6 +103,8 @@ class DataHandler():
                     if fn == "rcd_enca" and counter > 1:
                         sql += "%s, " %(fn)
                         value_str += "%s, " %(parent_last_row_id)
+                        print(counter)
+                        print(parent_last_row_id)
                     elif not fn == 'id':
                         sql += "%s, " %(fn)
                         value_str += "%s, " %(fv)
@@ -110,6 +112,7 @@ class DataHandler():
                 sql +=value_str + ')'
                 sql = sql.replace(", )", ")") #removes trailing ,
                 Cursor = self.conn.cursor(dictionary=True, buffered=True)
+                print (sql)
                 Cursor.execute(sql)
                 if counter == 1:
                     parent_last_row_id = Cursor.lastrowid

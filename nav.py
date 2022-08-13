@@ -13,12 +13,15 @@ def navigate_to(nav_button, db, form, table_list):
     while counter < len(table_list):
         if counter == 0:   
             sql = "Select * from {}".format(table_list[counter])
+            print (sql)
             db.execute(sql)
+            session['parent_last_row_id'] = db.lastrowid
+            print('nav session[parent_last_row_id]',session['parent_last_row_id'])
             rcds.append(db.fetchall())
-            counter += 1
             id = form.id.data
-            regd_id =[row.get('id') for row in rcds[0]] #making a list of registered ids
+            regd_id =[row.get('id') for row in rcds[counter]] #making a list of registered ids
             last_index = len(regd_id) -1 #calc id list length
+            counter += 1
         
             #resolve list index value of navigation target record (if any rcd)
             if not len(regd_id):
@@ -76,18 +79,22 @@ def navigate_to(nav_button, db, form, table_list):
                                 ON h.id = b.{} 
                                 """.format(table_list[0], table_list[counter],
                                 relation[counter-1][0].get('child_tbl_fld'))
-                        db.execute(sql)
-                        rcds.append(db.fetchall())
-                        
+                        a = db.execute(sql)
+
+                        #first time subform entry
+                        if a:
+                            rcds.append(db.fetchall())
+                        else:
+                            rcds.append([{}])
+
                         for ii in i:
                             if ii.short_name == 'idx':
                                 fld_tbl = 'id'
                             else:
                                 fld_tbl = ii.short_name
+
                             ii.data = session[ii.short_name] = rcds[counter][-1].get(fld_tbl)
-                            print('session[{}]'.format(ii.short_name), session[ii.short_name])
                         counter += 1
                     else:
                         i.data = session[i.id] = tgt_record.get(i.id)
-    
     return rcds, relation

@@ -46,9 +46,8 @@ class DataHandler():
         if not rcd:
             self.rcd ={}
         else:
-            self.rcd = rcd    
+            self.rcd = rcd
         
-
     def chk_sgl_fld(self): 
         """checks if a single value already exists in a single table field"""
 
@@ -83,7 +82,7 @@ class DataHandler():
                     if not fn == 'id':
                         sql += "%s = %s, " %(fn, fv)    
                 sql += "WHERE id = %s" %(ea_rcd['id'])
-                sql = sql.replace(", WHERE id =", " WHERE id =") #removes last ,
+                sql = sql.replace(", WHERE id =", " WHERE id =") #removes trailing ,
                 self.conn.cursor(dictionary=True, buffered=True).execute(sql)
                 self.conn.commit()
 
@@ -92,6 +91,8 @@ class DataHandler():
 
     def add_new(self):
         """adds record in table based on dict with tbl, fld and vals"""
+        if not session.get('relation'):
+            session['relation'] = [[{}]]
         counter = 0
         for t, r in self.rcd.items():
             value_str = ') VALUES('
@@ -99,12 +100,9 @@ class DataHandler():
             for ea_rcd in r:
                 sql = "INSERT INTO %s (" %(t)
                 for fn, fv in ea_rcd.items():
-                    
-                    if fn == "rcd_enca" and counter > 1:
+                    if fn == session.get('relation')[0][0].get('child_tbl_fld'):
                         sql += "%s, " %(fn)
-                        value_str += "%s, " %(parent_last_row_id)
-                        print(counter)
-                        print(parent_last_row_id)
+                        value_str += "%s, " %(session['parent_last_row_id'])
                     elif not fn == 'id':
                         sql += "%s, " %(fn)
                         value_str += "%s, " %(fv)
@@ -112,10 +110,9 @@ class DataHandler():
                 sql +=value_str + ')'
                 sql = sql.replace(", )", ")") #removes trailing ,
                 Cursor = self.conn.cursor(dictionary=True, buffered=True)
-                print (sql)
+                print('session[parent_last_row_id]',session['parent_last_row_id'])
+                print(sql)
                 Cursor.execute(sql)
-                if counter == 1:
-                    parent_last_row_id = Cursor.lastrowid
                 self.conn.commit()
   
         

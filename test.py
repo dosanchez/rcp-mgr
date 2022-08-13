@@ -18,8 +18,8 @@ from nav import navigate_to
 #                             AND REFERENCED_TABLE_NAME IS NOT NULL """
 # db.execute(sql)
 # relation = db.fetchall()
-relation = ['hola']
-for i in range(1):
-        print (i)
+relation = [[{}]]
+
+print (relation[0][0].get('a'))
 
 # conn.close()

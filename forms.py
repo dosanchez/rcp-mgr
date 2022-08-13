@@ -68,5 +68,5 @@ class Recet_en(FlaskForm):
     rct_yiel = DecimalField('Recipe yield',validators=[DataRequired()], 
         render_kw={"placeholder": "e.g. 0.98"}, default = 1)
     rct_unit = SelectField('Common UM', validators=[DataRequired()], coerce = int)
-    rct_ebld = BooleanField('Enabled', default = True, false_values=('',))
+    rct_ebld = BooleanField('Enabled', default = "checked", false_values=('',))
     subform = FormField(Recet_de)  

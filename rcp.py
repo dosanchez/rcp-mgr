@@ -206,8 +206,6 @@ def recipe():
 
     if form.validate_on_submit():
 
-
-        #Selectfield values
         listsql = listsql2 = {
                                 table_list[0]:[{
                                     'id':form.id.data,
@@ -233,7 +231,6 @@ def recipe():
         listsql1 ={list(listsql.keys())[0]: list(listsql.values())[0]} 
         del listsql2 [list(listsql.keys())[0]]
 
-
         if nav_button == "submit": #not a nav post
             #creates instance to chk if record exist
             record = dth.from_dict2sql(conn, listsql1)
@@ -252,6 +249,7 @@ def recipe():
             else:
                 #adds new record
                 record.add_new()
+
                 return redirect(url_for('recipe'))# clears POST data 
 
         if nav_button == "submit1": #not a nav post
@@ -263,7 +261,7 @@ def recipe():
                                                     }]
                                         }
             ) 
-            print (existe.chk_sgl_fld())
+
             if  existe.chk_sgl_fld():   #chk if record exists   
                 #update existing record
                 record.update()
@@ -275,7 +273,9 @@ def recipe():
                 return redirect(url_for('recipe'))# clears POST data
 
     records, relation = navigate_to(nav_button, db, form, table_list)
-    records.pop(0) #form header records not needed
+    session['relation'] = relation
+
+    records.pop(0) #form header records not needed nav populates header
     column_names =[['Recipe ingredients',['', '', 'Ingredient', 'Qty', 'Unit of measure',
                      'Ingredient yield']]]
     rcd_len = len(records)

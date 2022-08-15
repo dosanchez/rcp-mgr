@@ -20,11 +20,7 @@
           '{{session['rct_denu']}}', 
           {{session['rct_yiel']}},
           {{session['rct_unit']}},
-          {{session['rct_ebld']}},
-          {{session['rcd_enca']}},
-          {{session['rcd_ing']}},
-          {{session['rcd_qty']}},
-          {{session['rcd_yiel]}}
+          {{session['rct_ebld']}}
           )">
           <i class="fa-solid fa-door-open"></i>
         </button>
@@ -37,11 +33,7 @@
           '{{session['rct_denu']}}', 
           {{session['rct_yiel']}},
           {{session['rct_unit']}},
-          {{session['rct_ebld']}},
-          {{session['rcd_enca']}},
-          {{session['rcd_ing']}},
-          {{session['rcd_qty']}},
-          {{session['rcd_yiel']}}
+          {{session['rct_ebld']}}
           )">
           <i class="fa-solid fa-angles-left"></i>
         </button>
@@ -54,11 +46,7 @@
           '{{session['rct_denu']}}', 
           {{session['rct_yiel']}},
           {{session['rct_unit']}},
-          {{session['rct_ebld']}},
-          {{session['rcd_enca']}},
-          {{session['rcd_ing']}},
-          {{session['rcd_qty']}},
-          {{session['rcd_yiel']}}
+          {{session['rct_ebld']}}
           )">
           <i class="fa-solid fa-circle-chevron-left"></i>
         </button>
@@ -74,11 +62,7 @@
           '{{session['rct_denu']}}', 
           {{session['rct_yiel']}},
           {{session['rct_unit']}},
-          {{session['rct_ebld']}},
-          {{session['rcd_enca']}},
-          {{session['rcd_ing']}},
-          {{session['rcd_qty']}},
-          {{session['rcd_yiel']}}
+          {{session['rct_ebld']}}
           )">
           <i class="fa-solid fa-circle-chevron-right"></i>
         </button>
@@ -91,11 +75,7 @@
           '{{session['rct_denu']}}', 
           {{session['rct_yiel']}},
           {{session['rct_unit']}},
-          {{session['rct_ebld']}},
-          {{session['rcd_enca']}},
-          {{session['rcd_ing']}},
-          {{session['rcd_qty']}},
-          {{session['rcd_yiel']}}
+          {{session['rct_ebld']}}
           )">
           <i class="fa-solid fa-angles-right"></i>
         </button>
@@ -281,9 +261,7 @@
       document.getElementById("rcd_enca").value = 0;
       }
 
-    function Navrecord(NAV, RCTNAME, RCTCOST, RCTCOSC, 
-                      RCTDENS, RCTDENU, RCTYIEL, RCTUNIT, 
-                      RCTEBLD, RCTSUBF) {
+    function Navrecord(NAV, RCTNAME, RCTCOSC, RCTCOST, RCTDENS, RCTDENU, RCTYIEL, RCTUNIT, RCTEBLD) {
       document.getElementById("rct_name").value = RCTNAME;
       document.getElementById("rct_cosc").value = RCTCOSC;
       document.getElementById("rct_cost").value = RCTCOST;
@@ -291,9 +269,10 @@
       document.getElementById("rct_denu").value = RCTDENU;
       document.getElementById("rct_yiel").value = RCTYIEL;
       document.getElementById("rct_unit").value = RCTUNIT;
-      document.getElementById("rct_subf").value = RCTSUBF;
       document.getElementById("rct_ebld").value = RCTEBLD;
       document.getElementById("submit_button").value = NAV;
+      document.getElementById("subform-rcd_qty").value = 1;
+      document.getElementById("subform-rcd_yiel").value = 1;
       document.getElementById("submit_button").click();
       }
 

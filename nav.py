@@ -13,14 +13,17 @@ def navigate_to(nav_button, db, form, table_list):
     while counter < len(table_list):
         if counter == 0:   
             sql = "Select * from {}".format(table_list[counter])
-            print (sql)
             db.execute(sql)
-            session['parent_last_row_id'] = db.lastrowid
-            print('nav session[parent_last_row_id]',session['parent_last_row_id'])
             rcds.append(db.fetchall())
+
+            sql = "Select MAX(id) AS parent_last_row_id from {}".format(table_list[counter])
+            db.execute(sql)
+            session['parent_last_row_id'] = db.fetchall()[0].get('parent_last_row_id')
+
             id = form.id.data
             regd_id =[row.get('id') for row in rcds[counter]] #making a list of registered ids
             last_index = len(regd_id) -1 #calc id list length
+
             counter += 1
         
             #resolve list index value of navigation target record (if any rcd)
@@ -53,6 +56,7 @@ def navigate_to(nav_button, db, form, table_list):
             counter += 1
             pass
         else:
+
             tgt_record = rcds[0][pos]
             for i in form:
                 if not i.id == 'csrf_token':
@@ -73,17 +77,16 @@ def navigate_to(nav_button, db, form, table_list):
                             , table_list[counter])
                         db.execute(sql)
                         relation.append(db.fetchall())
-                        sql = """SELECT b.* 
-                                FROM {} AS h
-                                INNER JOIN {} AS b
-                                ON h.id = b.{} 
-                                """.format(table_list[0], table_list[counter],
+                        sql = """SELECT b.* FROM {} AS h INNER JOIN {} AS b
+                                ON h.id = b.{}""".format(table_list[0],
+                                table_list[counter],
                                 relation[counter-1][0].get('child_tbl_fld'))
-                        a = db.execute(sql)
+                        db.execute(sql)
+                        a = db.fetchall()
 
                         #first time subform entry
                         if a:
-                            rcds.append(db.fetchall())
+                            rcds.append(a)
                         else:
                             rcds.append([{}])
 

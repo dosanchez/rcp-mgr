@@ -85,6 +85,7 @@ class DataHandler():
                 sql = sql.replace(", WHERE id =", " WHERE id =") #removes trailing ,
                 self.conn.cursor(dictionary=True, buffered=True).execute(sql)
                 self.conn.commit()
+                print(sql)
 
             flash('Record updated!')
 
@@ -110,8 +111,6 @@ class DataHandler():
                 sql +=value_str + ')'
                 sql = sql.replace(", )", ")") #removes trailing ,
                 Cursor = self.conn.cursor(dictionary=True, buffered=True)
-                print('session[parent_last_row_id]',session['parent_last_row_id'])
-                print(sql)
                 Cursor.execute(sql)
                 self.conn.commit()
   

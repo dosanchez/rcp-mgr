@@ -11,72 +11,22 @@
         <small>add, edit, activate Recipes</small>
       </div>
       <div class="col-sm-4" style ="float:right;">
-        <button type = "button" class="btn" onclick="Navrecord(
-          'out', 
-          '{{session['rct_name']}}', 
-          {{session['rct_cost']}}, 
-          {{session['rct_cosc']}},
-          {{session['rct_dens']}},
-          '{{session['rct_denu']}}', 
-          {{session['rct_yiel']}},
-          {{session['rct_unit']}},
-          {{session['rct_ebld']}}
-          )">
+        <button type = "button" class="btn" onclick="Navrecord('out')">
           <i class="fa-solid fa-door-open"></i>
         </button>
-        <button type = "button" class="btn" onclick="Navrecord(
-          'first', 
-          '{{session['rct_name']}}', 
-          {{session['rct_cost']}}, 
-          {{session['rct_cosc']}},
-          {{session['rct_dens']}},
-          '{{session['rct_denu']}}', 
-          {{session['rct_yiel']}},
-          {{session['rct_unit']}},
-          {{session['rct_ebld']}}
-          )">
+        <button type = "button" class="btn" onclick="Navrecord('first')">
           <i class="fa-solid fa-angles-left"></i>
         </button>
-        <button type = "button" class="btn" onclick="Navrecord(
-          'back',
-          '{{session['rct_name']}}', 
-          {{session['rct_cost']}}, 
-          {{session['rct_cosc']}},
-          {{session['rct_dens']}},
-          '{{session['rct_denu']}}', 
-          {{session['rct_yiel']}},
-          {{session['rct_unit']}},
-          {{session['rct_ebld']}}
-          )">
+        <button type = "button" class="btn" onclick="Navrecord('back',)">
           <i class="fa-solid fa-circle-chevron-left"></i>
         </button>
         <button type ="button" class="btn btn-outline-dark" id = "id" locked>
           {{ form.id.data }}
         </button>
-        <button type = "button" class="btn" onclick="Navrecord(
-          'next', 
-          '{{session['rct_name']}}', 
-          {{session['rct_cost']}}, 
-          {{session['rct_cosc']}},
-          {{session['rct_dens']}},
-          '{{session['rct_denu']}}', 
-          {{session['rct_yiel']}},
-          {{session['rct_unit']}},
-          {{session['rct_ebld']}}
-          )">
+        <button type = "button" class="btn" onclick="Navrecord('next')">
           <i class="fa-solid fa-circle-chevron-right"></i>
         </button>
-        <button type = "button" class="btn" onclick="Navrecord(
-          'last',  
-          '{{session['rct_name']}}', 
-          {{session['rct_cost']}}, 
-          {{session['rct_cosc']}},
-          {{session['rct_dens']}},
-          '{{session['rct_denu']}}', 
-          {{session['rct_yiel']}},
-          {{session['rct_unit']}},
-          {{session['rct_ebld']}}
-          )">
+        <button type = "button" class="btn" onclick="Navrecord('last')">
           <i class="fa-solid fa-angles-right"></i>
         </button>
         <button type = "button" value = "new" class="btn" name ="nav" onclick="Newrecord()">
@@ -153,13 +103,7 @@
         <button type = "submit" value = "submit1" form ="nav_form" formmethod ="post" class="btn btn-md btn-primary" name ="nav">
           <strong id = "lbl_but_sub">update </strong><i class="fa-solid fa-circle-arrow-down"></i>
         </button>
-        <button type="button" class="btn btn-sm btn-primary" id = "sub"  value = "update" onclick="Newsub({{session['idx']}},
-                                                                                                          {{session['rcd_enca']}},
-                                                                                                          {{session['rcd_ing']}},
-                                                                                                          {{session['rcd_qty']}},
-                                                                                                          {{session['rcd_unit']}},
-                                                                                                          {{session['rcd_yiel']}}
-                                                                                                          )">
+        <button type="button" class="btn btn-sm btn-primary" id = "sub"  value = "update" onclick="Newsub()">
           UPDATE/ADD
         </button>
       </div>
@@ -261,15 +205,15 @@
       document.getElementById("rcd_enca").value = 0;
       }
 
-    function Navrecord(NAV, RCTNAME, RCTCOSC, RCTCOST, RCTDENS, RCTDENU, RCTYIEL, RCTUNIT, RCTEBLD) {
-      document.getElementById("rct_name").value = RCTNAME;
-      document.getElementById("rct_cosc").value = RCTCOSC;
-      document.getElementById("rct_cost").value = RCTCOST;
-      document.getElementById("rct_dens").value = RCTDENS;
-      document.getElementById("rct_denu").value = RCTDENU;
-      document.getElementById("rct_yiel").value = RCTYIEL;
-      document.getElementById("rct_unit").value = RCTUNIT;
-      document.getElementById("rct_ebld").value = RCTEBLD;
+    function Navrecord(NAV) {
+      document.getElementById("rct_name").value = '{{session['rct_name']}}';
+      document.getElementById("rct_cosc").value = {{session['rct_cost']}}
+      document.getElementById("rct_cost").value = {{session['rct_cosc']}};
+      document.getElementById("rct_dens").value = {{session['rct_dens']}};
+      document.getElementById("rct_denu").value = '{{session['rct_denu']}}';
+      document.getElementById("rct_yiel").value = {{session['rct_yiel']}};
+      document.getElementById("rct_unit").value = {{session['rct_unit']}};
+      document.getElementById("rct_ebld").value = {{session['rct_ebld']}};
       document.getElementById("submit_button").value = NAV;
       document.getElementById("subform-rcd_qty").value = 1;
       document.getElementById("subform-rcd_yiel").value = 1;
@@ -280,7 +224,7 @@
       document.getElementById("submit_button").click();
       }
 
-    function Newsub(IDX, RCDENCA, RCDING, RCDQTY, RCDUNIT, RCDYIEL) {
+    function Newsub() {
       if (document.getElementById("lbl_but_sub").innerHTML == "update "){
         document.getElementById("lbl_but_sub").innerHTML = "add ";
         document.getElementById("subform-idx").value = 0;
@@ -293,12 +237,12 @@
       }
       else{
         document.getElementById("lbl_but_sub").innerHTML = "update ";
-        document.getElementById("subform-idx").value = IDX;
-        document.getElementById("subform-rcd_enca").value = RCDENCA;
-        document.getElementById("subform-rcd_ing").value = RCDING;
-        document.getElementById("subform-rcd_qty").value = RCDQTY;
-        document.getElementById("subform-rcd_unit").value = RCDUNIT;
-        document.getElementById("subform-rcd_yiel").value = RCDYIEL;
+        document.getElementById("subform-idx").value = {{session['idx']}}
+        document.getElementById("subform-rcd_enca").value = {{session['rcd_enca']}};
+        document.getElementById("subform-rcd_ing").value = {{session['rcd_ing']}};
+        document.getElementById("subform-rcd_qty").value = {{session['rcd_qty']}};
+        document.getElementById("subform-rcd_unit").value = {{session['rcd_unit']}};
+        document.getElementById("subform-rcd_yiel").value = {{session['rcd_yiel']}};
       }      
     }
   </script>

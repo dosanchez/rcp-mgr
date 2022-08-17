@@ -113,6 +113,7 @@ class DataHandler():
                 Cursor = self.conn.cursor(dictionary=True, buffered=True)
                 Cursor.execute(sql)
                 self.conn.commit()
+                print(sql)
   
         
         if counter > 1:

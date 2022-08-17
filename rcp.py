@@ -189,7 +189,6 @@ def ingredient():
 def recipe():
     form = Recet_en()
     table_list = ['recet_en', 'recet_de']
-    print('form.id.data', form.id.data)
     #Queries for Selectfields active choices
     form.rct_unit.choices = form.subform.rcd_unit.choices = sel.UM_ebld(db)
     form.subform.rcd_ing.choices = sel.ingred_ebld(db)
@@ -244,8 +243,6 @@ def recipe():
                                         }
             ) 
             
-            print('form.id.data', form.id.data)
-            print('chk_sgl_fld()', existe.chk_sgl_fld())
             if  existe.chk_sgl_fld():   #chk if record exists   
                 #update existing record
                 record.update()

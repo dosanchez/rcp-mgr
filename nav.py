@@ -77,10 +77,14 @@ def navigate_to(nav_button, db, form, table_list):
                             , table_list[counter])
                         db.execute(sql)
                         relation.append(db.fetchall())
+
+
                         sql = """SELECT b.* FROM {} AS h INNER JOIN {} AS b
-                                ON h.id = b.{}""".format(table_list[0],
+                                ON h.id = b.{}
+                                WHERE h.id = {}""".format(table_list[0],
                                 table_list[counter],
-                                relation[counter-1][0].get('child_tbl_fld'))
+                                relation[counter-1][0].get('child_tbl_fld'),
+                                tgt_record.get('id'))
                         db.execute(sql)
                         a = db.fetchall()
 

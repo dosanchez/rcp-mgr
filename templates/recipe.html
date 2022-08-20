@@ -143,17 +143,18 @@
                   {% for key, value in row.items() %}
                     {% if key == 'id' %}
                       <td style="text-align: center;" class="pt-2">
-                        <button type = "submit" value = {{ value }} form ="nav_form" formmethod ="post" class="btn btn-sm btn-primary" name ="nav">
+                        <button type = "submit" value = {{ value }} form ="nav_form" formmethod ="post" class="btn btn-sm btn-primary" name ="subnav">
                           <small>edit</small>
+                        </button>
+                      </td>
+                      <td style="text-align: center;" class="pt-2">
+                        <button type = "submit" value = {{ value }} form ="nav_form" formmethod ="post" class="btn btn-sm btn-danger" name ="delete">
+                          <small>drop</small>
                         </button>
                       </td>
                     {% else %}
                       {% if key == relation[counter][0].get('child_tbl_fld') %} <!-- exception  hides parent-child field-->
-                        <td style="text-align: center;" class="pt-2">
-                          <button type = "submit" value = {{ value }} form ="nav_form" formmethod ="post" class="btn btn-sm btn-danger" name ="nav">
-                            <small>drop</small>
-                          </button>
-                        </td>
+                        <td hidden></td>
                       {% elif key == 'rcd_ing' %} <!-- exception loops for ing name -->
                         {% for choice in rcd_ing_choices %}
                           {% if choice[0] == value %}
@@ -214,6 +215,7 @@
       document.getElementById("rct_yiel").value = {{session['rct_yiel']}};
       document.getElementById("rct_unit").value = {{session['rct_unit']}};
       document.getElementById("rct_ebld").value = {{session['rct_ebld']}};
+      document.getElementById("id").value = {{session['id']}};
       document.getElementById("submit_button").value = NAV;
       document.getElementById("subform-rcd_qty").value = 1;
       document.getElementById("subform-rcd_yiel").value = 1;

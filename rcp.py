@@ -1,6 +1,6 @@
 import mysql.connector
 from flask import Flask, render_template, session, request, redirect, url_for
-from data import DataHandler as dth, select as sel
+from data import DataHandler as dth, select as sel, dlt
 from nav import navigate_to
 from forms import Ingredient, Unitmeas, Almacen, Recet_en
 
@@ -198,13 +198,26 @@ def recipe():
     rcd_ing_choices = sel.ingred_all(db)
 
     nav_button =  request.form.get('nav') #saves form navigation request
+    session['sub_nav_button'] = request.form.get('subnav') #saves subform navigation request
+    session['delete_id'] = request.form.get('delete')
+
     try:
         nav_button = int(nav_button)
     except:
         pass
     
-    print(nav_button)
-    print(form.validate_on_submit())
+    try:
+        session['sub_nav_button'] = int(session['sub_nav_button'])
+    except:
+        pass
+
+    try:
+        session['delete_id'] = int(session['delete_id'])
+    except:
+        pass    
+    print('session[delete_id]', session['delete_id'])
+    print('navbutton', nav_button)
+    print('formvalidate', form.validate_on_submit())
 
     if form.validate_on_submit():
 
@@ -273,6 +286,9 @@ def recipe():
                 #adds new record
                 record.add_new()
                 return redirect(url_for('recipe'))# clears POST data
+        
+        if session['delete_id']:
+            dlt.id(conn, table_list[1], session['delete_id'])
 
     records, relation = navigate_to(nav_button, db, form, table_list)
     session['relation'] = relation

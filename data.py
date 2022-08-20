@@ -1,9 +1,30 @@
 import mysql.connector
 from flask import flash, session
 
+class dlt():
+    def id(conn, tbl, id):
+        db = conn.cursor(dictionary=True, buffered=True)
+        sql = "DELETE FROM {} WHERE id = {}".format(tbl, id)
+        print(sql)
+        db.execute(sql)
+        conn.commit()
+        flash('record deleted')
+
+
 class select():
-    """Value functions for selectFields choices name rendering"""
+    """various query select functions """
     
+    #various queries
+    def all(db, tbl):
+        sql = "Select * from {}".format(tbl)
+        db.execute(sql)
+        return(db.fetchall())
+
+    def max_id(db, tbl):
+        sql = "Select MAX(id) AS parent_last_row_id from {}".format(tbl)
+        db.execute(sql)
+        return(db.fetchall())
+
     #Queries for active (ebld) choices
     def UM_ebld(db):
         
@@ -85,13 +106,14 @@ class DataHandler():
                 sql = sql.replace(", WHERE id =", " WHERE id =") #removes trailing ,
                 self.conn.cursor(dictionary=True, buffered=True).execute(sql)
                 self.conn.commit()
-                print(sql)
 
             flash('Record updated!')
 
 
     def add_new(self):
         """adds record in table based on dict with tbl, fld and vals"""
+        db = self.conn.cursor(dictionary=True, buffered=True)
+
         if not session.get('relation'):
             session['relation'] = [[{}]]
         counter = 0
@@ -103,17 +125,20 @@ class DataHandler():
                 for fn, fv in ea_rcd.items():
                     if fn == session.get('relation')[0][0].get('child_tbl_fld'):
                         sql += "%s, " %(fn)
-                        value_str += "%s, " %(session['parent_last_row_id'])
+                        if not session['id'] == 0:
+                            value_str += "%s, " %(session['id'])
+                        else:
+                            value_str += "%s, " %(select.max_id(db, 
+                                session.get('relation')[0][0].get('parent_tbl')))
+
                     elif not fn == 'id':
                         sql += "%s, " %(fn)
                         value_str += "%s, " %(fv)
 
                 sql +=value_str + ')'
                 sql = sql.replace(", )", ")") #removes trailing ,
-                Cursor = self.conn.cursor(dictionary=True, buffered=True)
-                Cursor.execute(sql)
+                db.execute(sql)
                 self.conn.commit()
-                print(sql)
   
         
         if counter > 1:

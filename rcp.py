@@ -2,7 +2,7 @@ import mysql.connector
 from flask import Flask, render_template, session, request, redirect, url_for
 from data import DataHandler as dth, select as sel, dlt
 from nav import navigate_to
-from forms import Ingredient, Unitmeas, Almacen, Recet_en
+from forms import Ingredient, Unitmeas, Almacen, Recet_en, Socio
 
 
 #database connection
@@ -74,6 +74,63 @@ def unitmeas():
     column_names =[['Registered unit of measurement', ['', 'Ud. base', 'Qty', 'Unit of measurement', 'Enabled']]]
 
     return render_template ('unitmeas.html', form = form, records = records,
+                            column_names = column_names)
+
+
+@app.route('/templates/socio.html', methods=['GET','POST'])
+def socio():
+    form = Socio()
+    table_list = ['socio']
+    print('hey')
+    nav_button =  request.form.get('nav') #saves form navigation request
+    try:
+        nav_button = int(nav_button)
+    except:
+        pass
+    
+
+    if form.validate_on_submit():
+
+        record = dth.from_dict2sql(conn, {
+                                        table_list[0]:[{
+                                            'id':form.id.data,
+                                            'soc_name':form.soc_name.data,
+                                            'soc_come':form.soc_come.data,
+                                            'soc_rnc':form.soc_rnc.data,
+                                            'soc_ebld':form.soc_ebld.data,
+                                            'soc_cont ':form.soc_cont.data,
+                                            'soc_addr':form.soc_addr.data,
+                                            'soc_tel1':form.soc_tel1.data,
+                                            'soc_tel2':form.soc_tel2.data,
+                                            'soc_tel3':form.soc_tel3.data
+                                                    }]
+                                        })
+
+        if nav_button == "submit": #not a nav post
+            #creates instance to chk if record exist
+            existe = dth.from_dict2sql(conn, {
+                                        table_list[0]:[{
+                                            'id':form.id.data,
+                                                    }]
+                                        }
+            ) 
+            if  existe.chk_sgl_fld():   #chk if record exists   
+                #update existing record
+                record.update()
+                return redirect(url_for('socio'))# clears POST data
+
+            else:
+                #adds new record
+                record.add_new()
+                return redirect(url_for('socio'))# clears POST data 
+
+
+    records, relation = navigate_to(nav_button, db, form, table_list)
+    column_names =[['Registered Business Partners',['id', 'Name', 'Fiscal Name',
+                     'Contact', 'Tax No.', 'Adress', 'Tel. 1', 'Tel. 2',
+                      'Tel. 3']]]
+
+    return render_template ('socio.html', form = form, records = records,
                             column_names = column_names)
 
 

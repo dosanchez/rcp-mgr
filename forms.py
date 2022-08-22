@@ -1,6 +1,6 @@
 from email.policy import default
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, DecimalField, HiddenField, BooleanField, Form, FormField
+from wtforms import StringField, SelectField, DecimalField, HiddenField, BooleanField, Form, FormField, IntegerField, TelField
 from wtforms.validators import DataRequired, Length, NumberRange
 
 
@@ -69,4 +69,27 @@ class Recet_en(FlaskForm):
         render_kw={"placeholder": "e.g. 0.98"}, default = 1)
     rct_unit = SelectField('Common UM', validators=[DataRequired()], coerce = int)
     rct_ebld = BooleanField('Enabled', default = "checked", false_values=('',))
-    subform = FormField(Recet_de)  
+    subform = FormField(Recet_de)
+
+
+class Socio(FlaskForm):
+    """wtform for Business partners (clients and vendors)"""
+    id = HiddenField()
+    soc_name = StringField('Business Partner', validators=[DataRequired(),Length(max=16)], 
+        render_kw={"placeholder": "e.g. Ohio Steel Co."})
+    soc_come= StringField('Reg. Name', validators=[Length(max = 16)], 
+        render_kw={"placeholder": "reg, fiscal name"})
+    soc_rnc = IntegerField('Fiscal No.', validators=[Length(max = 11)],
+        render_kw={"placeholder": "e.g. 101583983"})
+    soc_ebld = BooleanField('Enabled', default = "checked", false_values=('',))
+    soc_cont = StringField('Contact', validators=[Length(max = 6)], 
+        render_kw={"placeholder": "Mr. James Watt"})   
+    soc_addr = StringField('Business Partner', validators=[Length(max = 64)], 
+        render_kw={"placeholder": "up to 64 Chr. long"})
+    soc_tel1 = IntegerField('Tel. 1', validators=[Length(max = 11)],
+        render_kw={"placeholder": "e.g. 12125551332"})
+    soc_tel2 = IntegerField('Tel. 1', validators=[Length(max = 11)],
+        render_kw={"placeholder": "e.g. 12125551332"})
+    soc_tel3 = IntegerField('Tel. 1', validators=[Length(max = 11)],
+        render_kw={"placeholder": "e.g. 12125551332"})
+    

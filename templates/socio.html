@@ -3,12 +3,12 @@
 {% block form%}
 
 <div class ="container bg-light">
-  <form method="POST" id="nav_form" >
+  <form method="POST" id="nav_form">
     {{ form.hidden_tag() }}
     <div class="row mb-3" >
       <div class="col-sm-8">
-        <h2>Ingredients</h2>
-        <small>add, edit, activate Ingredients</small>
+        <h2>Unit of measurement</h2>
+        <small>add, edit, delete unit of measures and create your own table of equivalents</small>
       </div>
       <div class="col-sm-4" style ="float:right;">
         <button type = "button" class="btn" onclick="Navrecord('out')">
@@ -39,28 +39,44 @@
     </div>
     <div class="row">
       <div class="col-sm-4">
-        {{ form.ing_name.label(class="form-label") }}
-        {{ form.ing_name(class="form-control", value = form.ing_name.data) }}
+        {{ form.soc_name.label(class="form-label") }}
+        {{ form.soc_name(class="form-control", value = form.soc_name.data) }}
+      </div>
+      <div class="col-sm-3">
+        {{ form.soc_come.label(class="form-label") }}
+        {{ form.soc_come(class="form-control", value = form.soc_come.data) }}
+      </div>
+      <div class="col-sm-3">
+        {{ form.soc_rnc.label(class="form-label") }}
+        {{ form.soc_rnc(class="form-control", value = form.soc_rnc.data) }}
+      </div>
+      <div class="col-sm-2 mt-3 pt-4" style="float:right;">
+        {{ form.soc_ebld.label(class="form-check-label") }}
+        {{ form.soc_ebld(class="form-check-input", value = form.soc_ebld.data, onclick="Submit()") }}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-4">
+        {{ form.soc_cont.label(class="form-label") }}
+        {{ form.soc_cont(class="form-control", value = form.soc_cont.data) }}
+      </div>
+      <div class="col-sm-8">
+        {{ form.soc_addr.label(class="form-label") }}
+        {{ form.soc_addr(class="form-control", value = form.soc_addr.data) }}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-4">
+        {{ form.soc_tel1.label(class="form-label") }}
+        {{ form.soc_tel1(class="form-control", value = form.soc_tel1.data) }}
       </div>
       <div class="col-sm-4">
-        {{ form.ing_unit.label(class="form-label") }}
-        {{ form.ing_unit(class="form-select", value = form.ing_unit.data) }}
-      </div>
-      <div class="form-check col-sm-4 pt-5 mb-3">
-        {{ form.ing_ebld.label(class="form-check-label") }}
-        {{ form.ing_ebld(class="form-check-input", value = form.ing_ebld.data, onclick="Submit()") }}
+        {{ form.soc_tel2.label(class="form-label") }}
+        {{ form.soc_tel2(class="form-control", value = form.soc_tel2.data) }}
       </div>
       <div class="col-sm-4">
-        {{ form.ing_dens.label(class="form-label") }}
-        {{ form.ing_dens(class="form-control", value = form.ing_dens.data) }}
-      </div>
-      <div class="col-sm-4">
-        {{ form.ing_denu.label(class="form-label") }}
-        {{ form.ing_denu(class="form-select", value = form.ing_denu.data) }}
-      </div>
-      <div class="form-check col-sm-4 pt-5" style="opacity: 0.5;">
-        {{ form.ing_rece.label(class="form-check-label") }}
-        {{ form.ing_rece(class="form-check-input ", value = form.ing_rece.data) }}
+        {{ form.soc_tel3.label(class="form-label") }}
+        {{ form.soc_tel3(class="form-control", value = form.soc_tel3.data) }}
       </div>
     </div>
     <div style="float:right;">
@@ -89,11 +105,11 @@
         </thead>
         <tbody>
           {% for row in records[0] %}
-            {% if row['ing_ebld'] or not row['ing_rece'] %}  <!-- styles disabled records-->
-              <tr>
-            {% else %}
-              <tr style="opacity: 0.5;">
-            {% endif %}
+          {% if row['soc_ebld'] %}  <!-- styles disabled records-->
+          <tr>
+          {% else %}
+          <tr style="opacity: 0.5;">
+          {% endif %}
             {% for key, value in row.items() %}
                 {% if key == 'id' %}
                   <td style="text-align: center;" class="pt-2">
@@ -102,20 +118,10 @@
                     </button>
                   </td>
                 {% else %}
-                  {% if key == 'ing_ebld' and value %}<!-- just an exception for this form-->
+                  {% if key == 'soc_ebld' and value %}<!-- just an exception for this form-->
                     <td style="text-align: center;"><i class="fa-solid fa-check"></i></td>
-                  {% elif key == 'ing_ebld' and not value %}<!-- just an exception for this form-->
+                  {% elif key == 'soc_ebld' and not value %}<!-- just an exception for this form-->
                     <td style="text-align: center;"><i class="fa-solid fa-xmark"></i></td>
-                  {% elif key == 'ing_rece' and value %}<!-- just an exception for this form-->
-                    <td style="text-align: center;"><i class="fa-solid fa-check"></i></td>
-                  {% elif key == 'ing_rece' and not value %}<!-- just an exception for this form-->
-                    <td style="text-align: center;"><i class="fa-solid fa-xmark "></i></td>
-                  {% elif key == 'ing_unit' %}<!-- just an exception for this form-->
-                      {% for choice in ing_unit_choices %}
-                        {% if choice[0] == value %}
-                          <td style="text-align: center;">{{ choice[1] }}</td>
-                        {% endif %}
-                      {% endfor %}
                   {% else %}
                     <td style="text-align: center;">{{ value }}</td>
                   {% endif %}  
@@ -130,26 +136,33 @@
     </div>
   </div>
 </div>  
-{% endblock form %}
-{% block script %}
+{% endblock form%}
+{% block script%}
 {{ super() }}
   <script>
     function Newrecord() {
-        document.getElementById("ing_name").value = "";
-        document.getElementById("ing_unit").value = "";
-        document.getElementById("ing_dens").value = "";
-        document.getElementById("ing_denu").value = "";
-        document.getElementById("ing_rece").value = "";
+      document.getElementById("soc_name").value = "";
+        document.getElementById("soc_come").value = "";
+        document.getElementById("soc_cont").value = "";
+        document.getElementById("soc_rnc").value = "";
+        document.getElementById("soc_addr").value = "";
+        document.getElementById("soc_tel1").value = "";
+        document.getElementById("soc_tel2").value = "";
+        document.getElementById("soc_tel3").value = "";
+        document.getElementById("soc_ebld").value = "";
         document.getElementById("id").value = 0;
         }
 
     function Navrecord(NAV) {
-        document.getElementById("ing_name").value = '{{session['ing_name']}}';
-        document.getElementById("ing_unit").value = '{{session['ing_unit']}}';
-        document.getElementById("ing_dens").value = {{session['ing_dens']}};
-        document.getElementById("ing_denu").value = '{{session['ing_denu']}}';
-        document.getElementById("ing_rece").value = '{{session['ing_rece']}}';
-        document.getElementById("ing_ebld").value = '{{session['ing_ebld']}}';
+        document.getElementById("soc_name").value = '{{session['soc_name']}}';
+        document.getElementById("soc_come").value = '{{session['soc_come']}}';
+        document.getElementById("soc_cont").value = '{{session['soc_cont']}}';
+        document.getElementById("soc_rnc").value = {{session['soc_rnc']}};
+        document.getElementById("soc_addr").value = {{session['soc_addr']}};
+        document.getElementById("soc_tel1").value = {{session['soc_tel1']}};
+        document.getElementById("soc_tel2").value = {{session['soc_tel2']}};
+        document.getElementById("soc_tel3).value = {{session['soc_tel3']}};
+        document.getElementById("soc_ebld").value = '{{session['soc_ebld']}}';
         document.getElementById("submit_button").value = NAV;
         document.getElementById("submit_button").click();
         }

@@ -79,17 +79,17 @@ class Socio(FlaskForm):
         render_kw={"placeholder": "e.g. Ohio Steel Co."})
     soc_come= StringField('Reg. Name', validators=[Length(max = 16)], 
         render_kw={"placeholder": "reg, fiscal name"})
-    soc_rnc = IntegerField('Fiscal No.', validators=[Length(max = 11)],
+    soc_rnc = IntegerField('Fiscal No.', validators=[NumberRange(max = 9999999999999)],
         render_kw={"placeholder": "e.g. 101583983"})
     soc_ebld = BooleanField('Enabled', default = "checked", false_values=('',))
-    soc_cont = StringField('Contact', validators=[Length(max = 6)], 
-        render_kw={"placeholder": "Mr. James Watt"})   
+    soc_cont = StringField('Contact', validators=[Length(max = 16)], 
+        render_kw={"placeholder": "e.g. Mr. James Watt"})   
     soc_addr = StringField('Business Partner', validators=[Length(max = 64)], 
         render_kw={"placeholder": "up to 64 Chr. long"})
-    soc_tel1 = IntegerField('Tel. 1', validators=[Length(max = 11)],
+    soc_tel1 = IntegerField('Tel. 1', validators=[NumberRange(max = 9999999999999)],
         render_kw={"placeholder": "e.g. 12125551332"})
-    soc_tel2 = IntegerField('Tel. 1', validators=[Length(max = 11)],
+    soc_tel2 = IntegerField('Tel. 1', validators=[NumberRange(max = 9999999999999)],
         render_kw={"placeholder": "e.g. 12125551332"})
-    soc_tel3 = IntegerField('Tel. 1', validators=[Length(max = 11)],
+    soc_tel3 = IntegerField('Tel. 1', validators=[NumberRange(max = 9999999999999)],
         render_kw={"placeholder": "e.g. 12125551332"})
     

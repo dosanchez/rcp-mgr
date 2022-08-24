@@ -1,5 +1,5 @@
 import mysql.connector
-from nav import navigate_to
+from nav import navigate_to, nav_pos
 
 # conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
                         #       host='192.168.100.254',
@@ -13,11 +13,9 @@ from nav import navigate_to
 # sql = """SELECT MAX(id) AS parent_last_row_id
 #         FROM unitmeas"""
 
-def nav_pos():
-        regd_id =[row for row in range(10)]
-        return regd_id
+a, b = nav_pos([], None, None)
 
-print(nav_pos())
+print(nav_pos([], None, None))
 
 
 

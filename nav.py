@@ -8,9 +8,8 @@ def nav_pos(rcds, id, nav_button):
 
     regd_id =[row.get('id') for row in rcds] #making a list of registered ids
     last_index = len(regd_id) -1 #calc id list length
-
     if not len(regd_id):
-        pass
+        return None, []
     elif id == None:
         return -1, regd_id
     elif isinstance(nav_button,(int)):
@@ -44,7 +43,6 @@ def navigate_to(nav_button, db, form, table_list):
             res = sel.max_id(db, table_list[counter])
             session['parent_last_row_id'] = res[0].get('parent_last_row_id')
             id = form.id.data
-
             pos, regd_id = nav_pos(rcds[counter], id, nav_button)
             counter += 1
         

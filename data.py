@@ -5,7 +5,6 @@ class dlt():
     def id(conn, tbl, id):
         db = conn.cursor(dictionary=True, buffered=True)
         sql = "DELETE FROM {} WHERE id = {}".format(tbl, id)
-        print(sql)
         db.execute(sql)
         conn.commit()
         flash('record deleted')

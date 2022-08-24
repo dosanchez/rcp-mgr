@@ -81,7 +81,6 @@ def unitmeas():
 def socio():
     form = Socio()
     table_list = ['socio']
-    print('hey')
     nav_button =  request.form.get('nav') #saves form navigation request
     try:
         nav_button = int(nav_button)
@@ -127,7 +126,7 @@ def socio():
 
     records, relation = navigate_to(nav_button, db, form, table_list)
     column_names =[['Registered Business Partners',['id', 'Name', 'Fiscal Name',
-                     'Contact', 'Tax No.', 'Adress', 'Tel. 1', 'Tel. 2',
+                     'Tax No.', 'enabled', 'Contact', 'Adress', 'Tel. 1', 'Tel. 2',
                       'Tel. 3']]]
 
     return render_template ('socio.html', form = form, records = records,
@@ -186,7 +185,6 @@ def almacen():
 def ingredient():
     form = Ingredient()
     table_list = ['ingredient']
-    print('form.id.data', form.id.data)
 
     form.ing_unit.choices = sel.UM_ebld(db) #Queries for Selectfields active choices
     ing_unit_choices = sel.UM_all(db) #Queries for all Selectfields choices
@@ -223,7 +221,6 @@ def ingredient():
                                         }
             ) 
             
-            print('chk_sgl_fld()', existe.chk_sgl_fld())
             if  existe.chk_sgl_fld():   #chk if record exists   
                 #update existing record
                 record.update()
@@ -272,8 +269,7 @@ def recipe():
         session['delete_id'] = int(session['delete_id'])
     except:
         pass    
-    print('session[delete_id]', session['delete_id'])
-    print('navbutton', nav_button)
+
     print('formvalidate', form.validate_on_submit())
 
     if form.validate_on_submit():

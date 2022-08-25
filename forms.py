@@ -1,6 +1,6 @@
 from email.policy import default
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, DecimalField, HiddenField, BooleanField, Form, FormField, IntegerField, TelField
+from wtforms import StringField, SelectField, DecimalField, HiddenField, BooleanField, Form, FormField, IntegerField, FileField
 from wtforms.validators import DataRequired, Length, NumberRange
 
 
@@ -35,38 +35,39 @@ class Almacen(FlaskForm):
     """wtform for Warehouses"""
     id = HiddenField()
     alm_name = StringField('Warehouse', validators=[DataRequired(),Length(max=16)], 
-        render_kw={"placeholder": "e.g. Branch 01"})
+                            render_kw={"placeholder": "e.g. Branch 01"})
     alm_ebld = BooleanField('Enabled', default = True, false_values=('',))
 
 class Ingredient(FlaskForm):
     """wtform for Ingredients"""
     id = HiddenField()
-    ing_name = StringField('Ingredient', validators=[DataRequired(),Length(max=16)], 
-        render_kw={"placeholder": "e.g. Paprika"})
+    ing_name = StringField('Ingredient', validators=[DataRequired(),
+                            Length(max=16)], 
+                            render_kw={"placeholder": "e.g. Paprika"})
     ing_unit = SelectField('Common UM', validators=[DataRequired()], 
-        default = 'g')
+                            default = 'g')
     ing_dens = DecimalField('Ingredient density',validators=[DataRequired()], 
-        render_kw={"placeholder": "Density"}, default = 1)
+                            render_kw={"placeholder": "Density"}, default = 1)
     ing_denu = SelectField('Density UM', validators=[DataRequired()], 
-        choices=['g/ml','g/unit'], default ='g/ml')
-    ing_rece = BooleanField('Recipe', default = False, false_values=('',), render_kw = {'disabled':''})
+                            choices=['g/ml','g/unit'], default ='g/ml')
+    ing_rece = BooleanField('Recipe', default = False, false_values=('',), 
+                            render_kw = {'disabled':''})
     ing_ebld = BooleanField('Enabled', default = True, false_values=('',))
 
 class Recet_en(FlaskForm):
     """wtform for recipe form header"""
     id = HiddenField()
-    rct_name = StringField('Recipe/Plate Name', validators=[DataRequired(),Length(max=16)], 
-        render_kw={"placeholder": "e.g. French Fries Side"})
-    rct_cost = DecimalField('Actual Cost', 
-        render_kw = {'disabled':''}, default = 0)
-    rct_cosc = DecimalField('Standard Cost', 
-        render_kw = {'disabled':''}, default = 0)
+    rct_name = StringField('Recipe/Plate Name', validators=[DataRequired(),
+                            Length(max=16)], 
+                            render_kw={"placeholder": "e.g. French Fries Side"})
+    rct_cost = DecimalField('Actual Cost', render_kw = {'disabled':''}, default = 0)
+    rct_cosc = DecimalField('Standard Cost', render_kw = {'disabled':''}, default = 0)
     rct_dens = DecimalField('Recipe/Plate density',validators=[DataRequired()], 
-        render_kw={"placeholder": "density"}, default = 1)
+                            render_kw={"placeholder": "density"}, default = 1)
     rct_denu = SelectField('Recipe/Plate density UM', validators=[DataRequired()], 
-        choices=['g/ml','g/unit'], default ='g/unit')
+                            choices=['g/ml','g/unit'], default ='g/unit')
     rct_yiel = DecimalField('Recipe yield',validators=[DataRequired()], 
-        render_kw={"placeholder": "e.g. 0.98"}, default = 1)
+                            render_kw={"placeholder": "e.g. 0.98"}, default = 1)
     rct_unit = SelectField('Common UM', validators=[DataRequired()], coerce = int)
     rct_ebld = BooleanField('Enabled', default = "checked", false_values=('',))
     subform = FormField(Recet_de)
@@ -75,21 +76,41 @@ class Recet_en(FlaskForm):
 class Socio(FlaskForm):
     """wtform for Business partners (clients and vendors)"""
     id = HiddenField()
-    soc_name = StringField('Business Partner', validators=[DataRequired(),Length(max=16)], 
-        render_kw={"placeholder": "e.g. Ohio Steel Co."})
+    soc_name = StringField('Business Partner', validators=[DataRequired(),
+                            Length(max=16)], 
+                            render_kw={"placeholder": "e.g. Ohio Steel Co."})
     soc_come= StringField('Reg. Name', validators=[Length(max = 16)], 
-        render_kw={"placeholder": "reg, fiscal name"})
+                            render_kw={"placeholder": "reg, fiscal name"})
     soc_rnc = IntegerField('Fiscal No.', validators=[NumberRange(max = 9999999999999)],
-        render_kw={"placeholder": "e.g. 101583983"})
+                            render_kw={"placeholder": "e.g. 101583983"})
     soc_ebld = BooleanField('Enabled', default = "checked", false_values=('',))
     soc_cont = StringField('Contact', validators=[Length(max = 16)], 
-        render_kw={"placeholder": "e.g. Mr. James Watt"})   
+                            render_kw={"placeholder": "e.g. Mr. James Watt"})   
     soc_addr = StringField('Business Partner', validators=[Length(max = 64)], 
-        render_kw={"placeholder": "up to 64 Chr. long"})
+                            render_kw={"placeholder": "up to 64 Chr. long"})
     soc_tel1 = IntegerField('Tel. 1', validators=[NumberRange(max = 9999999999999)],
-        render_kw={"placeholder": "e.g. 12125551332"})
+                            render_kw={"placeholder": "e.g. 12125551332"})
     soc_tel2 = IntegerField('Tel. 1', validators=[NumberRange(max = 9999999999999)],
-        render_kw={"placeholder": "e.g. 12125551332"})
+                            render_kw={"placeholder": "e.g. 12125551332"})
     soc_tel3 = IntegerField('Tel. 1', validators=[NumberRange(max = 9999999999999)],
-        render_kw={"placeholder": "e.g. 12125551332"})
+                            render_kw={"placeholder": "e.g. 12125551332"})
     
+class Sku(Flaskform):
+    id = HiddenField()
+    sku_name = StringField('Business Partner', validators=[DataRequired(),
+                            Length(max=16)], 
+                            render_kw={"placeholder": "e.g. Ohio Steel Co."})
+    sku_ingr = SelectField('Ingredient', validators=[DataRequired()], coerce= int) 
+    sku_cont = DecimalField('Qty',validators=[DataRequired()], default = 1)
+    sku_unit = SelectField('Unit of measure', validators=[DataRequired()], 
+                            coerce = int)
+    sku_barc = StringField('Business Partner', validators=[DataRequired(),
+                            Length(max=16)], 
+                            render_kw={"placeholder": "e.g. Ohio Steel Co."})
+    sku_foto = FileField('Sku Photo')
+    sku_pref = SelectField('Ingredient', validators=[DataRequired()], coerce= int)
+    sku_itbi = DecimalField('Qty',validators=[DataRequired()], default = 0.18)
+    sku_vaci = DecimalField('Qty',validators=[DataRequired()], default = 1) 
+    sku_nams = StringField('Business Partner', validators=[DataRequired(),
+                            Length(max=16)], 
+                            render_kw={"placeholder": "e.g. Ohio Steel Co."})

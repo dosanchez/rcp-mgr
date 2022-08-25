@@ -31,11 +31,12 @@ def nav_pos(rcds, id, nav_button):
     else:
         return -1, regd_id    
 
-def navigate_to(nav_button, db, form, table_list):
+def navigate_to(nav_button, conn, form, table_list):
     """visualize registered U.M and moves form to nav target"""
     rcds =[]
     relation=[]
     counter = 0
+    db = conn.cursor(dictionary=True, buffered=True)
     while counter < len(table_list):
         if counter == 0:   
             rcds.append(sel.all(db, table_list[counter]))
@@ -62,32 +63,15 @@ def navigate_to(nav_button, db, form, table_list):
                     elif i.id == "qty_base" and table_list[0] == 'unitmeas':#exception for unitmeas form
                         i.data = session['uni_conv'] = tgt_record.get('uni_conv')
                     elif type(i).__name__ == 'FormField':
-                        sql ="""SELECT TABLE_NAME AS child_tbl, 
-                            COLUMN_NAME AS child_tbl_fld, 
-                            REFERENCED_TABLE_NAME AS parent_tbl, 
-                            REFERENCED_COLUMN_NAME AS parent_tbl_fld 
-                            FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE 
-                            WHERE TABLE_SCHEMA = 'std'
-                            AND REFERENCED_TABLE_NAME = '{}'
-                            AND TABLE_NAME = '{}'
-                            AND REFERENCED_COLUMN_NAME = 'id'""".format(table_list[0]
-                            , table_list[counter])
-                        db.execute(sql)
-                        relation.append(db.fetchall())
 
+                        relation.append(sel.foreign_tbl(conn, table_list[0], table_list[counter]))
 
-                        sql = """SELECT b.* FROM {} AS h INNER JOIN {} AS b
-                                ON h.id = b.{}
-                                WHERE h.id = {}""".format(table_list[0],
-                                table_list[counter],
-                                relation[counter-1][0].get('child_tbl_fld'),
-                                tgt_record.get('id'))
-                        db.execute(sql)
-                        a = db.fetchall()
+                        subform_rcds = sel.chld_vals(db, table_list[0], table_list[counter],
+                                relation[counter-1][0].get('child_tbl_fld'), tgt_record.get('id'))
 
                         #first time subform entry
-                        if a:
-                            rcds.append(a)
+                        if subform_rcds:
+                            rcds.append(subform_rcds)
                         else:
                             rcds.append([{}])
 

@@ -15,14 +15,40 @@ class select():
     
     #various queries
     def all(db, tbl):
+        """returns all records from a given table"""
         sql = "Select * from {}".format(tbl)
         db.execute(sql)
         return(db.fetchall())
 
     def max_id(db, tbl):
+        """returns max id field value from a given table"""
         sql = "Select MAX(id) AS parent_last_row_id from {}".format(tbl)
         db.execute(sql)
         return(db.fetchall())
+
+    def foreign_tbl(conn, ref_tbl, chld_tbl):
+        """returns parent child fields of two given tables"""
+        db = conn.cursor(dictionary=True, buffered=True)
+        sql ="""SELECT TABLE_NAME AS child_tbl, 
+                            COLUMN_NAME AS child_tbl_fld, 
+                            REFERENCED_TABLE_NAME AS parent_tbl, 
+                            REFERENCED_COLUMN_NAME AS parent_tbl_fld 
+                            FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE 
+                            WHERE TABLE_SCHEMA = '{}'
+                            AND REFERENCED_TABLE_NAME = '{}'
+                            AND TABLE_NAME = '{}'
+                            AND REFERENCED_COLUMN_NAME = 'id'""".format(conn.database, 
+                                ref_tbl, chld_tbl)
+        db.execute(sql)
+        return db.fetchall()
+
+    def chld_vals(db, ref_tbl, chld_tbl, child_tbl_fld, ref_tbl_id_val):
+        """returns a table with all child records for a given parent record id value"""
+        sql = """SELECT b.* FROM {} AS h INNER JOIN {} AS b
+                ON h.id = b.{}
+                WHERE h.id = {}""".format(ref_tbl, chld_tbl, child_tbl_fld, ref_tbl_id_val)
+        db.execute(sql)
+        return db.fetchall()     
 
     #Queries for active (ebld) choices
     def UM_ebld(db):

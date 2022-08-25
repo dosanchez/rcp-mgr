@@ -9,9 +9,7 @@ from forms import Ingredient, Unitmeas, Almacen, Recet_en, Socio
 conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
                               host='192.168.100.254',
                               database='std')
-# conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
-#                               host='200.125.169.75',
-#                               database='std')
+
 db = conn.cursor(dictionary=True, buffered=True)
 
 # database parent-child table
@@ -70,7 +68,7 @@ def unitmeas():
                 return redirect(url_for('unitmeas'))# clears POST data 
 
 
-    records, relation = navigate_to(nav_button, db, form, table_list)
+    records, relation = navigate_to(nav_button, conn, form, table_list)
     column_names =[['Registered unit of measurement', ['', 'Ud. base', 'Qty', 'Unit of measurement', 'Enabled']]]
 
     return render_template ('unitmeas.html', form = form, records = records,
@@ -124,7 +122,7 @@ def socio():
                 return redirect(url_for('socio'))# clears POST data 
 
 
-    records, relation = navigate_to(nav_button, db, form, table_list)
+    records, relation = navigate_to(nav_button, conn, form, table_list)
     column_names =[['Registered Business Partners',['id', 'Name', 'Fiscal Name',
                      'Tax No.', 'enabled', 'Contact', 'Adress', 'Tel. 1', 'Tel. 2',
                       'Tel. 3']]]
@@ -174,7 +172,7 @@ def almacen():
                 return redirect(url_for('almacen'))# clears POST data 
 
 
-    records, relation = navigate_to(nav_button, db, form, table_list)
+    records, relation = navigate_to(nav_button, conn, form, table_list)
     column_names =[['Registered Warehouses',['', 'Warehouse', 'Enabled']]]
 
     return render_template ('almacen.html', form = form, records = records,
@@ -232,7 +230,7 @@ def ingredient():
                 return redirect(url_for('ingredient'))# clears POST data 
 
 
-    records, relation = navigate_to(nav_button, db, form, table_list)
+    records, relation = navigate_to(nav_button, conn, form, table_list)
     column_names =[['Registered Ingredients',['', 'Ingredient', 'Common UM', 'Density', 'Densi UM',
                      'Recipe','Enabled']]]
 
@@ -343,7 +341,7 @@ def recipe():
         if session['delete_id']:
             dlt.id(conn, table_list[1], session['delete_id'])
 
-    records, relation = navigate_to(nav_button, db, form, table_list)
+    records, relation = navigate_to(nav_button, conn, form, table_list)
     session['relation'] = relation
 
     records.pop(0) #form header records not needed nav populates header

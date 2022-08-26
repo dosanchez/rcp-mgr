@@ -6,9 +6,9 @@ from forms import Ingredient, Sku, Unitmeas, Almacen, Recet_en, Socio
 
 
 #database connection
-conn = mysql.connector.connect(user='sql5514428', password='C3b4Xn6K4Z',
-                              host='sql5.freesqldatabase.com',
-                              database='sql5514428')
+conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
+                              host='192.168.100.254',
+                              database='std')
 
 db = conn.cursor(dictionary=True, buffered=True)
 
@@ -36,7 +36,7 @@ def unitmeas():
     except:
         pass
     
-
+    print (type(form).__name__)
     if form.validate_on_submit():
         uni_conv = form.qty_base.data / form.qty_um.data
         record = dth.from_dict2sql(conn, {
@@ -182,7 +182,7 @@ def almacen():
 @app.route('/templates/ingredient.html', methods=['GET','POST'])
 def ingredient():
     form = Ingredient()
-    table_list = ['ingredient']
+    table_list = ['recet_en']
 
     form.ing_unit.choices = sel.UM_ebld(db) #Queries for Selectfields active choices
     ing_unit_choices = sel.UM_all(db) #Queries for all Selectfields choices
@@ -200,12 +200,12 @@ def ingredient():
         record = dth.from_dict2sql(conn, {
                                         table_list[0]:[{
                                             'id':form.id.data,
-                                            'ing_name':form.ing_name.data,
-                                            'ing_unit':form.ing_unit.data,
-                                            'ing_dens':form.ing_dens.data,
-                                            'ing_denu':form.ing_denu.data,
-                                            'ing_rece':form.ing_rece.data,
-                                            'ing_ebld':form.ing_ebld.data  
+                                            'rct_name':form.ing_name.data,
+                                            'rct_unit':form.ing_unit.data,
+                                            'rct_dens':form.ing_dens.data,
+                                            'rct_denu':form.ing_denu.data,
+                                            'rct_rece':form.ing_rece.data,
+                                            'rct_ebld':form.ing_ebld.data  
                                                     }]
                                         })
 

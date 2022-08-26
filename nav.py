@@ -38,10 +38,20 @@ def navigate_to(nav_button, conn, form, table_list):
     counter = 0
     db = conn.cursor(dictionary=True, buffered=True)
     while counter < len(table_list):
-        if counter == 0:   
-            rcds.append(sel.all(db, table_list[counter]))
+        if counter == 0:
+            print('type form name', type(form).__name__ )
+            #Ingredient and recipe forms share the same SQL Table recet_en need to discriminate
+            if type(form).__name__ == 'Ingredient':
+                rcds.append(sel.all(db, table_list[counter], rct_rece = 0))
+                res = sel.max_id(db, table_list[counter], rct_rece = 0)
+            elif type(form).__name__ == 'Recet_en':
+                rcds.append(sel.all(db, table_list[counter], rct_rece = 1))
+                res = sel.max_id(db, table_list[counter], rct_rece = 1) 
+            else:
+                rcds.append(sel.all(db, table_list[counter]))
+                res = sel.max_id(db, table_list[counter])
 
-            res = sel.max_id(db, table_list[counter])
+
             session['parent_last_row_id'] = res[0].get('parent_last_row_id')
             id = form.id.data
             pos, regd_id = nav_pos(rcds[counter], id, nav_button)

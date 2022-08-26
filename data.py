@@ -14,16 +14,37 @@ class select():
     """various query select functions """
     
     #various queries
-    def all(db, tbl):
-        """returns all records from a given table"""
-        sql = "Select * from {}".format(tbl)
-        db.execute(sql)
+    def all(db, tbl, **kwargs):
+        """returns all records from a given table filtered when given"""
+        if not kwargs:
+            sql = "Select * from {}".format(tbl)
+            db.execute(sql)
+        else:
+            sql = "Select * from {} WHERE ".format(tbl)
+            for field, value in kwargs.items():
+                if isinstance(value, str):
+                    sql += "{} = '{}' ".format(field, value)
+                else:
+                    sql += "{} = {} ".format(field, value)
+                sql += "AND "
+            db.execute(sql[:-4]) 
         return(db.fetchall())
 
-    def max_id(db, tbl):
-        """returns max id field value from a given table"""
-        sql = "Select MAX(id) AS parent_last_row_id from {}".format(tbl)
-        db.execute(sql)
+
+    def max_id(db, tbl, **kwargs):
+        """returns max id field value from a given table filtered when given"""
+        if not kwargs:
+            sql = "Select MAX(id) AS parent_last_row_id from {}".format(tbl)
+            db.execute(sql)
+        else:
+            sql = "SELECT MAX(id) AS parent_last_row_id FROM {} WHERE ".format(tbl)
+            for field, value in kwargs.items():
+                if isinstance(value, str):
+                    sql += "{} = '{}' ".format(field, value)
+                else:
+                    sql += "{} = {} ".format(field, value)
+                sql += "AND " 
+            db.execute(sql[:-4])
         return(db.fetchall())
 
     def foreign_tbl(conn, ref_tbl, chld_tbl):

@@ -95,22 +95,20 @@ class Socio(FlaskForm):
     soc_tel3 = IntegerField('Tel. 1', validators=[NumberRange(max = 9999999999999)],
                             render_kw={"placeholder": "e.g. 12125551332"})
     
-class Sku(Flaskform):
+class Sku(FlaskForm):
     id = HiddenField()
-    sku_name = StringField('Business Partner', validators=[DataRequired(),
+    sku_name = StringField('SKU Name', validators=[DataRequired(),
                             Length(max=16)], 
-                            render_kw={"placeholder": "e.g. Ohio Steel Co."})
-    sku_ingr = SelectField('Ingredient', validators=[DataRequired()], coerce= int) 
-    sku_cont = DecimalField('Qty',validators=[DataRequired()], default = 1)
+                            render_kw={"placeholder": "e.g. Heinz Tomato Soup"})
+    sku_ingr = SelectField('Related Recipe/ingredient', default = None, coerce= int) 
+    sku_cont = DecimalField('Qty',validators=[DataRequired()], default = 0)
     sku_unit = SelectField('Unit of measure', validators=[DataRequired()], 
                             coerce = int)
-    sku_barc = StringField('Business Partner', validators=[DataRequired(),
-                            Length(max=16)], 
-                            render_kw={"placeholder": "e.g. Ohio Steel Co."})
+    sku_barc = StringField('Business Partner', validators = [Length(max=16)], 
+                            render_kw={"placeholder": "insert barcode here"})
     sku_foto = FileField('Sku Photo')
-    sku_pref = SelectField('Ingredient', validators=[DataRequired()], coerce= int)
-    sku_itbi = DecimalField('Qty',validators=[DataRequired()], default = 0.18)
-    sku_vaci = DecimalField('Qty',validators=[DataRequired()], default = 1) 
-    sku_nams = StringField('Business Partner', validators=[DataRequired(),
-                            Length(max=16)], 
-                            render_kw={"placeholder": "e.g. Ohio Steel Co."})
+    sku_pref = SelectField('Preferred Vendor', default = None, coerce= int)
+    sku_itbi = DecimalField('Sales Tax',validators=[DataRequired()], default = 0.18)
+    sku_vaci = DecimalField('Empty container weight', default = 0) 
+    sku_nams = StringField('SKU name on preferred vendor invoice ', 
+                            validators=[Length(max=16)])

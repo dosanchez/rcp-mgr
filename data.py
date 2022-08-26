@@ -68,6 +68,14 @@ class select():
         return sorted([(d['id'], d['ing_name']) for d in list(db.fetchall() )], 
                         key = lambda fld: fld[1])
 
+    def bp_ebld(db):
+        sql = """SELECT id, soc_name 
+            FROM socio
+            WHERE soc_ebld = True""" 
+        db.execute(sql)
+        return sorted([(d['id'], d['ing_name']) for d in list(db.fetchall() )], 
+                        key = lambda fld: fld[1])
+
     #Queries for all choices
     def UM_all(db):
         
@@ -82,6 +90,14 @@ class select():
             FROM ingredient""" 
         db.execute(sql)
         return sorted([(d['id'], d['ing_name']) for d in list(db.fetchall() )], 
+                        key = lambda fld: fld[1])
+    
+    def bp_all(db):
+        
+        sql = """SELECT id, soc_name 
+                FROM socio"""
+        db.execute(sql)
+        return sorted([(d['id'], d['uni_symb']) for d in list(db.fetchall())],
                         key = lambda fld: fld[1])
 
 class DataHandler():

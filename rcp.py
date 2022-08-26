@@ -2,7 +2,7 @@ import mysql.connector
 from flask import Flask, render_template, session, request, redirect, url_for
 from data import DataHandler as dth, select as sel, dlt
 from nav import navigate_to
-from forms import Ingredient, Unitmeas, Almacen, Recet_en, Socio
+from forms import Ingredient, Sku, Unitmeas, Almacen, Recet_en, Socio
 
 
 #database connection
@@ -196,7 +196,6 @@ def ingredient():
     
 
     if form.validate_on_submit():
-        #Selectfield values
 
         record = dth.from_dict2sql(conn, {
                                         table_list[0]:[{
@@ -357,6 +356,74 @@ def recipe():
                             rcd_ing_choices = rcd_ing_choices,
                             relation = relation,
                             rcd_len = rcd_len)
+
+@app.route('/templates/sku.html', methods=['GET','POST'])
+def sku():
+    form = Sku()
+    table_list = ['sku']
+
+    form.sku_ingr.choices = sel.UM_ebld(db) #Queries for Selectfields active choices
+    sku_ingr_choices = sel.UM_all(db) #Queries for all Selectfields choices
+
+    form.sku_unit.choices = sel.UM_ebld(db) #Queries for Selectfields active choices
+    sku_unit_choices = sel.UM_all(db) #Queries for all Selectfields choices
+
+    form.sku_pref.choices = sel.bp_ebld(db) #Queries for Selectfields active choices
+    sku_pref_choices = sel.bp_all(db) #Queries for all Selectfields choices
+
+    nav_button =  request.form.get('nav') #saves form navigation request
+    try:
+        nav_button = int(nav_button)
+    except:
+        pass
+    
+
+    if form.validate_on_submit():
+
+
+        record = dth.from_dict2sql(conn, {
+                                        table_list[0]:[{
+                                            'id':form.id.data,
+                                            'sku_name':form.sku_name.data,
+                                            'sku_ingr':form.sku_ingr.data,
+                                            'sku_cont':form.sku_cont.data,
+                                            'sku_unit':form.sku_unit.data,
+                                            'sku_barc':form.sku_barc.data,
+                                            'sku_foto':form.sku_foto.data,
+                                            'sku_pref':form.sku_pref.data,
+                                            'sku_itbi':form.sku_itbi.data,
+                                            'sku_vaci':form.sku_vaci.data,
+                                            'sku_nams':form.sku_nams.data  
+                                                    }]
+                                        })
+
+        if nav_button == "submit": #not a nav post
+            #creates instance to chk if record exist
+            existe = dth.from_dict2sql(conn, {
+                                        table_list[0]:[{
+                                            'id':form.id.data
+                                                    }]
+                                        }
+            ) 
+            
+            if  existe.chk_sgl_fld():   #chk if record exists   
+                #update existing record
+                record.update()
+                return redirect(url_for('ingredient'))# clears POST data
+
+            else:
+                #adds new record
+                record.add_new()
+                return redirect(url_for('ingredient'))# clears POST data 
+
+
+    records, relation = navigate_to(nav_button, conn, form, table_list)
+    column_names =[['Registered Ingredients',['', 'Ingredient', 'Common UM', 'Density', 'Densi UM',
+                     'Recipe','Enabled']]]
+
+    return render_template ('ingredient.html', form = form, records = records,
+                            column_names = column_names, ing_unit_choices = ing_unit_choices)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -52,8 +52,6 @@ class Ingredient(FlaskForm):
                             choices=['g/ml','g/unit'], default ='g/ml')
     rct_yiel = DecimalField('Ingredient yield',validators=[DataRequired()], 
                             render_kw={"placeholder": "e.g. 0.98"}, default = 1)
-    rct_rece = BooleanField('Recipe', default = False, false_values=('',), 
-                            render_kw = {'disabled':''})
     rct_ebld = BooleanField('Enabled', default = True, false_values=('',))
 
 class Recet_en(FlaskForm):
@@ -68,8 +66,6 @@ class Recet_en(FlaskForm):
                             render_kw={"placeholder": "density"}, default = 1)
     rct_denu = SelectField('Recipe/Plate density UM', validators=[DataRequired()], 
                             choices=['g/ml','g/unit'], default ='g/unit')
-    rct_rece = BooleanField('Recipe', default = False, false_values=('',), 
-                            render_kw = {'disabled':''})
     rct_yiel = DecimalField('Recipe yield',validators=[DataRequired()], 
                             render_kw={"placeholder": "e.g. 0.98"}, default = 1)
     rct_unit = SelectField('Common UM', validators=[DataRequired()], coerce = int)

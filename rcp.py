@@ -7,9 +7,9 @@ from forms import Ingredient, Sku, Unitmeas, Almacen, Recet_en, Socio
 
 
 #database connection
-conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
-                              host='192.168.100.254',
-                              database='std')
+conn = mysql.connector.connect(user='sql5514428', password='C3b4Xn6K4Z',
+                              host='sql5.freesqldatabase.com',
+                              database='sql5514428')
 
 db = conn.cursor(dictionary=True, buffered=True)
 
@@ -208,7 +208,6 @@ def ingredient():
                                             'rct_dens':form.rct_dens.data,
                                             'rct_denu':form.rct_denu.data,
                                             'rct_yiel':form.rct_yiel.data,
-                                            'rct_rece':form.rct_rece.data,
                                             'rct_ebld':form.rct_ebld.data  
                                                     }]
                                         })
@@ -230,7 +229,7 @@ def ingredient():
 
             else:
                 #adds new record
-                record.add_new()
+                record.add_new(rct_rece = 0)
                 return redirect(url_for('ingredient'))# clears POST data 
 
 
@@ -287,8 +286,7 @@ def recipe():
                                     'rct_dens':form.rct_dens.data,
                                     'rct_denu':form.rct_denu.data,
                                     'rct_yiel':form.rct_yiel.data,
-                                    'rct_ebld':form.rct_ebld.data,
-                                    'rct_rece':form.rct_rece.data  
+                                    'rct_ebld':form.rct_ebld.data 
                                             }],
                                 table_list[1]:[{
                                     'id':form.subform.idx.data,
@@ -314,7 +312,7 @@ def recipe():
             ) 
 
             print('formiddata', form.id.data)
-            print('formrct_recedata', form.rct_rece.data)
+
             print('existe', existe.chk_sgl_fld())
             if  existe.chk_sgl_fld():   #chk if record exists   
                 #update existing record
@@ -323,8 +321,7 @@ def recipe():
 
             else:
                 #adds new record
-                record.add_new()
-
+                record.add_new(rct_rece = 1)
                 return redirect(url_for('recipe'))# clears POST data 
 
         if nav_button == "submit1": #not a nav post

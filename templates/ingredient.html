@@ -36,7 +36,6 @@
     </div>
     <div hidden>
       {{ form.id() }}
-      {{ form.rct_rece() }}
     </div>
     <div class="row">
       <div class="col-sm-3">
@@ -122,8 +121,6 @@
                 <td style="text-align: center;"><i class="fa-solid fa-check"></i></td>
               {% elif key == 'rct_ebld' and not value %}<!-- just an exception for this form-->
                 <td style="text-align: center;"><i class="fa-solid fa-xmark"></i></td>
-              {% elif key == 'rct_rece' %}<!-- exception display if ingredient is a recipe not necessary-->
-                <td hidden></td>
               {% elif key == 'rct_unit' %}<!-- just an exception for this form-->
                 {% for choice in ing_unit_choices %}
                   {% if choice[0] == value %}
@@ -152,7 +149,6 @@
         document.getElementById("rct_unit").value = "";
         document.getElementById("rct_dens").value = "";
         document.getElementById("rct_denu").value = "";
-        document.getElementById("rct_rece").value = '';
         document.getElementById("rct_cost").value = "";
         document.getElementById("rct_cosc").value = "";
         document.getElementById("rct_yiel").value = "";
@@ -166,7 +162,6 @@
         document.getElementById("rct_cost").value = {{session['rct_cost']}};
         document.getElementById("rct_dens").value = {{session['rct_dens']}};
         document.getElementById("rct_denu").value = '{{session['rct_denu']}}';
-        document.getElementById("rct_rece").value = {{session['rct_rece']}};
         document.getElementById("rct_yiel").value = {{session['rct_yiel']}};
         document.getElementById("rct_unit").value = {{session['rct_unit']}};
         document.getElementById("rct_ebld").value = {{session['rct_ebld']}};

@@ -172,10 +172,10 @@ class DataHandler():
             flash('Record updated!')
 
 
-    def add_new(self):
+    def add_new(self, **kwargs):
         """adds record in table based on dict with tbl, fld and vals"""
         db = self.conn.cursor(dictionary=True, buffered=True)
-
+        print('kwargs', kwargs)
         if not session.get('relation'):
             session['relation'] = [[{}]]
         counter = 0
@@ -196,9 +196,14 @@ class DataHandler():
                     elif not fn == 'id':
                         sql += "%s, " %(fn)
                         value_str += "%s, " %(fv)
+                
+                for k,v in kwargs.items():
+                    sql += "%s, " %(k)
+                    value_str += "%s, " %(v)
 
                 sql +=value_str + ')'
                 sql = sql.replace(", )", ")") #removes trailing ,
+                print ('sql add', sql)
                 db.execute(sql)
                 self.conn.commit()
   

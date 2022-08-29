@@ -1,4 +1,3 @@
-import mysql.connector
 from flask import session
 from flask import render_template
 from data import select as sel
@@ -39,8 +38,8 @@ def navigate_to(nav_button, conn, form, table_list):
     db = conn.cursor(dictionary=True, buffered=True)
     while counter < len(table_list):
         if counter == 0:
-            print('type form name', type(form).__name__ )
-            #Ingredient and recipe forms share the same SQL Table recet_en need to discriminate
+
+            #Ingredient and recipe forms share the same SQL Table == recet_en,hence need to discriminate
             if type(form).__name__ == 'Ingredient':
                 rcds.append(sel.all(db, table_list[counter], rct_rece = 0))
                 res = sel.max_id(db, table_list[counter], rct_rece = 0)
@@ -56,7 +55,6 @@ def navigate_to(nav_button, conn, form, table_list):
             id = form.id.data
             pos, regd_id = nav_pos(rcds[counter], id, nav_button)
             counter += 1
-        
 
         #visualize the target record on main form (if any rcd)
         if not len(regd_id):
@@ -65,7 +63,7 @@ def navigate_to(nav_button, conn, form, table_list):
         else:
 
             tgt_record = rcds[0][pos]
-
+            
             for i in form:
                 if not i.id == 'csrf_token':
                     if i.id == "qty_um" and table_list[0] == 'unitmeas':#exception for unitmeas form
@@ -98,4 +96,5 @@ def navigate_to(nav_button, conn, form, table_list):
                         counter += 1
                     else:
                         i.data = session[i.id] = tgt_record.get(i.id)
+
     return rcds, relation

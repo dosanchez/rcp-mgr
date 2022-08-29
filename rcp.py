@@ -1,3 +1,4 @@
+from site import execsitecustomize
 import mysql.connector
 from flask import Flask, render_template, session, request, redirect, url_for
 from data import DataHandler as dth, select as sel, dlt
@@ -184,7 +185,7 @@ def ingredient():
     form = Ingredient()
     table_list = ['recet_en']
 
-    form.ing_unit.choices = sel.UM_ebld(db) #Queries for Selectfields active choices
+    form.rct_unit.choices = sel.UM_ebld(db) #Queries for Selectfields active choices
     ing_unit_choices = sel.UM_all(db) #Queries for all Selectfields choices
 
         
@@ -200,12 +201,15 @@ def ingredient():
         record = dth.from_dict2sql(conn, {
                                         table_list[0]:[{
                                             'id':form.id.data,
-                                            'rct_name':form.ing_name.data,
-                                            'rct_unit':form.ing_unit.data,
-                                            'rct_dens':form.ing_dens.data,
-                                            'rct_denu':form.ing_denu.data,
-                                            'rct_rece':form.ing_rece.data,
-                                            'rct_ebld':form.ing_ebld.data  
+                                            'rct_name':form.rct_name.data,
+                                            'rct_unit':form.rct_unit.data,
+                                            'rct_cost':form.rct_cost.data,
+                                            'rct_cosc':form.rct_cosc.data,
+                                            'rct_dens':form.rct_dens.data,
+                                            'rct_denu':form.rct_denu.data,
+                                            'rct_yiel':form.rct_yiel.data,
+                                            'rct_rece':form.rct_rece.data,
+                                            'rct_ebld':form.rct_ebld.data  
                                                     }]
                                         })
 
@@ -217,7 +221,8 @@ def ingredient():
                                                     }]
                                         }
             ) 
-            
+            print('formiddata', form.id.data)
+            print('existe', existe.chk_sgl_fld())
             if  existe.chk_sgl_fld():   #chk if record exists   
                 #update existing record
                 record.update()
@@ -230,9 +235,10 @@ def ingredient():
 
 
     records, relation = navigate_to(nav_button, conn, form, table_list)
-    column_names =[['Registered Ingredients',['', 'Ingredient', 'Common UM', 'Density', 'Densi UM',
-                     'Recipe','Enabled']]]
+    column_names =[['Registered Ingredients',['', 'Ingredient', 'Costo Real', 'Costo Std',
+                    'Density', 'Densi UM', 'Yield', 'Common UM', 'Enabled']]]
 
+    print('record0', records[0])
     return render_template ('ingredient.html', form = form, records = records,
                             column_names = column_names, ing_unit_choices = ing_unit_choices)
 
@@ -281,7 +287,8 @@ def recipe():
                                     'rct_dens':form.rct_dens.data,
                                     'rct_denu':form.rct_denu.data,
                                     'rct_yiel':form.rct_yiel.data,
-                                    'rct_ebld':form.rct_ebld.data  
+                                    'rct_ebld':form.rct_ebld.data,
+                                    'rct_rece':form.rct_rece.data  
                                             }],
                                 table_list[1]:[{
                                     'id':form.subform.idx.data,
@@ -305,7 +312,10 @@ def recipe():
                                                     }]
                                         }
             ) 
-            
+
+            print('formiddata', form.id.data)
+            print('formrct_recedata', form.rct_rece.data)
+            print('existe', existe.chk_sgl_fld())
             if  existe.chk_sgl_fld():   #chk if record exists   
                 #update existing record
                 record.update()

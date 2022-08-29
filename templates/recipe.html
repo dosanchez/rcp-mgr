@@ -34,8 +34,9 @@
         </button>
       </div>  
     </div>
-    <div>
+    <div hidden>
       {{ form.id() }}
+      {{ form.rct_rece() }}
     </div>
     <div class="row">
       <div class="col-sm-3">
@@ -139,7 +140,7 @@
                 <tr class="table-active">
                 {% else %}
                 <tr>
-                {% endif %}  
+                  {% endif %}  
                   {% for key, value in row.items() %}
                     {% if key == 'id' %}
                       <td style="text-align: center;" class="pt-2">
@@ -152,24 +153,24 @@
                           <small>drop</small>
                         </button>
                       </td>
-                    {% else %}
-                      {% if key == relation[counter][0].get('child_tbl_fld') %} <!-- exception  hides parent-child field-->
-                        <td hidden></td>
-                      {% elif key == 'rcd_ing' %} <!-- exception loops for ing name -->
-                        {% for choice in rcd_ing_choices %}
+                    {% elif key == relation[counter][0].get('child_tbl_fld') %} <!-- exception  hides parent-child field-->
+                      <td hidden></td>
+                    {% elif key == 'rct_rece' %} <!-- exception hides if it is recipe, check not necessary-->
+                      <td hidden></td>
+                    {% elif key == 'rcd_ing' %} <!-- exception loops for ing name -->
+                      {% for choice in rcd_ing_choices %}
+                        {% if choice[0] == value %}
+                          <td style="text-align: center;">{{ choice[1] }}</td>
+                        {% endif %}
+                      {% endfor %}                        
+                    {% elif key == 'rcd_unit' %}<!-- exception loops for UM-->
+                        {% for choice in rcd_unit_choices %}
                           {% if choice[0] == value %}
                             <td style="text-align: center;">{{ choice[1] }}</td>
                           {% endif %}
-                        {% endfor %}                        
-                      {% elif key == 'rcd_unit' %}<!-- exception loops for UM-->
-                          {% for choice in rcd_unit_choices %}
-                            {% if choice[0] == value %}
-                              <td style="text-align: center;">{{ choice[1] }}</td>
-                            {% endif %}
-                          {% endfor %}
-                      {% else %}
-                        <td style="text-align: center;">{{ value }}</td>
-                      {% endif %}  
+                        {% endfor %}
+                    {% else %}
+                      <td style="text-align: center;">{{ value }}</td>
                     {% endif %}    
                   {% endfor %}
                 </tr>
@@ -198,6 +199,7 @@
       document.getElementById("rct_unit").value = "";
       document.getElementById("rct_subf").value = "";
       document.getElementById("rct_ebld").value = True;
+      document.getElementById("rct_rece").value = True;
       document.getElementById("rcd_ing").value = "";
       document.getElementById("rcd_qty").value = "";
       document.getElementById("rcd_unit").value = "";
@@ -208,13 +210,14 @@
 
     function Navrecord(NAV) {
       document.getElementById("rct_name").value = '{{session['rct_name']}}';
-      document.getElementById("rct_cosc").value = {{session['rct_cost']}}
-      document.getElementById("rct_cost").value = {{session['rct_cosc']}};
+      document.getElementById("rct_cosc").value = {{session['rct_cosc']}};
+      document.getElementById("rct_cost").value = {{session['rct_cost']}};
       document.getElementById("rct_dens").value = {{session['rct_dens']}};
       document.getElementById("rct_denu").value = '{{session['rct_denu']}}';
       document.getElementById("rct_yiel").value = {{session['rct_yiel']}};
       document.getElementById("rct_unit").value = {{session['rct_unit']}};
       document.getElementById("rct_ebld").value = {{session['rct_ebld']}};
+      document.getElementById("rct_rece").value = {{session['rct_rece']}};
       document.getElementById("id").value = {{session['id']}};
       document.getElementById("submit_button").value = NAV;
       document.getElementById("subform-rcd_qty").value = 1;

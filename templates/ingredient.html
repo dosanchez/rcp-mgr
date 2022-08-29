@@ -34,37 +34,46 @@
         </button>
       </div>  
     </div>
-    <div>
+    <div hidden>
       {{ form.id() }}
+      {{ form.rct_rece() }}
     </div>
     <div class="row">
-      <div class="col-sm-4">
-        {{ form.ing_name.label(class="form-label") }}
-        {{ form.ing_name(class="form-control", value = form.ing_name.data) }}
+      <div class="col-sm-3">
+        {{ form.rct_name.label(class="form-label") }}
+        {{ form.rct_name(class="form-control", value = form.rct_name.data) }}
       </div>
-      <div class="col-sm-4">
-        {{ form.ing_unit.label(class="form-label") }}
-        {{ form.ing_unit(class="form-select", value = form.ing_unit.data) }}
+      <div class="col-sm-3">
+        {{ form.rct_cost.label(class="form-label") }}
+        {{ form.rct_cost(class="form-control", value = form.rct_cost.data) }}
       </div>
-      <div class="form-check col-sm-4 pt-5 mb-3">
-        {{ form.ing_ebld.label(class="form-check-label") }}
-        {{ form.ing_ebld(class="form-check-input", value = form.ing_ebld.data, onclick="Submit()") }}
+      <div class="col-sm-3">
+        {{ form.rct_cosc.label(class="form-label") }}
+        {{ form.rct_cosc(class="form-control", value = form.rct_cosc.data) }}
       </div>
-      <div class="col-sm-4">
-        {{ form.ing_dens.label(class="form-label") }}
-        {{ form.ing_dens(class="form-control", value = form.ing_dens.data) }}
+      <div class="form-check col-sm-1 pt-4" style="padding-left: 30px;">
+        {{ form.rct_ebld.label(class="form-check-label") }}
+        {{ form.rct_ebld(class="form-check-input", value = form.rct_ebld.data) }}
       </div>
-      <div class="col-sm-4">
-        {{ form.ing_denu.label(class="form-label") }}
-        {{ form.ing_denu(class="form-select", value = form.ing_denu.data) }}
+      <div class="col-sm-2 pt-3" style="text-align:center" >
+        <input type="submit" id ="submit_button" class="btn btn-primary" formmethod="post" value="submit" name = "nav">
       </div>
-      <div class="form-check col-sm-4 pt-5" style="opacity: 0.5;">
-        {{ form.ing_rece.label(class="form-check-label") }}
-        {{ form.ing_rece(class="form-check-input ", value = form.ing_rece.data) }}
+      <div class="col-sm-3 pt-3">
+        {{ form.rct_dens.label(class="form-label") }}
+        {{ form.rct_dens(class="form-control", value = form.rct_dens.data) }}
       </div>
-    </div>
-    <div style="float:right;">
-    <input type="submit" id ="submit_button" class="btn btn-primary" formmethod="POST" value="submit" name = "nav">
+      <div class="col-sm-3 pt-3">
+        {{ form.rct_denu.label(class="form-label") }}
+        {{ form.rct_denu(class="form-select", value = form.rct_denu.data) }}
+      </div>
+      <div class="col-sm-3 pt-3">
+        {{ form.rct_yiel.label(class="form-label") }}
+        {{ form.rct_yiel(class="form-control", value = form.rct_yiel.data) }}
+      </div>
+      <div class="col-sm-3 pt-3">
+        {{ form.rct_unit.label(class="form-label") }}
+        {{ form.rct_unit(class="form-select", value = form.rct_unit.data) }}
+      </div>
     </div>
   </form>
 
@@ -89,38 +98,42 @@
         </thead>
         <tbody>
           {% for row in records[0] %}
-            {% if row['ing_ebld'] or not row['ing_rece'] %}  <!-- styles disabled records-->
-              <tr>
+            {% if row['id'] == form.id.data %}  <!-- styles selected records-->
+              {% if row['rct_ebld'] %}  <!-- styles disabled records-->
+                <tr class="table-active">
+              {% else %}
+                <tr class="table-active" style="opacity: 0.5;">
+              {% endif %}
             {% else %}
-              <tr style="opacity: 0.5;">
+              {% if row['rct_ebld'] %}  <!-- styles disabled records-->
+                <tr>
+              {% else %}
+                <tr style="opacity: 0.5;">
+              {% endif %}   
             {% endif %}
             {% for key, value in row.items() %}
-                {% if key == 'id' %}
-                  <td style="text-align: center;" class="pt-2">
-                    <button type = "submit" value = {{ value }} form ="nav_form" formmethod ="post" class="btn btn-sm btn-primary" name ="nav">
-                      <small>edit</small>
-                    </button>
-                  </td>
-                {% else %}
-                  {% if key == 'ing_ebld' and value %}<!-- just an exception for this form-->
-                    <td style="text-align: center;"><i class="fa-solid fa-check"></i></td>
-                  {% elif key == 'ing_ebld' and not value %}<!-- just an exception for this form-->
-                    <td style="text-align: center;"><i class="fa-solid fa-xmark"></i></td>
-                  {% elif key == 'ing_rece' and value %}<!-- just an exception for this form-->
-                    <td style="text-align: center;"><i class="fa-solid fa-check"></i></td>
-                  {% elif key == 'ing_rece' and not value %}<!-- just an exception for this form-->
-                    <td style="text-align: center;"><i class="fa-solid fa-xmark "></i></td>
-                  {% elif key == 'ing_unit' %}<!-- just an exception for this form-->
-                      {% for choice in ing_unit_choices %}
-                        {% if choice[0] == value %}
-                          <td style="text-align: center;">{{ choice[1] }}</td>
-                        {% endif %}
-                      {% endfor %}
-                  {% else %}
-                    <td style="text-align: center;">{{ value }}</td>
-                  {% endif %}  
-                {% endif %}    
-              {% endfor %}
+              {% if key == 'id' %}
+                <td style="text-align: center;" class="pt-2">
+                  <button type = "submit" value = {{ value }} form ="nav_form" formmethod ="post" class="btn btn-sm btn-primary" name ="nav">
+                    <small>edit</small>
+                  </button>
+                </td>
+              {% elif key == 'rct_ebld' and value %}<!-- just an exception for this form-->
+                <td style="text-align: center;"><i class="fa-solid fa-check"></i></td>
+              {% elif key == 'rct_ebld' and not value %}<!-- just an exception for this form-->
+                <td style="text-align: center;"><i class="fa-solid fa-xmark"></i></td>
+              {% elif key == 'rct_rece' %}<!-- exception display if ingredient is a recipe not necessary-->
+                <td hidden></td>
+              {% elif key == 'rct_unit' %}<!-- just an exception for this form-->
+                {% for choice in ing_unit_choices %}
+                  {% if choice[0] == value %}
+                    <td style="text-align: center;">{{ choice[1] }}</td>
+                  {% endif %}
+                {% endfor %}
+              {% else %}
+                <td style="text-align: center;">{{ value }}</td> 
+              {% endif %}    
+            {% endfor %}
             </tr>
           {% endfor %}
         </tbody>
@@ -135,21 +148,29 @@
 {{ super() }}
   <script>
     function Newrecord() {
-        document.getElementById("ing_name").value = "";
-        document.getElementById("ing_unit").value = "";
-        document.getElementById("ing_dens").value = "";
-        document.getElementById("ing_denu").value = "";
-        document.getElementById("ing_rece").value = "";
+        document.getElementById("rct_name").value = "";
+        document.getElementById("rct_unit").value = "";
+        document.getElementById("rct_dens").value = "";
+        document.getElementById("rct_denu").value = "";
+        document.getElementById("rct_rece").value = '';
+        document.getElementById("rct_cost").value = "";
+        document.getElementById("rct_cosc").value = "";
+        document.getElementById("rct_yiel").value = "";
+        document.getElementById("rct_ebld").value = True;
         document.getElementById("id").value = 0;
         }
 
     function Navrecord(NAV) {
-        document.getElementById("ing_name").value = '{{session['ing_name']}}';
-        document.getElementById("ing_unit").value = '{{session['ing_unit']}}';
-        document.getElementById("ing_dens").value = {{session['ing_dens']}};
-        document.getElementById("ing_denu").value = '{{session['ing_denu']}}';
-        document.getElementById("ing_rece").value = '{{session['ing_rece']}}';
-        document.getElementById("ing_ebld").value = '{{session['ing_ebld']}}';
+        document.getElementById("rct_name").value = '{{session['rct_name']}}';
+        document.getElementById("rct_cosc").value = {{session['rct_cosc']}};
+        document.getElementById("rct_cost").value = {{session['rct_cost']}};
+        document.getElementById("rct_dens").value = {{session['rct_dens']}};
+        document.getElementById("rct_denu").value = '{{session['rct_denu']}}';
+        document.getElementById("rct_rece").value = {{session['rct_rece']}};
+        document.getElementById("rct_yiel").value = {{session['rct_yiel']}};
+        document.getElementById("rct_unit").value = {{session['rct_unit']}};
+        document.getElementById("rct_ebld").value = {{session['rct_ebld']}};
+        document.getElementById("id").value = {{session['id']}};
         document.getElementById("submit_button").value = NAV;
         document.getElementById("submit_button").click();
         }

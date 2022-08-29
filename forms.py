@@ -1,4 +1,3 @@
-from email.policy import default
 from flask_wtf import FlaskForm
 from wtforms import StringField, SelectField, DecimalField, HiddenField, BooleanField, Form, FormField, IntegerField, FileField
 from wtforms.validators import DataRequired, Length, NumberRange
@@ -41,18 +40,21 @@ class Almacen(FlaskForm):
 class Ingredient(FlaskForm):
     """wtform for Ingredients"""
     id = HiddenField()
-    ing_name = StringField('Ingredient', validators=[DataRequired(),
+    rct_name = StringField('Ingredient', validators=[DataRequired(),
                             Length(max=16)], 
                             render_kw={"placeholder": "e.g. Paprika"})
-    ing_unit = SelectField('Common UM', validators=[DataRequired()], 
-                            default = 'g')
-    ing_dens = DecimalField('Ingredient density',validators=[DataRequired()], 
+    rct_cost = DecimalField('Actual Cost', render_kw = {'disabled':''}, default = 0)
+    rct_cosc = DecimalField('Standard Cost', render_kw = {'disabled':''}, default = 0)
+    rct_unit = SelectField('Common UM', validators=[DataRequired()], coerce = int)
+    rct_dens = DecimalField('Ingredient density',validators=[DataRequired()], 
                             render_kw={"placeholder": "Density"}, default = 1)
-    ing_denu = SelectField('Density UM', validators=[DataRequired()], 
+    rct_denu = SelectField('Density UM', validators=[DataRequired()], 
                             choices=['g/ml','g/unit'], default ='g/ml')
-    ing_rece = BooleanField('Recipe', default = False, false_values=('',), 
+    rct_yiel = DecimalField('Ingredient yield',validators=[DataRequired()], 
+                            render_kw={"placeholder": "e.g. 0.98"}, default = 1)
+    rct_rece = BooleanField('Recipe', default = False, false_values=('',), 
                             render_kw = {'disabled':''})
-    ing_ebld = BooleanField('Enabled', default = True, false_values=('',))
+    rct_ebld = BooleanField('Enabled', default = True, false_values=('',))
 
 class Recet_en(FlaskForm):
     """wtform for recipe form header"""
@@ -66,6 +68,8 @@ class Recet_en(FlaskForm):
                             render_kw={"placeholder": "density"}, default = 1)
     rct_denu = SelectField('Recipe/Plate density UM', validators=[DataRequired()], 
                             choices=['g/ml','g/unit'], default ='g/unit')
+    rct_rece = BooleanField('Recipe', default = False, false_values=('',), 
+                            render_kw = {'disabled':''})
     rct_yiel = DecimalField('Recipe yield',validators=[DataRequired()], 
                             render_kw={"placeholder": "e.g. 0.98"}, default = 1)
     rct_unit = SelectField('Common UM', validators=[DataRequired()], coerce = int)

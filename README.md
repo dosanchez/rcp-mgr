@@ -1,4 +1,6 @@
 # rcp-mgr
+
+THIS README IS NOT YET FINISHED
 This is my first web app (under construction).  It helps manage recipe costs and related ingredients and finished plates operations.
 its based on mysql, flask, WTForms, bootstrap 5
 each form can navigate through records while either listing them all at the bottom or listing related records at the bottom.
@@ -16,6 +18,8 @@ Subforms are defined as inherited classes in WTF.  The subform class id field mu
 Subforms can not contain another subform, however a parent form can contain many subforms
 
 nav.py takes care of form navigation and returns set of registered records
+
+an exception is the ingredient and recipe forms which share same sql table
 
 '-' can not be used in fields or form (class) names
 

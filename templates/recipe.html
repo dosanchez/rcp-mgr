@@ -55,7 +55,7 @@
         {{ form.rct_ebld(class="form-check-input", value = form.rct_ebld.data) }}
       </div>
       <div class="col-sm-2 pt-3" style="text-align:center" >
-        <input type="submit" id ="submit_button" class="btn btn-primary" formmethod="post" value="submit" name = "nav">
+        <input type="submit" id ="submit_button" class="btn btn-primary" formmethod="POST" value="submit" name = "nav">
       </div>
       <div class="col-sm-3 pt-3">
         {{ form.rct_dens.label(class="form-label") }}
@@ -195,7 +195,7 @@
       document.getElementById("rct_yiel").value = "";
       document.getElementById("rct_unit").value = "";
       document.getElementById("rct_subf").value = "";
-      document.getElementById("rct_ebld").value = True;
+      document.getElementById("rct_ebld").value = "checked";
       document.getElementById("rcd_ing").value = "";
       document.getElementById("rcd_qty").value = "";
       document.getElementById("rcd_unit").value = "";
@@ -212,7 +212,7 @@
       document.getElementById("rct_denu").value = '{{session['rct_denu']}}';
       document.getElementById("rct_yiel").value = {{session['rct_yiel']}};
       document.getElementById("rct_unit").value = {{session['rct_unit']}};
-      document.getElementById("rct_ebld").value = {{session['rct_ebld']}};
+      document.getElementById("rct_ebld").value = '{{session['rct_ebld']}}';
       document.getElementById("id").value = {{session['id']}};
       document.getElementById("submit_button").value = NAV;
       document.getElementById("subform-rcd_qty").value = 1;

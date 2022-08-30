@@ -195,7 +195,7 @@ def ingredient():
     except:
         pass
     
-
+    print('validate on submit', form.validate_on_submit())
     if form.validate_on_submit():
 
         record = dth.from_dict2sql(conn, {
@@ -237,7 +237,6 @@ def ingredient():
     column_names =[['Registered Ingredients',['', 'Ingredient', 'Costo Real', 'Costo Std',
                     'Density', 'Densi UM', 'Yield', 'Common UM', 'Enabled']]]
 
-    print('record0', records[0])
     return render_template ('ingredient.html', form = form, records = records,
                             column_names = column_names, ing_unit_choices = ing_unit_choices)
 

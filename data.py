@@ -82,11 +82,11 @@ class select():
                         key = lambda fld: fld[1])
     
     def ingred_ebld(db):
-        sql = """SELECT id, ing_name 
-            FROM ingredient
-            WHERE ing_ebld = True""" 
+        sql = """SELECT id, rct_name 
+            FROM recet_en
+            WHERE rct_ebld = True""" 
         db.execute(sql)
-        return sorted([(d['id'], d['ing_name']) for d in list(db.fetchall() )], 
+        return sorted([(d['id'], d['rct_name']) for d in list(db.fetchall() )], 
                         key = lambda fld: fld[1])
 
     def bp_ebld(db):
@@ -94,7 +94,7 @@ class select():
             FROM socio
             WHERE soc_ebld = True""" 
         db.execute(sql)
-        return sorted([(d['id'], d['ing_name']) for d in list(db.fetchall() )], 
+        return sorted([(d['id'], d['soc_name']) for d in list(db.fetchall() )], 
                         key = lambda fld: fld[1])
 
     #Queries for all choices
@@ -107,10 +107,10 @@ class select():
                         key = lambda fld: fld[1])
 
     def ingred_all(db):
-        sql = """SELECT id, ing_name 
-            FROM ingredient""" 
+        sql = """SELECT id, rct_name 
+            FROM recet_en""" 
         db.execute(sql)
-        return sorted([(d['id'], d['ing_name']) for d in list(db.fetchall() )], 
+        return sorted([(d['id'], d['rct_name']) for d in list(db.fetchall() )], 
                         key = lambda fld: fld[1])
     
     def bp_all(db):
@@ -118,7 +118,7 @@ class select():
         sql = """SELECT id, soc_name 
                 FROM socio"""
         db.execute(sql)
-        return sorted([(d['id'], d['uni_symb']) for d in list(db.fetchall())],
+        return sorted([(d['id'], d['soc_name']) for d in list(db.fetchall())],
                         key = lambda fld: fld[1])
 
 class DataHandler():

@@ -19,6 +19,7 @@ class select():
         if not kwargs:
             sql = "Select * from {}".format(tbl)
             db.execute(sql)
+
         else:
             sql = "Select * from {} WHERE ".format(tbl)
             for field, value in kwargs.items():
@@ -27,6 +28,7 @@ class select():
                 else:
                     sql += "{} = {} ".format(field, value)
                 sql += "AND "
+            
             db.execute(sql[:-4]) 
         return(db.fetchall())
 
@@ -64,7 +66,7 @@ class select():
         return db.fetchall()
 
     def chld_vals(db, ref_tbl, chld_tbl, child_tbl_fld, ref_tbl_id_val):
-        """returns a table with all child records for a given parent record id value"""
+        """returns a set with all child records for a given parent record id value"""
         sql = """SELECT b.* FROM {} AS h INNER JOIN {} AS b
                 ON h.id = b.{}
                 WHERE h.id = {}""".format(ref_tbl, chld_tbl, child_tbl_fld, ref_tbl_id_val)
@@ -72,53 +74,91 @@ class select():
         return db.fetchall()     
 
     #Queries for active (ebld) choices
-    def UM_ebld(db):
-        
+    def UM_ebld(db, blank = False):
+        """returns a set with Enable unit of measure"""
         sql = """SELECT id, uni_symb 
-                FROM unitmeas
-                WHERE uni_ebld = True"""
+                    FROM unitmeas
+                    WHERE uni_ebld = True"""
         db.execute(sql)
-        return sorted([(d['id'], d['uni_symb']) for d in list(db.fetchall())],
+        
+        if blank == True:
+            choice = [(None,'---')]
+        else:
+            choice =[]
+        
+        return choice + sorted([(d['id'], d['uni_symb']) for d in list(db.fetchall() )], 
                         key = lambda fld: fld[1])
-    
-    def ingred_ebld(db):
+
+
+
+    def ingred_ebld(db, blank = False):
         sql = """SELECT id, rct_name 
             FROM recet_en
             WHERE rct_ebld = True""" 
         db.execute(sql)
-        return sorted([(d['id'], d['rct_name']) for d in list(db.fetchall() )], 
+
+        if blank == True:
+            choice = [(None,'---')]
+        else:
+            choice =[]
+
+        return choice + sorted([(d['id'], d['rct_name']) for d in list(db.fetchall() )], 
                         key = lambda fld: fld[1])
 
-    def bp_ebld(db):
+    def bp_ebld(db, blank = False):
         sql = """SELECT id, soc_name 
             FROM socio
             WHERE soc_ebld = True""" 
         db.execute(sql)
-        return sorted([(d['id'], d['soc_name']) for d in list(db.fetchall() )], 
+
+        if blank == True:
+            choice = [(None,'---')]
+        else:
+            choice =[]
+
+        return choice + sorted([(d['id'], d['soc_name']) for d in list(db.fetchall() )], 
                         key = lambda fld: fld[1])
 
     #Queries for all choices
-    def UM_all(db):
+    def UM_all(db, blank = False):
         
         sql = """SELECT id, uni_symb 
                 FROM unitmeas"""
         db.execute(sql)
-        return sorted([(d['id'], d['uni_symb']) for d in list(db.fetchall())],
+
+        if blank == True:
+            choice = [(None,'---')]
+        else:
+            choice =[]
+
+        return choice + sorted([(d['id'], d['uni_symb']) for d in list(db.fetchall())],
                         key = lambda fld: fld[1])
 
-    def ingred_all(db):
+    def ingred_all(db, blank = False):
         sql = """SELECT id, rct_name 
             FROM recet_en""" 
         db.execute(sql)
-        return sorted([(d['id'], d['rct_name']) for d in list(db.fetchall() )], 
+
+        if blank == True:
+            choice = [(None,'---')]
+        else:
+            choice =[]
+
+        return choice + sorted([(d['id'], d['rct_name']) for d in list(db.fetchall() )], 
                         key = lambda fld: fld[1])
     
-    def bp_all(db):
+    def bp_all(db, blank = False):
         
         sql = """SELECT id, soc_name 
                 FROM socio"""
         db.execute(sql)
-        return sorted([(d['id'], d['soc_name']) for d in list(db.fetchall())],
+
+        if blank == True:
+            choice = [(None,'---')]
+        else:
+            choice =[]
+
+        return choice + sorted([(d['id'], d['soc_name']) for d in list(db.fetchall())],
                         key = lambda fld: fld[1])
 
 class DataHandler():
@@ -168,6 +208,7 @@ class DataHandler():
                 sql = sql.replace(", WHERE id =", " WHERE id =") #removes trailing ,
                 self.conn.cursor(dictionary=True, buffered=True).execute(sql)
                 self.conn.commit()
+                print('sql', sql)
 
             flash('Record updated!')
 
@@ -175,6 +216,7 @@ class DataHandler():
     def add_new(self, **kwargs):
         """adds record in table based on dict with tbl, fld and vals"""
         db = self.conn.cursor(dictionary=True, buffered=True)
+        print('rcd',self.rcd)
         print('kwargs', kwargs)
         if not session.get('relation'):
             session['relation'] = [[{}]]
@@ -203,7 +245,6 @@ class DataHandler():
 
                 sql +=value_str + ')'
                 sql = sql.replace(", )", ")") #removes trailing ,
-                print ('sql add', sql)
                 db.execute(sql)
                 self.conn.commit()
   

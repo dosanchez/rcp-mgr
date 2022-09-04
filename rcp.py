@@ -1,3 +1,4 @@
+from operator import truediv
 from site import execsitecustomize
 import mysql.connector
 from flask import Flask, render_template, session, request, redirect, url_for
@@ -7,9 +8,9 @@ from forms import Ingredient, Sku, Unitmeas, Almacen, Recet_en, Socio
 
 
 #database connection
-conn = mysql.connector.connect(user='sql5514428', password='C3b4Xn6K4Z',
-                              host='sql5.freesqldatabase.com',
-                              database='sql5514428')
+conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
+                              host='192.168.100.254',
+                              database='std')
 
 db = conn.cursor(dictionary=True, buffered=True)
 
@@ -310,9 +311,7 @@ def recipe():
                                         }
             ) 
 
-            print('formiddata', form.id.data)
 
-            print('existe', existe.chk_sgl_fld())
             if  existe.chk_sgl_fld():   #chk if record exists   
                 #update existing record
                 record.update()
@@ -355,6 +354,7 @@ def recipe():
                      'Ingredient yield']]]
     rcd_len = len(records)
 
+    print('recipe records', records)
     return render_template ('recipe.html', form = form, records = records,
                             column_names = column_names, 
                             rcd_unit_choices = rcd_unit_choices ,
@@ -368,12 +368,13 @@ def sku():
     form = Sku()
     table_list = ['sku']
 
-    form.sku_ingr.choices = sel.UM_ebld(db) #Queries for Selectfields active choices
-    sku_ingr_choices = sel.UM_all(db) #Queries for all Selectfields choices
+    form.sku_ingr.choices = sel.ingred_ebld(db) #Queries for Selectfields active choices
+    sku_ingr_choices = sel.ingred_all(db) #Queries for all Selectfields choices
 
-    form.sku_unit.choices = sel.UM_ebld(db) #Queries for Selectfields active choices
+    form.sku_unit.choices = sel.UM_ebld(db)
+    form.sku_v_unit.choices = sel.UM_ebld(db, blank = True) #Queries for Selectfields active choices
     sku_unit_choices = sel.UM_all(db) #Queries for all Selectfields choices
-
+    print('sku unit choices', sku_unit_choices)
     form.sku_pref.choices = sel.bp_ebld(db) #Queries for Selectfields active choices
     sku_pref_choices = sel.bp_all(db) #Queries for all Selectfields choices
 
@@ -384,8 +385,12 @@ def sku():
         pass
     
 
-    if form.validate_on_submit():
+    print('validateonsubmit', form.validate_on_submit())
+    for error in form.errors:
+        print('error',error)
 
+        
+    if form.validate_on_submit():
 
         record = dth.from_dict2sql(conn, {
                                         table_list[0]:[{
@@ -399,6 +404,7 @@ def sku():
                                             'sku_pref':form.sku_pref.data,
                                             'sku_itbi':form.sku_itbi.data,
                                             'sku_vaci':form.sku_vaci.data,
+                                            'sku_v_unit':form.sku_v_unit.data,
                                             'sku_nams':form.sku_nams.data  
                                                     }]
                                         })
@@ -415,20 +421,27 @@ def sku():
             if  existe.chk_sgl_fld():   #chk if record exists   
                 #update existing record
                 record.update()
-                return redirect(url_for('ingredient'))# clears POST data
+                return redirect(url_for('sku'))# clears POST data
 
             else:
                 #adds new record
                 record.add_new()
-                return redirect(url_for('ingredient'))# clears POST data 
+                return redirect(url_for('sku'))# clears POST data 
 
 
     records, relation = navigate_to(nav_button, conn, form, table_list)
-    column_names =[['Registered Ingredients',['', 'Ingredient', 'Common UM', 'Density', 'Densi UM',
-                     'Recipe','Enabled']]]
+    column_names =[['SKUs',['', 'Name', 'rel Ingr/recipe', 'Content', 
+                    'Content UM', 'Barcode','Image', 'Pref Vendor',
+                    'Itbis', 'Empty cont. weight', 'Empty cont. UM', 
+                    'vendor slip name']]]
 
-    return render_template ('ingredient.html', form = form, records = records,
-                            column_names = column_names, ing_unit_choices = ing_unit_choices)
+    print ('records', records)
+    return render_template ('sku.html', form = form, records = records,
+                            column_names = column_names, 
+                            sku_unit_choices = sku_unit_choices,
+                            sku_ingr_choices = sku_ingr_choices,
+                            sku_pref_choices = sku_pref_choices
+                            )
 
 
 if __name__ == '__main__':

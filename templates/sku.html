@@ -7,8 +7,8 @@
     {{ form.hidden_tag() }}
     <div class="row mb-3" >
       <div class="col-sm-8">
-        <h2>Ingredients</h2>
-        <small>add, edit, activate Ingredients</small>
+        <h2>SKUs</h2>
+        <small>add, edit, activate SKUs</small>
       </div>
       <div class="col-sm-4" style ="float:right;">
         <button type = "button" class="btn" onclick="Navrecord('out')">
@@ -39,40 +39,55 @@
     </div>
     <div class="row">
       <div class="col-sm-3">
-        {{ form.rct_name.label(class="form-label") }}
-        {{ form.rct_name(class="form-control", value = form.rct_name.data) }}
+        {{ form.sku_name.label(class="form-label") }}
+        {{ form.sku_name(class="form-control", value = form.sku_name.data) }}
       </div>
       <div class="col-sm-3">
-        {{ form.rct_cost.label(class="form-label") }}
-        {{ form.rct_cost(class="form-control", value = form.rct_cost.data) }}
+        {{ form.sku_cont.label(class="form-label") }}
+        {{ form.sku_cont(class="form-control", value = form.sku_cont.data) }}
       </div>
       <div class="col-sm-3">
-        {{ form.rct_cosc.label(class="form-label") }}
-        {{ form.rct_cosc(class="form-control", value = form.rct_cosc.data) }}
+        {{ form.sku_unit.label(class="form-label") }}
+        {{ form.sku_unit(class="form-select", value = form.sku_unit.data) }}
       </div>
-      <div class="form-check col-sm-1 pt-4" style="padding-left: 30px;">
-        {{ form.rct_ebld.label(class="form-check-label") }}
-        {{ form.rct_ebld(class="form-check-input", value = form.rct_ebld.data) }}
+      <div class="col-sm-3 input-group mb-3">
+        <label class="input-group-text" for="inputGroupFile01">Upload</label>
+        <input type="file" class="form-control" id="inputGroupFile01">
       </div>
-      <div class="col-sm-2 pt-3" style="text-align:center; float:right" >
+      
+      <div class="col-sm-3 pt-3">
+        {{ form.sku_ingr.label(class="form-label") }}
+        {{ form.sku_ingr(class="form-control", value = form.sku_ingr.data) }}
+      </div>
+      <div class="col-sm-3 pt-3">
+        {{ form.sku_itbi.label(class="form-label") }}
+        {{ form.sku_itbi(class="form-control", value = form.sku_itbi.data) }}
+      </div>
+      <div class="col-sm-3 pt-3">
+        {{ form.sku_vaci.label(class="form-label") }}
+        {{ form.sku_vaci(class="form-control", value = form.sku_vaci.data) }}
+      </div>
+      <div class="col-sm-3 pt-3">
+        {{ form.sku_v_unit.label(class="form-label") }}
+        {{ form.sku_v_unit(class="form-select", value = form.sku_v_unit.data) }}
+      </div>
+      
+      <div class="col-sm-3 pt-3">
+        {{ form.sku_barc.label(class="form-label") }}
+        {{ form.sku_barc(class="form-control", value = form.sku_barc.data) }}
+      </div>
+      <div class="col-sm-3 pt-3">
+        {{ form.sku_pref.label(class="form-label") }}
+        {{ form.sku_pref(class="form-control", value = form.sku_nams.data) }}
+      </div>
+      <div class="col-sm-3 pt-3">
+        {{ form.sku_nams.label(class="form-label") }}
+        {{ form.sku_nams(class="form-control", value = form.sku_nams.data) }}
+      </div>
+      <div class="col-sm-2 pt-3" style="text-align:center; float:right;">
         <input type="submit" id ="submit_button" class="btn btn-primary" formmethod="POST" value="submit" name = "nav">
       </div>
-      <div class="col-sm-3 pt-3">
-        {{ form.rct_dens.label(class="form-label") }}
-        {{ form.rct_dens(class="form-control", value = form.rct_dens.data) }}
-      </div>
-      <div class="col-sm-3 pt-3">
-        {{ form.rct_denu.label(class="form-label") }}
-        {{ form.rct_denu(class="form-select", value = form.rct_denu.data) }}
-      </div>
-      <div class="col-sm-3 pt-3">
-        {{ form.rct_yiel.label(class="form-label") }}
-        {{ form.rct_yiel(class="form-control", value = form.rct_yiel.data) }}
-      </div>
-      <div class="col-sm-3 pt-3">
-        {{ form.rct_unit.label(class="form-label") }}
-        {{ form.rct_unit(class="form-select", value = form.rct_unit.data) }}
-      </div>
+      
     </div>
   </form>
 
@@ -117,11 +132,19 @@
                     <small>edit</small>
                   </button>
                 </td>
-              {% elif key == 'rct_ebld' and value %}<!-- just an exception for this form-->
-                <td style="text-align: center;"><i class="fa-solid fa-check"></i></td>
-              {% elif key == 'rct_ebld' and not value %}<!-- just an exception for this form-->
-                <td style="text-align: center;"><i class="fa-solid fa-xmark"></i></td>
-              {% elif key == 'rct_unit' %}<!-- just an exception for this form-->
+              {% elif key == 'sku_ingr' %}<!-- just an exception for this form-->
+                {% for choice in sku_ingr_choices %}
+                  {% if choice[0] == value %}
+                    <td style="text-align: center;">{{ choice[1] }}</td>
+                  {% endif %}
+                {% endfor %} 
+              {% elif key == 'sku_unit' or key == 'sku_v_unit' %}
+                {% for choice in sku_unit_choices %}
+                  {% if choice[0] == value %}
+                    <td style="text-align: center;">{{ choice[1] }}</td>
+                  {% endif %}
+                {% endfor %}
+              {% elif key == 'rct_unit' %} <!-- just an exception for this form-->
                 {% for choice in ing_unit_choices %}
                   {% if choice[0] == value %}
                     <td style="text-align: center;">{{ choice[1] }}</td>
@@ -145,26 +168,32 @@
 {{ super() }}
   <script>
     function Newrecord() {
-        document.getElementById("rct_name").value = "";
-        document.getElementById("rct_unit").value = "";
-        document.getElementById("rct_dens").value = "";
-        document.getElementById("rct_denu").value = "";
-        document.getElementById("rct_cost").value = "";
-        document.getElementById("rct_cosc").value = "";
-        document.getElementById("rct_yiel").value = "";
-        document.getElementById("rct_ebld").value = "checked";
+        document.getElementById("sku_name").value = "";
+        document.getElementById("sku_ingr").value = "";
+        document.getElementById("sku_cont").value = "";
+        document.getElementById("sku_unit").value = "";
+        document.getElementById("sku_barc").value = "";
+        //document.getElementById("sku_foto").value = None;
+        document.getElementById("sku_pref").value = "";
+        document.getElementById("sku_itbi").value = "";
+        document.getElementById("sku_vaci").value = "";
+        document.getElementById("sku_v_unit").value = "";
+        document.getElementById("sku_nams").value = "";
         document.getElementById("id").value = 0;
         }
 
     function Navrecord(NAV) {
-        document.getElementById("rct_name").value = '{{session['rct_name']}}';
-        document.getElementById("rct_cosc").value = {{session['rct_cosc']}};
-        document.getElementById("rct_cost").value = {{session['rct_cost']}};
-        document.getElementById("rct_dens").value = {{session['rct_dens']}};
-        document.getElementById("rct_denu").value = '{{session['rct_denu']}}';
-        document.getElementById("rct_yiel").value = {{session['rct_yiel']}};
-        document.getElementById("rct_unit").value = {{session['rct_unit']}};
-        document.getElementById("rct_ebld").value = '{{session['rct_ebld']}}';
+        document.getElementById("sku_name").value = '{{session['sku_name']}}';
+        document.getElementById("sku_ingr").value = {{session['sku_ingr']}};
+        document.getElementById("sku_cont").value = {{session['sku_cont']}};
+        document.getElementById("sku_unit").value = {{session['sku_unit']}};
+        document.getElementById("sku_barc").value = '{{session['sku_barc']}}';
+        //document.getElementById("sku_foto").value = '{{session['sku_foto']}}';
+        document.getElementById("sku_pref").value = {{session['sku_pref']}};
+        document.getElementById("sku_itbi").value = {{session['sku_itbi']}};
+        document.getElementById("sku_vaci").value = {{session['sku_vaci']}};
+        document.getElementById("sku_v_unit").value = {{session['sku_v_unit']}};
+        document.getElementById("sku_nams").value = '{{session['sku_nams']}}';
         document.getElementById("id").value = {{session['id']}};
         document.getElementById("submit_button").value = NAV;
         document.getElementById("submit_button").click();

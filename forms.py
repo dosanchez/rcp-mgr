@@ -104,11 +104,13 @@ class Sku(FlaskForm):
     sku_cont = DecimalField('Qty',validators=[DataRequired()], default = 0)
     sku_unit = SelectField('Unit of measure', validators=[DataRequired()], 
                             coerce = int)
-    sku_barc = StringField('Business Partner', validators = [Length(max=16)], 
+    sku_barc = StringField('Barcode', validators = [Length(max=16)], 
                             render_kw={"placeholder": "insert barcode here"})
-    sku_foto = FileField('Sku Photo')
-    sku_pref = SelectField('Preferred Vendor', default = None, coerce= int)
+    sku_foto = FileField('Sku Photo', default = '')
+    sku_pref = SelectField('Preferred Vendor', default = '', coerce= int)
     sku_itbi = DecimalField('Sales Tax',validators=[DataRequired()], default = 0.18)
-    sku_vaci = DecimalField('Empty container weight', default = 0) 
+    sku_vaci = DecimalField('Empty container weight', default = 0)
+    sku_v_unit = SelectField('Unit of measure', default = (0,'---'), 
+                            coerce = int)
     sku_nams = StringField('SKU name on preferred vendor invoice ', 
                             validators=[Length(max=16)])

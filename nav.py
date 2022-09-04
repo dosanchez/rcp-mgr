@@ -63,7 +63,6 @@ def navigate_to(nav_button, conn, form, table_list):
         else:
 
             tgt_record = rcds[0][pos]
-            
             for i in form:
                 if not i.id == 'csrf_token':
                     if i.id == "qty_um" and table_list[0] == 'unitmeas':#exception for unitmeas form
@@ -97,4 +96,5 @@ def navigate_to(nav_button, conn, form, table_list):
                     else:
                         i.data = session[i.id] = tgt_record.get(i.id)
 
+    print('rcd', rcds)
     return rcds, relation

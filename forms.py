@@ -1,5 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, DecimalField, HiddenField, BooleanField, Form, FormField, IntegerField, FileField
+from flask_wtf.file import FileField, FileAllowed
+from wtforms import StringField, SelectField, DecimalField, HiddenField, BooleanField 
+from wtforms import Form, FormField, IntegerField
 from wtforms.validators import DataRequired, Length, NumberRange
 
 
@@ -106,11 +108,10 @@ class Sku(FlaskForm):
                             coerce = int)
     sku_barc = StringField('Barcode', validators = [Length(max=16)], 
                             render_kw={"placeholder": "insert barcode here"})
-    sku_foto = FileField('Sku Photo', default = '')
+    sku_foto = FileField('Update SKU Picture', validators = [FileAllowed(['jpg', 'png'])])
     sku_pref = SelectField('Preferred Vendor', default = '', coerce= int)
     sku_itbi = DecimalField('Sales Tax',validators=[DataRequired()], default = 0.18)
     sku_vaci = DecimalField('Empty container weight', default = 0)
-    sku_v_unit = SelectField('Unit of measure', default = (0,'---'), 
-                            coerce = int)
+    sku_v_unit = SelectField('Unit of measure', default = ('','---'), coerce = int)
     sku_nams = StringField('SKU name on preferred vendor invoice ', 
                             validators=[Length(max=16)])

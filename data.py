@@ -1,5 +1,26 @@
 import mysql.connector
 from flask import flash, session
+import os, secrets
+
+
+def save_file(sku_pic, save_path, f_name = None):
+    _, fext = os.path.splitext(sku_pic.filename)
+
+    if not f_name:    
+        randon_name = secrets.token_hex(4)
+        f_name = randon_name + fext
+        new_name = f_name
+        
+    else:
+        name = f_name.split('.')[0]
+        new_name = name + fext
+
+    pic_path = os.path.join(save_path, f_name)
+    new_path = os.path.join(save_path, new_name)
+    
+    sku_pic.save(pic_path)
+    os.rename(pic_path, new_path)
+    return new_name
 
 class dlt():
     def id(conn, tbl, id):
@@ -82,14 +103,14 @@ class select():
         db.execute(sql)
         
         if blank == True:
-            choice = [(None,'---')]
+            choice = [(0,'---')]
+            
         else:
             choice =[]
-        
-        return choice + sorted([(d['id'], d['uni_symb']) for d in list(db.fetchall() )], 
+
+        return choice + sorted([(int(d['id']), d['uni_symb']) for d in list(db.fetchall() )], 
                         key = lambda fld: fld[1])
-
-
+ 
 
     def ingred_ebld(db, blank = False):
         sql = """SELECT id, rct_name 
@@ -98,12 +119,13 @@ class select():
         db.execute(sql)
 
         if blank == True:
-            choice = [(None,'---')]
+            choice = [(0,'---')]           
         else:
             choice =[]
-
-        return choice + sorted([(d['id'], d['rct_name']) for d in list(db.fetchall() )], 
+ 
+        return choice + sorted([(int(d['id']), d['rct_name']) for d in list(db.fetchall() )], 
                         key = lambda fld: fld[1])
+
 
     def bp_ebld(db, blank = False):
         sql = """SELECT id, soc_name 
@@ -112,12 +134,13 @@ class select():
         db.execute(sql)
 
         if blank == True:
-            choice = [(None,'---')]
+            choice = [(0,'---')]
         else:
             choice =[]
 
-        return choice + sorted([(d['id'], d['soc_name']) for d in list(db.fetchall() )], 
+        return choice + sorted([(int(d['id']), d['soc_name']) for d in list(db.fetchall() )], 
                         key = lambda fld: fld[1])
+
 
     #Queries for all choices
     def UM_all(db, blank = False):
@@ -127,12 +150,13 @@ class select():
         db.execute(sql)
 
         if blank == True:
-            choice = [(None,'---')]
+            choice = [(0,'---')]
         else:
             choice =[]
 
-        return choice + sorted([(d['id'], d['uni_symb']) for d in list(db.fetchall())],
+        return choice + sorted([(int(d['id']), d['uni_symb']) for d in list(db.fetchall() )], 
                         key = lambda fld: fld[1])
+
 
     def ingred_all(db, blank = False):
         sql = """SELECT id, rct_name 
@@ -140,13 +164,14 @@ class select():
         db.execute(sql)
 
         if blank == True:
-            choice = [(None,'---')]
+            choice = [(0,'---')]
         else:
             choice =[]
 
-        return choice + sorted([(d['id'], d['rct_name']) for d in list(db.fetchall() )], 
+        return choice + sorted([(int(d['id']), d['rct_name']) for d in list(db.fetchall() )], 
                         key = lambda fld: fld[1])
     
+
     def bp_all(db, blank = False):
         
         sql = """SELECT id, soc_name 
@@ -154,12 +179,13 @@ class select():
         db.execute(sql)
 
         if blank == True:
-            choice = [(None,'---')]
+            choice = [(0,'---')]
         else:
             choice =[]
 
-        return choice + sorted([(d['id'], d['soc_name']) for d in list(db.fetchall())],
+        return choice + sorted([(int(d['id']), d['soc_name']) for d in list(db.fetchall() )], 
                         key = lambda fld: fld[1])
+
 
 class DataHandler():
 
@@ -202,13 +228,17 @@ class DataHandler():
             for ea_rcd in r:
                 sql = "UPDATE %s SET " %(t)
                 for fn, fv in ea_rcd.items():
+                    
+                    if not fv:
+                        fv = 'NULL'
+                        
                     if not fn == 'id':
                         sql += "%s = %s, " %(fn, fv)    
                 sql += "WHERE id = %s" %(ea_rcd['id'])
                 sql = sql.replace(", WHERE id =", " WHERE id =") #removes trailing ,
                 self.conn.cursor(dictionary=True, buffered=True).execute(sql)
                 self.conn.commit()
-                print('sql', sql)
+
 
             flash('Record updated!')
 
@@ -216,8 +246,6 @@ class DataHandler():
     def add_new(self, **kwargs):
         """adds record in table based on dict with tbl, fld and vals"""
         db = self.conn.cursor(dictionary=True, buffered=True)
-        print('rcd',self.rcd)
-        print('kwargs', kwargs)
         if not session.get('relation'):
             session['relation'] = [[{}]]
         counter = 0
@@ -227,6 +255,8 @@ class DataHandler():
             for ea_rcd in r:
                 sql = "INSERT INTO %s (" %(t)
                 for fn, fv in ea_rcd.items():
+                    if fv == '':
+                        fv = 'NULL'
                     if fn == session.get('relation')[0][0].get('child_tbl_fld'):
                         sql += "%s, " %(fn)
                         if not session['id'] == 0:

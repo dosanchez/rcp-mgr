@@ -1,11 +1,10 @@
-from operator import truediv
-from site import execsitecustomize
+from fileinput import filename
 import mysql.connector
 from flask import Flask, render_template, session, request, redirect, url_for
-from data import DataHandler as dth, select as sel, dlt
+from data import DataHandler as dth, select as sel, dlt, save_file
 from nav import navigate_to
 from forms import Ingredient, Sku, Unitmeas, Almacen, Recet_en, Socio
-
+import os
 
 #database connection
 conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
@@ -14,13 +13,10 @@ conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
 
 db = conn.cursor(dictionary=True, buffered=True)
 
-# database parent-child table
-
 
 #Flask initialization
 app=Flask(__name__)
 app.config['SECRET_KEY']="place a key here"
-
 
 #view funtions
 @app.route('/', methods=['GET','POST'])
@@ -365,6 +361,8 @@ def recipe():
 
 @app.route('/templates/sku.html', methods=['GET','POST'])
 def sku():
+    # paths for files
+    sku_pic_path = os.path.join(app.root_path,'static/skupics')
     form = Sku()
     table_list = ['sku']
 
@@ -374,7 +372,6 @@ def sku():
     form.sku_unit.choices = sel.UM_ebld(db)
     form.sku_v_unit.choices = sel.UM_ebld(db, blank = True) #Queries for Selectfields active choices
     sku_unit_choices = sel.UM_all(db) #Queries for all Selectfields choices
-    print('sku unit choices', sku_unit_choices)
     form.sku_pref.choices = sel.bp_ebld(db) #Queries for Selectfields active choices
     sku_pref_choices = sel.bp_all(db) #Queries for all Selectfields choices
 
@@ -391,7 +388,7 @@ def sku():
 
         
     if form.validate_on_submit():
-
+        
         record = dth.from_dict2sql(conn, {
                                         table_list[0]:[{
                                             'id':form.id.data,
@@ -417,8 +414,14 @@ def sku():
                                                     }]
                                         }
             ) 
-            
-            if  existe.chk_sgl_fld():   #chk if record exists   
+
+            if form.sku_foto.data:
+                    name = sel.all(db,
+                        table_list[0], id = form.id.data)[0].get('sku_foto') 
+                    record.rcd.get(table_list[0])[0]['sku_foto']  = "\'" + save_file(form.sku_foto.data, 
+                        sku_pic_path, f_name = name) + "\'" 
+
+            if  existe.chk_sgl_fld():   #chk if record exists
                 #update existing record
                 record.update()
                 return redirect(url_for('sku'))# clears POST data
@@ -430,17 +433,20 @@ def sku():
 
 
     records, relation = navigate_to(nav_button, conn, form, table_list)
+
     column_names =[['SKUs',['', 'Name', 'rel Ingr/recipe', 'Content', 
                     'Content UM', 'Barcode','Image', 'Pref Vendor',
                     'Itbis', 'Empty cont. weight', 'Empty cont. UM', 
                     'vendor slip name']]]
 
-    print ('records', records)
+    sku_img = url_for('static', filename = 'skupics/' + form.sku_foto.data) 
+
     return render_template ('sku.html', form = form, records = records,
                             column_names = column_names, 
                             sku_unit_choices = sku_unit_choices,
                             sku_ingr_choices = sku_ingr_choices,
-                            sku_pref_choices = sku_pref_choices
+                            sku_pref_choices = sku_pref_choices,
+                            sku_img = sku_img
                             )
 
 

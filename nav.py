@@ -96,5 +96,4 @@ def navigate_to(nav_button, conn, form, table_list):
                     else:
                         i.data = session[i.id] = tgt_record.get(i.id)
 
-    print('rcd', rcds)
     return rcds, relation

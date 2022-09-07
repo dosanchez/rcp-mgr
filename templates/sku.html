@@ -37,62 +37,76 @@
     <div>
       {{ form.id() }}
     </div>
-    <div class="row">
-      <div class="col-sm-3">
-        {{ form.sku_name.label(class="form-label") }}
-        {{ form.sku_name(class="form-control", value = form.sku_name.data) }}
+    <div style="display: flex; flex-wrap: wrap;">
+      <div class="row" style ="flex: 70%; padding: 5px;">
+        <div class="col-md-6">
+          {{ form.sku_name.label(class="form-label") }}
+          {{ form.sku_name(class="form-control", value = form.sku_name.data) }}
+        </div>
+        <div class="col-md-3">
+          <div>
+            {{ form.sku_cont.label(class="form-label") }}
+          </div>
+          <div>
+            <div style="width: 60%; float: left;">
+              {{ form.sku_cont(class="form-control", value = form.sku_cont.data) }}
+            </div>
+            <div style="width: 40%; float: left;">
+              {{ form.sku_unit(class="form-select", value = form.sku_unit.data) }}
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          {{ form.sku_ingr.label(class="form-label") }}
+          {{ form.sku_ingr(class="form-control", value = form.sku_ingr.data) }}
+        </div>
+
+
+        <div class="col-md-3 pt-3">
+          {{ form.sku_itbi.label(class="form-label") }}
+          {{ form.sku_itbi(class="form-control", value = form.sku_itbi.data) }}
+        </div>
+        <div class="col-md-3 pt-3">
+          <div>
+            {{ form.sku_vaci.label (class="form-label") }}
+          </div>
+            <div style="width: 55%; float: left;">
+              {{ form.sku_vaci(class="form-control", value = form.sku_vaci.data) }}
+            </div>
+            <div style="width: 45%; float: left;">
+              {{ form.sku_v_unit(class="form-select", value = form.sku_v_unit.data) }}
+            </div>
+        </div>
+        <div class="col-md-3 pt-3">
+          {{ form.sku_barc.label(class="form-label") }}
+          {{ form.sku_barc(class="form-control", value = form.sku_barc.data) }}
+        </div>
+        <div class="col-md-3 pt-3">
+          {{ form.sku_pref.label(class="form-label") }}
+          {{ form.sku_pref(class="form-control", value = form.sku_nams.data) }}
+        </div>
+
+
+        <div class="col-md-3">
+          {{ form.sku_nams.label(class="form-label") }}
+          {{ form.sku_nams(class="form-control", value = form.sku_nams.data) }}
+        </div>
+        <div class="col-md-9 pt-4" style="text-align:center; float:right;">
+          <input type="submit" id ="submit_button" class="btn btn-primary" 
+          formmethod="POST" value="submit" name = "nav">
+        </div>
+        
       </div>
-      <div class="col-sm-3">
-        {{ form.sku_cont.label(class="form-label") }}
-        {{ form.sku_cont(class="form-control", value = form.sku_cont.data) }}
+      <div class="col-sm" style="flex: 30%; padding: 5px; ">
+        <img src="{{ sku_img }}" class="img-thumbnail img-fluid" alt="sku icon" 
+        title="Click button bellow to add new image">
+        {{ form.sku_foto(class="form-control-file") }}
+        {% if form.sku_foto.errors %}
+          {% for error in form.sku_foto.errors %}
+            <span class ="text-danger">{{ error }}</span></br>
+          {% endfor %}
+        {% endif %}
       </div>
-      <div class="col-sm-3">
-        {{ form.sku_unit.label(class="form-label") }}
-        {{ form.sku_unit(class="form-select", value = form.sku_unit.data) }}
-      </div>
-      <div class="col-sm-3">
-        <img src="{{ sku_img }}" class="img-thumbnail" alt="sku icon" >
-          {{ form.sku_foto(class="form-control-file") }}
-          {% if form.sku_foto.errors %}
-            {% for error in form.sku_foto.errors %}
-              <span class ="text-danger">{{ error }}</span></br>
-            {% endfor %}
-          {% endif %}
-      </div>
-      
-      <div class="col-sm-3 pt-3">
-        {{ form.sku_ingr.label(class="form-label") }}
-        {{ form.sku_ingr(class="form-control", value = form.sku_ingr.data) }}
-      </div>
-      <div class="col-sm-3 pt-3">
-        {{ form.sku_itbi.label(class="form-label") }}
-        {{ form.sku_itbi(class="form-control", value = form.sku_itbi.data) }}
-      </div>
-      <div class="col-sm-3 pt-3">
-        {{ form.sku_vaci.label(class="form-label") }}
-        {{ form.sku_vaci(class="form-control", value = form.sku_vaci.data) }}
-      </div>
-      <div class="col-sm-3 pt-3">
-        {{ form.sku_v_unit.label(class="form-label") }}
-        {{ form.sku_v_unit(class="form-select", value = form.sku_v_unit.data) }}
-      </div>
-      
-      <div class="col-sm-3 pt-3">
-        {{ form.sku_barc.label(class="form-label") }}
-        {{ form.sku_barc(class="form-control", value = form.sku_barc.data) }}
-      </div>
-      <div class="col-sm-3 pt-3">
-        {{ form.sku_pref.label(class="form-label") }}
-        {{ form.sku_pref(class="form-control", value = form.sku_nams.data) }}
-      </div>
-      <div class="col-sm-3 pt-3">
-        {{ form.sku_nams.label(class="form-label") }}
-        {{ form.sku_nams(class="form-control", value = form.sku_nams.data) }}
-      </div>
-      <div class="col-sm-2 pt-3" style="text-align:center; float:right;">
-        <input type="submit" id ="submit_button" class="btn btn-primary" formmethod="POST" value="submit" name = "nav">
-      </div>
-      
     </div>
   </form>
 

@@ -102,8 +102,8 @@ class Sku(FlaskForm):
     sku_name = StringField('SKU Name', validators=[DataRequired(),
                             Length(max=16)], 
                             render_kw={"placeholder": "e.g. Heinz Tomato Soup"})
-    sku_ingr = SelectField('Related Recipe/ingredient', default = None, coerce= int) 
-    sku_cont = DecimalField('Qty',validators=[DataRequired()], default = 0)
+    sku_ingr = SelectField('Rel Recipe/ingr', default = None, coerce= int) 
+    sku_cont = DecimalField('Label weight',validators=[DataRequired()], default = 0)
     sku_unit = SelectField('Unit of measure', validators=[DataRequired()], 
                             coerce = int)
     sku_barc = StringField('Barcode', validators = [Length(max=16)], 
@@ -113,5 +113,5 @@ class Sku(FlaskForm):
     sku_itbi = DecimalField('Sales Tax',validators=[DataRequired()], default = 0.18)
     sku_vaci = DecimalField('Empty container weight', default = 0)
     sku_v_unit = SelectField('Unit of measure', default = ('','---'), coerce = int)
-    sku_nams = StringField('SKU name on preferred vendor invoice ', 
+    sku_nams = StringField('name on vendor slip', 
                             validators=[Length(max=16)])

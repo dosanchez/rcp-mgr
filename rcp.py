@@ -438,8 +438,10 @@ def sku():
                     'Content UM', 'Barcode','Image', 'Pref Vendor',
                     'Itbis', 'Empty cont. weight', 'Empty cont. UM', 
                     'vendor slip name']]]
-
-    sku_img = url_for('static', filename = 'skupics/' + form.sku_foto.data) 
+    if not form.sku_foto.data:
+        sku_img = url_for('static', filename = 'skupics/595ab936.jpg') 
+    else:
+        sku_img = url_for('static', filename = 'skupics/' + form.sku_foto.data) 
 
     return render_template ('sku.html', form = form, records = records,
                             column_names = column_names, 

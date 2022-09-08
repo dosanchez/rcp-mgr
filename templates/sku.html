@@ -147,28 +147,34 @@
             {% for key, value in row.items() %}
               {% if key == 'id' %}
                 <td style="text-align: center;" class="pt-2">
-                  <button type = "submit" value = {{ value }} form ="nav_form" formmethod ="post" class="btn btn-sm btn-primary" name ="nav">
+                  <button type = "submit" value = {{ value }} form ="nav_form" 
+                    formmethod ="post" class="btn btn-sm btn-primary" name ="nav">
                     <small>edit</small>
                   </button>
                 </td>
-              {% elif key == 'sku_ingr' %}<!-- just an exception for this form-->
+              {% elif key == 'sku_ingr' %}<!-- looks for ingredient name-->
                 {% for choice in sku_ingr_choices %}
                   {% if choice[0] == value %}
                     <td style="text-align: center;">{{ choice[1] }}</td>
                   {% endif %}
                 {% endfor %} 
+              <!-- looks for Unit of measure name-->  
               {% elif key == 'sku_unit' or key == 'sku_v_unit' %}
                 {% for choice in sku_unit_choices %}
                   {% if choice[0] == value %}
                     <td style="text-align: center;">{{ choice[1] }}</td>
                   {% endif %}
                 {% endfor %}
-              {% elif key == 'rct_unit' %} <!-- just an exception for this form-->
-                {% for choice in ing_unit_choices %}
+              <!-- looks for preffered vendor name-->
+              {% elif key == 'sku_pref' %}
+                {% for choice in sku_pref_choices %}
                   {% if choice[0] == value %}
                     <td style="text-align: center;">{{ choice[1] }}</td>
                   {% endif %}
                 {% endfor %}
+
+                
+
               {% else %}
                 <td style="text-align: center;">{{ value }}</td> 
               {% endif %}    

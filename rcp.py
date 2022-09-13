@@ -1,4 +1,3 @@
-from fileinput import filename
 import mysql.connector
 from flask import Flask, render_template, session, request, redirect, url_for
 from data import DataHandler as dth, select as sel, dlt, save_file
@@ -7,9 +6,9 @@ from forms import Ingredient, Sku, Unitmeas, Almacen, Recet_en, Socio
 import os
 
 #database connection
-conn = mysql.connector.connect(user='sql5514428', password='C3b4Xn6K4Z',
-                              host='sql5.freesqldatabase.com',
-                              database='sql5514428')
+conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
+                              host='192.168.100.254',
+                              database='std')
 
 db = conn.cursor(dictionary=True, buffered=True)
 
@@ -370,7 +369,7 @@ def sku():
     sku_ingr_choices = sel.ingred_all(db) #Queries for all Selectfields choices
 
     form.sku_unit.choices = sel.UM_ebld(db)
-    form.sku_v_unit.choices = sel.UM_ebld(db, blank = True) #Queries for Selectfields active choices
+    form.sku_v_unit.choices = sel.UM_ebld(db) #Queries for Selectfields active choices
     sku_unit_choices = sel.UM_all(db) #Queries for all Selectfields choices
     form.sku_pref.choices = sel.bp_ebld(db) #Queries for Selectfields active choices
     sku_pref_choices = sel.bp_all(db) #Queries for all Selectfields choices
@@ -381,11 +380,12 @@ def sku():
     except:
         pass
     
-
+    print('skuitbi', request.form.get('sku_itbi'))
     print('validateonsubmit', form.validate_on_submit())
-    for error in form.errors:
-        print('error',error)
-
+    for error in form.sku_vaci.errors:
+        print('skuvaci',error)
+    for error in form.sku_cont.errors:
+        print('skucont',error)
         
     if form.validate_on_submit():
         
@@ -402,7 +402,7 @@ def sku():
                                             'sku_itbi':form.sku_itbi.data,
                                             'sku_vaci':form.sku_vaci.data,
                                             'sku_v_unit':form.sku_v_unit.data,
-                                            'sku_nams':form.sku_nams.data  
+                                            'sku_ebld':form.sku_ebld.data  
                                                     }]
                                         })
 
@@ -416,10 +416,10 @@ def sku():
             ) 
 
             if form.sku_foto.data:
-                    name = sel.all(db,
-                        table_list[0], id = form.id.data)[0].get('sku_foto') 
-                    record.rcd.get(table_list[0])[0]['sku_foto']  = "\'" + save_file(form.sku_foto.data, 
-                        sku_pic_path, f_name = name) + "\'" 
+                name = sel.all(db,
+                    table_list[0], id = form.id.data)[0].get('sku_foto') 
+                record.rcd.get(table_list[0])[0]['sku_foto']  = "\'" + save_file(form.sku_foto.data, 
+                    sku_pic_path, f_name = name) + "\'" 
 
             if  existe.chk_sgl_fld():   #chk if record exists
                 #update existing record
@@ -434,10 +434,12 @@ def sku():
 
     records, relation = navigate_to(nav_button, conn, form, table_list)
 
-    column_names =[['SKUs',['', 'Name', 'rel Ingr/recipe', 'Content', 
-                    'Content UM', 'Barcode','Image', 'Pref Vendor',
-                    'Itbis', 'Empty cont. weight', 'Empty cont. UM', 
-                    'vendor slip name']]]
+    #personalise record list headers
+    column_names =[['SKUs',['id', 'Name', 'related to', 'Content', 
+                    '', 'Barcode','Image', 'Pref Vendor',
+                    'Itbis', 'Empty weight', '', 
+                    'enabled']]]
+    
     if not form.sku_foto.data:
         sku_img = url_for('static', filename = 'skupics/595ab936.jpg') 
     else:

@@ -60,8 +60,6 @@
           {{ form.sku_ingr.label(class="form-label") }}
           {{ form.sku_ingr(class="form-control", value = form.sku_ingr.data) }}
         </div>
-
-
         <div class="col-md-3 pt-3">
           {{ form.sku_itbi.label(class="form-label") }}
           {{ form.sku_itbi(class="form-control", value = form.sku_itbi.data) }}
@@ -83,22 +81,22 @@
         </div>
         <div class="col-md-3 pt-3">
           {{ form.sku_pref.label(class="form-label") }}
-          {{ form.sku_pref(class="form-control", value = form.sku_nams.data) }}
+          {{ form.sku_pref(class="form-control", value = form.sku_pref.data) }}
         </div>
 
-
-        <div class="col-md-3">
-          {{ form.sku_nams.label(class="form-label") }}
-          {{ form.sku_nams(class="form-control", value = form.sku_nams.data) }}
-        </div>
-        <div class="col-md-9 pt-4" style="text-align:center; float:right;">
-          <input type="submit" id ="submit_button" class="btn btn-primary" 
-          formmethod="POST" value="submit" name = "nav">
-        </div>
+          <div class="col-md-9" style="float: right;">
+            {{ form.sku_ebld.label(class="form-check-label") }}
+            {{ form.sku_ebld(class="form-check-input", value = form.sku_ebld.data) }}
+          </div>
         
+          <div class="col-md-3">
+            <input type="submit" id ="submit_button" class="btn btn-primary" 
+            formmethod="POST" value="submit" name = "nav">
+          </div>
+
       </div>
-      <div class="col-sm" style="flex: 30%; padding: 5px; ">
-        <img src="{{ sku_img }}" class="img-thumbnail img-fluid" alt="sku icon" 
+      <div class="col-sm" style="flex: 30%; padding: 5px; max-width: 240px">
+        <img src="{{ sku_img }}" class="img-thumbnail img-fluid" alt="sku image" 
         title="Click button bellow to add new image">
         {{ form.sku_foto(class="form-control-file") }}
         {% if form.sku_foto.errors %}
@@ -132,13 +130,13 @@
         <tbody>
           {% for row in records[0] %}
             {% if row['id'] == form.id.data %}  <!-- styles selected records-->
-              {% if row['rct_ebld'] %}  <!-- styles disabled records-->
+              {% if row['sku_ebld'] %}  <!-- styles disabled records-->
                 <tr class="table-active">
               {% else %}
                 <tr class="table-active" style="opacity: 0.5;">
               {% endif %}
             {% else %}
-              {% if row['rct_ebld'] %}  <!-- styles disabled records-->
+              {% if row['sku_ebld'] %}  <!-- styles disabled records-->
                 <tr>
               {% else %}
                 <tr style="opacity: 0.5;">
@@ -158,23 +156,46 @@
                     <td style="text-align: center;">{{ choice[1] }}</td>
                   {% endif %}
                 {% endfor %} 
-              <!-- looks for Unit of measure name-->  
-              {% elif key == 'sku_unit' or key == 'sku_v_unit' %}
+              <!-- substitute null values with string or looks for UM name--> 
+              {% elif key == 'sku_v_unit' %}
+                {% if value is none %}
+                  <td style="text-align: center;">---</td>
+                {% else %}
+                  {% for choice in sku_unit_choices %}
+                    {% if choice[0] == value %}
+                      <td style="text-align: center;">{{ choice[1] }}</td>
+                    {% endif %}
+                  {% endfor %}  
+                {% endif %}
+              <!-- looks for Unit of measure name in all UM-->  
+              {% elif key == 'sku_unit' %}
                 {% for choice in sku_unit_choices %}
                   {% if choice[0] == value %}
                     <td style="text-align: center;">{{ choice[1] }}</td>
                   {% endif %}
                 {% endfor %}
-              <!-- looks for preffered vendor name-->
+              <!-- looks for preffered vendor name in all vendor-->
               {% elif key == 'sku_pref' %}
                 {% for choice in sku_pref_choices %}
                   {% if choice[0] == value %}
                     <td style="text-align: center;">{{ choice[1] }}</td>
                   {% endif %}
                 {% endfor %}
-
-                
-
+              {% elif key == 'sku_foto' %}
+                {% if not value %}
+                  <td style="text-align: center;">
+                    <img src="{{ url_for('static', filename = 'skupics/595ab936.jpg') }}" class="img-fluid" alt="list sku image" width="40px">
+                  </td>
+                {% else %}
+                <td style="text-align: center;">
+                  <img src="{{ url_for('static', filename = 'skupics/' + value) }}" class="img-fluid" alt="list sku image" width="40px">
+                </td>
+                {% endif %}
+              <!-- display icon on enabled status-->
+              {% elif key == 'sku_ebld' and value %}
+                <td style="text-align: center;"><i class="fa-solid fa-check"></i></td>
+              {% elif key == 'sku_ebld' and not value %}
+                <td style="text-align: center;"><i class="fa-solid fa-xmark"></i></td>
               {% else %}
                 <td style="text-align: center;">{{ value }}</td> 
               {% endif %}    
@@ -198,12 +219,12 @@
         document.getElementById("sku_cont").value = "";
         document.getElementById("sku_unit").value = "";
         document.getElementById("sku_barc").value = "";
-        //document.getElementById("sku_foto").value = None;
+        document.getElementById("sku_foto").value = "";
         document.getElementById("sku_pref").value = "";
         document.getElementById("sku_itbi").value = "";
         document.getElementById("sku_vaci").value = "";
         document.getElementById("sku_v_unit").value = "";
-        document.getElementById("sku_nams").value = "";
+        document.getElementById("sku_ebld").value = "checked";
         document.getElementById("id").value = 0;
         }
 
@@ -213,12 +234,13 @@
         document.getElementById("sku_cont").value = {{session['sku_cont']}};
         document.getElementById("sku_unit").value = {{session['sku_unit']}};
         document.getElementById("sku_barc").value = '{{session['sku_barc']}}';
+        //line bellow commented field only filled when new pic 
         //document.getElementById("sku_foto").value = '{{session['sku_foto']}}';
         document.getElementById("sku_pref").value = {{session['sku_pref']}};
         document.getElementById("sku_itbi").value = {{session['sku_itbi']}};
         document.getElementById("sku_vaci").value = {{session['sku_vaci']}};
         document.getElementById("sku_v_unit").value = {{session['sku_v_unit']}};
-        document.getElementById("sku_nams").value = '{{session['sku_nams']}}';
+        document.getElementById("sku_ebld").value = '{{session['sku_ebld']}}';
         document.getElementById("id").value = {{session['id']}};
         document.getElementById("submit_button").value = NAV;
         document.getElementById("submit_button").click();

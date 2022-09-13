@@ -23,3 +23,4 @@ an exception is the ingredient and recipe forms which share same sql table
 
 '-' can not be used in fields or form (class) names
 
+elifs in htmls are used for particular formatting of certain fields else clause is used for the general cases 

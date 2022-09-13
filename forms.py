@@ -1,8 +1,9 @@
+from unicodedata import decimal
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, SelectField, DecimalField, HiddenField, BooleanField 
 from wtforms import Form, FormField, IntegerField
-from wtforms.validators import DataRequired, Length, NumberRange
+from wtforms.validators import DataRequired, Length, NumberRange, InputRequired
 
 
 class Recet_de(Form):
@@ -79,7 +80,7 @@ class Socio(FlaskForm):
     """wtform for Business partners (clients and vendors)"""
     id = HiddenField()
     soc_name = StringField('Business Partner', validators=[DataRequired(),
-                            Length(max=16)], 
+                            Length(max=32)], 
                             render_kw={"placeholder": "e.g. Ohio Steel Co."})
     soc_come= StringField('Reg. Name', validators=[Length(max = 16)], 
                             render_kw={"placeholder": "reg, fiscal name"})
@@ -88,9 +89,9 @@ class Socio(FlaskForm):
     soc_ebld = BooleanField('Enabled', default = "checked", false_values=('',))
     soc_cont = StringField('Contact', validators=[Length(max = 16)], 
                             render_kw={"placeholder": "e.g. Mr. James Watt"})   
-    soc_addr = StringField('Business Partner', validators=[Length(max = 64)], 
+    soc_addr = StringField('Business Partner', validators=[Length(max = 128)], 
                             render_kw={"placeholder": "up to 64 Chr. long"})
-    soc_tel1 = IntegerField('Tel. 1', validators=[NumberRange(max = 9999999999999)],
+    soc_tel1 = IntegerField('Tel. 1', validators=[NumberRange(max = 9999999999999, message='if no number enter 0')],
                             render_kw={"placeholder": "e.g. 12125551332"})
     soc_tel2 = IntegerField('Tel. 1', validators=[NumberRange(max = 9999999999999)],
                             render_kw={"placeholder": "e.g. 12125551332"})
@@ -103,15 +104,16 @@ class Sku(FlaskForm):
                             Length(max=16)], 
                             render_kw={"placeholder": "e.g. Heinz Tomato Soup"})
     sku_ingr = SelectField('Rel Recipe/ingr', default = None, coerce= int) 
-    sku_cont = DecimalField('Label weight',validators=[DataRequired()], default = 0)
+    sku_cont = DecimalField('Label weight',validators=[NumberRange(min = 0)], default = 0)
     sku_unit = SelectField('Unit of measure', validators=[DataRequired()], 
                             coerce = int)
     sku_barc = StringField('Barcode', validators = [Length(max=16)], 
                             render_kw={"placeholder": "insert barcode here"})
     sku_foto = FileField('Update SKU Picture', validators = [FileAllowed(['jpg', 'png'])])
     sku_pref = SelectField('Preferred Vendor', default = '', coerce= int)
-    sku_itbi = DecimalField('Sales Tax',validators=[DataRequired()], default = 0.18)
-    sku_vaci = DecimalField('Empty container weight', default = 0)
+    sku_itbi = DecimalField('Sales Tax',validators=[NumberRange(min = 0)], default = 0.18)
+    sku_vaci = DecimalField('Empty container weight',validators=[NumberRange(min = 0)])
+        
     sku_v_unit = SelectField('Unit of measure', default = ('','---'), coerce = int)
-    sku_nams = StringField('name on vendor slip', 
-                            validators=[Length(max=16)])
+    sku_ebld = BooleanField('Enabled', default = "checked", false_values=('',))
+

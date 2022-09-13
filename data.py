@@ -1,25 +1,33 @@
 import mysql.connector
 from flask import flash, session
 import os, secrets
+from PIL import Image
 
 
 def save_file(sku_pic, save_path, f_name = None):
+    #selects current name or creates one if none with new pic extension
     _, fext = os.path.splitext(sku_pic.filename)
-
     if not f_name:    
         randon_name = secrets.token_hex(4)
         f_name = randon_name + fext
         new_name = f_name
-        
     else:
         name = f_name.split('.')[0]
         new_name = name + fext
-
+   
+   #stores old and new name + path
     pic_path = os.path.join(save_path, f_name)
     new_path = os.path.join(save_path, new_name)
-    
-    sku_pic.save(pic_path)
+   
+    #scales down image
+    new_size = (240, 320)
+    resized_img = Image.open(sku_pic)
+    resized_img.thumbnail(new_size)
+
+    #saves new image with old name then changes the name to new one
+    resized_img.save(pic_path)
     os.rename(pic_path, new_path)
+    
     return new_name
 
 class dlt():
@@ -228,8 +236,8 @@ class DataHandler():
             for ea_rcd in r:
                 sql = "UPDATE %s SET " %(t)
                 for fn, fv in ea_rcd.items():
-                    
-                    if not fv:
+                    print('key >{}'.format(fn),'val >{}'.format(fv) )
+                    if not fv and fv != 0:
                         fv = 'NULL'
                         
                     if not fn == 'id':
@@ -255,7 +263,7 @@ class DataHandler():
             for ea_rcd in r:
                 sql = "INSERT INTO %s (" %(t)
                 for fn, fv in ea_rcd.items():
-                    if fv == '':
+                    if not fv and fv != 0:
                         fv = 'NULL'
                     if fn == session.get('relation')[0][0].get('child_tbl_fld'):
                         sql += "%s, " %(fn)

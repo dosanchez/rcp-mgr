@@ -2,7 +2,7 @@ from unicodedata import decimal
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, SelectField, DecimalField, HiddenField, BooleanField 
-from wtforms import Form, FormField, IntegerField
+from wtforms import Form, FormField, IntegerField, DateField
 from wtforms.validators import DataRequired, Length, NumberRange, InputRequired
 
 
@@ -11,12 +11,23 @@ class Recet_de(Form):
     idx = HiddenField()
     rcd_enca = HiddenField()
     rcd_ing = SelectField('Ingredient', validators=[DataRequired()], coerce= int)
-    rcd_qty = DecimalField('Qty',validators=[DataRequired()],
+    rcd_qty = DecimalField('Qty',validators=[DataRequired(), NumberRange(min = 0)],
                             default = 1)
-    rcd_unit = SelectField('Unit of measure', validators=[DataRequired()], coerce = int)
-    rcd_yiel = DecimalField('Ingredient yield', validators=[DataRequired()],
-                            default = 0.98)
-    
+    rcd_unit = SelectField('Unit of measure', validators=[DataRequired()],
+                            coerce = int)
+    rcd_yiel = DecimalField('Ingredient yield', validators=[DataRequired(),
+                            NumberRange(min = 0)],default = 0.98)
+class Rcv_de(Form):
+    """wtform for receive form details"""
+    idx = HiddenField()
+    log_enca = HiddenField()
+    log_sku = SelectField('Sku', validators=[DataRequired()], coerce= int)
+    log_qty = DecimalField('Qty',validators=[DataRequired(),
+                            NumberRange(min = 0)], default = 1)
+    log_pric = DecimalField('Unit Price',validators=[DataRequired(),
+                            NumberRange(min = 0)])
+    log_tax = DecimalField('Tax amount',validators=[NumberRange(min = 0)])
+
 class Unitmeas(FlaskForm):
     """wtform for Units of measure"""
     id = HiddenField()
@@ -117,3 +128,17 @@ class Sku(FlaskForm):
     sku_v_unit = SelectField('Unit of measure', default = ('','---'), coerce = int)
     sku_ebld = BooleanField('Enabled', default = "checked", false_values=('',))
 
+class Rcv_en(FlaskForm):
+    id = HiddenField()
+    lox_date = DateField('Reception Date', format='%d-%m-%Y')
+    lox_datd = DateField('Reception Doc Date', format='%d-%m-%Y')
+    lox_vend = SelectField('Vendor', coerce= int)
+    lox_nifn = StringField('receipt tax number', validators = [Length(max=16)])
+    lox_doc_no = IntegerField('Vendor Receipt No.', 
+                                render_kw={"placeholder": "optional"})
+    lox_desc = DecimalField('Total Discount',validators=[NumberRange(min = 0)], 
+                            default = 0.0)
+    lox_due = DecimalField('Total Due',validators=[NumberRange(min = 0)])
+    lox_tax = DecimalField('Total Tax',validators=[NumberRange(min = 0)])
+    lox_alm = SelectField('Receiving warehouse', coerce= int)
+    subform = FormField(Rcv_de)

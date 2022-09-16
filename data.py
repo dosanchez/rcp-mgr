@@ -103,6 +103,24 @@ class select():
         return db.fetchall()     
 
     #Queries for active (ebld) choices
+    def ebld(db, table, field, truefield, blank = False):
+        """returns a set of (id, <<field>>) tuples for 
+            selectfield choices"""
+        sql = """SELECT id, {} 
+                    FROM {}
+                    WHERE {} = True""". format(field, table, truefield)
+        db.execute(sql)
+        
+        if blank == True:
+            choice = [(0,'---')]
+            
+        else:
+            choice =[]
+
+        return choice + sorted([(int(d['id']), d[field]) for d in list(db.fetchall() )], 
+                        key = lambda fld: fld[1])
+
+
     def UM_ebld(db, blank = False):
         """returns a set with Enable unit of measure"""
         sql = """SELECT id, uni_symb 
@@ -150,6 +168,35 @@ class select():
                         key = lambda fld: fld[1])
 
 
+    def alm_ebld(db, blank = False):
+        sql = """SELECT id, alm_name 
+            FROM almacen
+            WHERE alm_ebld = True""" 
+        db.execute(sql)
+
+        if blank == True:
+            choice = [(0,'---')]
+        else:
+            choice =[]
+
+        return choice + sorted([(int(d['id']), d['alm_name']) for d in list(db.fetchall() )], 
+                        key = lambda fld: fld[1])
+
+
+    def sku_ebld(db, blank = False):
+        sql = """SELECT id, sku_name 
+            FROM sku
+            WHERE soc_ebld = True""" 
+        db.execute(sql)
+
+        if blank == True:
+            choice = [(0,'---')]
+        else:
+            choice =[]
+
+        return choice + sorted([(int(d['id']), d['sku_name']) for d in list(db.fetchall() )], 
+                        key = lambda fld: fld[1])
+
     #Queries for all choices
     def UM_all(db, blank = False):
         
@@ -192,6 +239,36 @@ class select():
             choice =[]
 
         return choice + sorted([(int(d['id']), d['soc_name']) for d in list(db.fetchall() )], 
+                        key = lambda fld: fld[1])
+
+
+    def sku_all(db, blank = False):
+        
+        sql = """SELECT id, sku_name 
+                FROM sku"""
+        db.execute(sql)
+
+        if blank == True:
+            choice = [(0,'---')]
+        else:
+            choice =[]
+
+        return choice + sorted([(int(d['id']), d['sku_name']) for d in list(db.fetchall() )], 
+                        key = lambda fld: fld[1])
+
+
+    def alm_all(db, blank = False):
+        
+        sql = """SELECT id, alm_name 
+                FROM almacen"""
+        db.execute(sql)
+
+        if blank == True:
+            choice = [(0,'---')]
+        else:
+            choice =[]
+
+        return choice + sorted([(int(d['id']), d['alm_name']) for d in list(db.fetchall() )], 
                         key = lambda fld: fld[1])
 
 

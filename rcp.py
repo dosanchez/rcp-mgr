@@ -181,9 +181,6 @@ def ingredient():
     form = Ingredient()
     table_list = ['recet_en']
 
-    form.rct_unit.choices = sel.UM_ebld(db) #Queries for Selectfields active choices
-    ing_unit_choices = sel.UM_all(db) #Queries for all Selectfields choices
-
         
     nav_button =  request.form.get('nav') #saves form navigation request
     try:
@@ -198,7 +195,6 @@ def ingredient():
                                         table_list[0]:[{
                                             'id':form.id.data,
                                             'rct_name':form.rct_name.data,
-                                            'rct_unit':form.rct_unit.data,
                                             'rct_cost':form.rct_cost.data,
                                             'rct_cosc':form.rct_cosc.data,
                                             'rct_dens':form.rct_dens.data,
@@ -230,11 +226,11 @@ def ingredient():
 
 
     records, relation = navigate_to(nav_button, conn, form, table_list)
-    column_names =[['Registered Ingredients',['', 'Ingredient', 'Costo Real', 'Costo Std',
-                    'Density', 'Densi UM', 'Yield', 'Common UM', 'Enabled']]]
+    column_names =[['Registered Ingredients',['', 'Ingredient', 'Costo Real',
+                    'Costo Std', 'Density', 'Densi UM', 'Yield', 'Enabled']]]
 
     return render_template ('ingredient.html', form = form, records = records,
-                            column_names = column_names, ing_unit_choices = ing_unit_choices)
+                            column_names = column_names)
 
 @app.route('/templates/recipe.html', methods=['GET','POST'])
 def recipe():

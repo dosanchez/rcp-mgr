@@ -48,7 +48,7 @@ class Ingredient(FlaskForm):
                             render_kw={"placeholder": "e.g. Paprika"})
     rct_cost = DecimalField('Actual Cost', render_kw = {'disabled':''}, default = 0)
     rct_cosc = DecimalField('Standard Cost', render_kw = {'disabled':''}, default = 0)
-    rct_unit = SelectField('Common UM', validators=[DataRequired()], coerce = int)
+    #rct_unit = SelectField('Common UM', validators=[DataRequired()], coerce = int)
     rct_dens = DecimalField('Ingredient density',validators=[DataRequired()], 
                             render_kw={"placeholder": "Density"}, default = 1)
     rct_denu = SelectField('Density UM', validators=[DataRequired()], 

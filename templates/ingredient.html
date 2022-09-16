@@ -69,10 +69,6 @@
         {{ form.rct_yiel.label(class="form-label") }}
         {{ form.rct_yiel(class="form-control", value = form.rct_yiel.data) }}
       </div>
-      <div class="col-sm-3 pt-3">
-        {{ form.rct_unit.label(class="form-label") }}
-        {{ form.rct_unit(class="form-select", value = form.rct_unit.data) }}
-      </div>
     </div>
   </form>
 
@@ -117,16 +113,12 @@
                     <small>edit</small>
                   </button>
                 </td>
-              {% elif key == 'rct_ebld' and value %}<!-- just an exception for this form-->
+              {% elif key == 'rct_ebld' and value %}<!-- display checked icon if enabled-->
                 <td style="text-align: center;"><i class="fa-solid fa-check"></i></td>
-              {% elif key == 'rct_ebld' and not value %}<!-- just an exception for this form-->
+              {% elif key == 'rct_ebld' and not value %}<!-- display checked icon if disabled-->
                 <td style="text-align: center;"><i class="fa-solid fa-xmark"></i></td>
-              {% elif key == 'rct_unit' %}<!-- just an exception for this form-->
-                {% for choice in ing_unit_choices %}
-                  {% if choice[0] == value %}
-                    <td style="text-align: center;">{{ choice[1] }}</td>
-                  {% endif %}
-                {% endfor %}
+              {% elif key =='rct_rece' %} <!-- hides on recipe record flag-->
+                <td hidden></td>
               {% else %}
                 <td style="text-align: center;">{{ value }}</td> 
               {% endif %}    
@@ -146,7 +138,7 @@
   <script>
     function Newrecord() {
         document.getElementById("rct_name").value = "";
-        document.getElementById("rct_unit").value = "";
+        //document.getElementById("rct_unit").value = "";
         document.getElementById("rct_dens").value = "";
         document.getElementById("rct_denu").value = "";
         document.getElementById("rct_cost").value = "";
@@ -163,7 +155,7 @@
         document.getElementById("rct_dens").value = {{session['rct_dens']}};
         document.getElementById("rct_denu").value = '{{session['rct_denu']}}';
         document.getElementById("rct_yiel").value = {{session['rct_yiel']}};
-        document.getElementById("rct_unit").value = {{session['rct_unit']}};
+        //document.getElementById("rct_unit").value = {{session['rct_unit']}};
         document.getElementById("rct_ebld").value = '{{session['rct_ebld']}}';
         document.getElementById("id").value = {{session['id']}};
         document.getElementById("submit_button").value = NAV;

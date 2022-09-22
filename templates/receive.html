@@ -2,13 +2,13 @@
 
 {% block form%}
 
-<div class ="form-group bg-light border-2">
+<div class ="container bg-light border-2">
   <form method="POST" id="nav_form" >
     {{ form.hidden_tag() }}
     <div class="row mb-3" >
       <div class="col-sm-8">
         <h2>Receptions</h2>
-        <small>receive items</small>
+        <small>receive SKUs</small>
       </div>
       <div class="col-sm-4" style ="float:right;">
         <button type = "button" class="btn" onclick="Navrecord('out')">
@@ -37,77 +37,125 @@
     <div hidden>
       {{ form.id() }}
     </div>
-    <div class="row">
-      <div class="col-sm-3">
-        {{ form.rct_name.label(class="form-label") }}
-        {{ form.rct_name(class="form-control", value = form.rct_name.data) }}
+    <div class="row mb-4">
+      <div class="col-sm-6 pl-2">
+        {{ form.lox_vend.label(class="form-label") }}
+        {{ form.lox_vend(class="form-select", value = form.lox_vend.data) }}
       </div>
-      <div class="col-sm-3">
-        {{ form.rct_cost.label(class="form-label") }}
-        {{ form.rct_cost(class="form-control", value = form.rct_cost.data) }}
+      <div class="col-sm-4">
+        {{ form.lox_date.label(class="form-label") }}
+        {{ form.lox_date(class="datepicker form-control", value = form.lox_date.data) }}
       </div>
-      <div class="col-sm-3">
-        {{ form.rct_cosc.label(class="form-label") }}
-        {{ form.rct_cosc(class="form-control", value = form.rct_cosc.data) }}
-      </div>
-      <div class="form-check col-sm-1 pt-4" style="padding-left: 30px;">
-        {{ form.rct_ebld.label(class="form-check-label") }}
-        {{ form.rct_ebld(class="form-check-input", value = form.rct_ebld.data) }}
-      </div>
-      <div class="col-sm-2 pt-3" style="text-align:center" >
+      <div class="col-sm-2 pt-3">
         <input type="submit" id ="submit_button" class="btn btn-primary" formmethod="POST" value="submit" name = "nav">
       </div>
-      <div class="col-sm-3 pt-3">
-        {{ form.rct_dens.label(class="form-label") }}
-        {{ form.rct_dens(class="form-control", value = form.rct_dens.data) }}
+    </div>
+    <div class="d-sm-flex">  
+      <div class="d-flex align-items-stretch" style="flex: 75%;">
+        <fieldset class="row rounded border border-dark border-1 me-1 pb-1" style="--bs-border-opacity: .4;">  
+          <legend class="fs-5">Vendor receipt info</legend>
+          <div class="col-sm">
+            {{ form.lox_doc_no.label(class="form-label") }}
+            {{ form.lox_doc_no(class="form-control", value = form.lox_doc_no.data) }}
+          </div>
+          <div class="w-100"></div>
+          <div class="col-sm">
+            {{ form.lox_datd.label(class="form-label") }}
+            {{ form.lox_datd(class="datepicker form-control", value = form.lox_datd.data) }}
+          </div>
+          <div class="w-100"></div>
+          <div class="col-sm">
+            {{ form.lox_nifn.label(class="form-label") }}
+            {{ form.lox_nifn(class="form-control", value = form.lox_nifn.data) }}
+          </div>
+        </fieldset>
       </div>
-      <div class="col-sm-3 pt-3">
-        {{ form.rct_denu.label(class="form-label") }}
-        {{ form.rct_denu(class="form-select", value = form.rct_denu.data) }}
-      </div>
-      <div class="col-sm-3 pt-3">
-        {{ form.rct_yiel.label(class="form-label") }}
-        {{ form.rct_yiel(class="form-control", value = form.rct_yiel.data) }}
-      </div>
-      <div class="col-sm-3 pt-3">
-        {{ form.rct_unit.label(class="form-label") }}
-        {{ form.rct_unit(class="form-select", value = form.rct_unit.data) }}
+      <div class="d-flex align-items-stretch" style="flex: 25%;">
+        <fieldset class="row rounded border border-dark border-1 ms-1" style="--bs-border-opacity: .4;">
+          <legend class="fs-5">Receipt summary</legend>
+          <div class="row g-1 px-3"> 
+            <div class="col-sm-4">
+              {{ form.lox_sub.label(class="form-label form-label-sm") }}
+            </div>
+            <div class="col-sm-8">
+              {{ form.lox_sub(class ="form-control form-control-sm", value = form.lox_sub.data) }}
+            </div>
+            <div class="w-100"></div>
+            <div class="col-sm-4">
+              {{ form.lox_desc.label(class="form-label form-label-sm") }}
+            </div>
+            <div class="col-sm-8">
+              {{ form.lox_desc(class ="form-control form-control-sm", value = form.lox_sub.data) }}
+            </div>
+            <div class="w-100"></div>
+            <div class="col-sm-4"></div>
+            <div class="col-sm-8 border border-secondary"></div>
+            <div class="w-100"></div>
+            <div class="col-sm-4">
+              <p class="fw-semibold">Sub-total</p>
+            </div>
+            <div class="col-sm-8">
+              <input class="form-control form-control-sm" id="Sub-total" min="0" name="Sub-total" step="any" type="number" value="None">
+            </div>
+            <div class="w-100"></div>
+            <div class="col-sm-4">
+              {{ form.lox_tax.label(class="form-label") }}
+            </div>
+            <div class="col-sm-8">
+              {{ form.lox_tax(class="form-control", value = form.lox_tax.data) }}
+            </div>
+            <div class="w-100"></div>
+            <div class="col-sm-4"></div>
+            <div class="col-sm-8 border border-dark"></div>
+            <div class="w-100"></div>
+            <div class="col-sm-4">
+              <p class="fw-semibold">Total</p>
+            </div>
+            <div class="col-sm-8">
+              <input class="form-control form-control-sm" id="Total" min="0" name="Total" step="any" type="number" value="None">
+            </div>
+          </div>
+        </fieldset>
       </div>
     </div>
     <div class="mt-10">
     </div>
 
-  <div class=" container-fluid rounded my-5 border border-dark border-1">
-    <div class=" row mt-5">
-      <div>
-        {{ form.subform.idx }}
-        {{ form.subform.rcd_enca }}
+    <div class=" container-fluid rounded my-5 border border-dark border-1">
+      <div class=" row mt-5">
+        <div>
+          {{ form.subform.idx }}
+          {{ form.subform.log_enca }}
+        </div>
+        <div class="col-sm-3">
+          {{ form.subform.log_sku.label(class="form-label") }}
+          {{ form.subform.log_sku(class="form-select", value = form.subform.log_sku.data) }}
+        </div>
+        <div class="col-sm-2">
+          {{ form.subform.log_qty.label(class="form-label") }}
+          {{ form.subform.log_qty(class="form-control", value = form.subform.log_qty.data) }}
+        </div>
+        <div class="col-sm-2">
+          {{ form.subform.log_pric.label(class="form-label") }}
+          {{ form.subform.log_pric(class="form-control", value = form.subform.log_pric.data) }}
+        </div>
+        <div class="col-sm-2">
+          {{ form.subform.log_tax.label(class="form-label") }}
+          {{ form.subform.log_tax(class="form-control", value = form.subform.log_tax.data) }}
+        </div>
+        <div class="col-sm-3">
+          {{ form.subform.log_alm.label(class="form-label") }}
+          {{ form.subform.log_alm(class="form-select", value = form.subform.log_alm.data) }}
+        </div>
+        <div class="col-sm-12 pt-3 d-grid gap-5 d-sm-flex justify-content-md-center" >
+          <button type = "submit" value = "submit1" form ="nav_form" formmethod ="post" class="btn btn-md btn-primary" name ="nav">
+            <strong id = "lbl_but_sub">update </strong><i class="fa-solid fa-circle-arrow-down"></i>
+          </button>
+          <button type="button" class="btn btn-sm btn-primary" id = "sub"  value = "update" onclick="Newsub()">
+            UPDATE/ADD
+          </button>
+        </div>
       </div>
-      <div class="col-sm-3">
-        {{ form.subform.rcd_ing.label(class="form-label") }}
-        {{ form.subform.rcd_ing(class="form-select", value = form.subform.rcd_ing.data) }}
-      </div>
-      <div class="col-sm-3">
-        {{ form.subform.rcd_qty.label(class="form-label") }}
-        {{ form.subform.rcd_qty(class="form-control", value = form.subform.rcd_qty.data) }}
-      </div>
-      <div class="col-sm-3">
-        {{ form.subform.rcd_unit.label(class="form-label") }}
-        {{ form.subform.rcd_unit(class="form-select", value = form.subform.rcd_unit.data) }}
-      </div>
-      <div class="col-sm-3">
-        {{ form.subform.rcd_yiel.label(class="form-label") }}
-        {{ form.subform.rcd_yiel(class="form-control", value = form.subform.rcd_yiel.data) }}
-      </div>
-      <div class="col-sm-12 pt-3 d-grid gap-5 d-sm-flex justify-content-md-center" >
-        <button type = "submit" value = "submit1" form ="nav_form" formmethod ="post" class="btn btn-md btn-primary" name ="nav">
-          <strong id = "lbl_but_sub">update </strong><i class="fa-solid fa-circle-arrow-down"></i>
-        </button>
-        <button type="button" class="btn btn-sm btn-primary" id = "sub"  value = "update" onclick="Newsub()">
-          UPDATE/ADD
-        </button>
-      </div>
-    </div>
   </form>
     <div>
     {% if form.errors %}
@@ -154,13 +202,13 @@
                       </td>
                     {% elif key == relation[counter][0].get('child_tbl_fld') %} <!-- exception  hides parent-child field-->
                       <td hidden></td>
-                    {% elif key == 'rcd_ing' %} <!-- exception loops for ing name -->
-                      {% for choice in rcd_ing_choices %}
+                    {% elif key == 'log_sku' %} <!-- loops for sku names -->
+                      {% for choice in log_sku_choices %}
                         {% if choice[0] == value %}
                           <td style="text-align: center;">{{ choice[1] }}</td>
                         {% endif %}
                       {% endfor %}                        
-                    {% elif key == 'rcd_unit' %}<!-- exception loops for UM-->
+                    {% elif key == 'log_alm' %}<!-- loops for warehouse name-->
                         {% for choice in rcd_unit_choices %}
                           {% if choice[0] == value %}
                             <td style="text-align: center;">{{ choice[1] }}</td>
@@ -187,36 +235,36 @@
   <script>
     function Newrecord() {
       document.getElementById("id").value = 0;
-      document.getElementById("rct_name").value = "";
-      document.getElementById("rct_cosc").value = "";
-      document.getElementById("rct_cost").value = "";
-      document.getElementById("rct_dens").value = "";
-      document.getElementById("rct_denu").value = "";
-      document.getElementById("rct_yiel").value = "";
-      document.getElementById("rct_unit").value = "";
-      document.getElementById("rct_subf").value = "";
-      document.getElementById("rct_ebld").value = "checked";
-      document.getElementById("rcd_ing").value = "";
-      document.getElementById("rcd_qty").value = "";
-      document.getElementById("rcd_unit").value = "";
-      document.getElementById("rcd_yiel").value = "";
+      document.getElementById("lox_vend").value = "";
+      document.getElementById("lox_date").value = "";
+      document.getElementById("lox_doc_no").value = "";
+      document.getElementById("lox_datd").value = "";
+      document.getElementById("lox_nifn").value = "";
+      document.getElementById("lox_desc").value = "";
+      document.getElementById("lox_due").value = "";
+      document.getElementById("lox_tax").value = "";
+      document.getElementById("log_qty").value = "";
+      document.getElementById("log_pric").value = "";
+      document.getElementById("log_tax").value = "";
+      document.getElementById("log_alm").value = "";
       document.getElementById("idx").value = 0;
-      document.getElementById("rcd_enca").value = 0;
+      document.getElementById("log_enca").value = 0;
       }
 
     function Navrecord(NAV) {
-      document.getElementById("rct_name").value = '{{session['rct_name']}}';
-      document.getElementById("rct_cosc").value = {{session['rct_cosc']}};
-      document.getElementById("rct_cost").value = {{session['rct_cost']}};
-      document.getElementById("rct_dens").value = {{session['rct_dens']}};
-      document.getElementById("rct_denu").value = '{{session['rct_denu']}}';
-      document.getElementById("rct_yiel").value = {{session['rct_yiel']}};
-      document.getElementById("rct_unit").value = {{session['rct_unit']}};
-      document.getElementById("rct_ebld").value = '{{session['rct_ebld']}}';
+      document.getElementById("lox_vend").value = {{session['lox_vend']}};
+      document.getElementById("lox_date").value = {{session['lox_date']}};
+      document.getElementById("lox_doc_no").value = {{session['lox_doc_no']}};
+      document.getElementById("lox_datd").value = {{session['lox_datd']}};
+      document.getElementById("lox_nifn").value = '{{session['lox_nifn']}}';
+      document.getElementById("lox_desc").value = {{session['lox_desc']}};
+      document.getElementById("lox_due").value = {{session['lox_due']}};
+      document.getElementById("lox_tax").value = {{session['lox_tax']}};
       document.getElementById("id").value = {{session['id']}};
       document.getElementById("submit_button").value = NAV;
-      document.getElementById("subform-rcd_qty").value = 1;
-      document.getElementById("subform-rcd_yiel").value = 1;
+      document.getElementById("subform-log_qty").value = 1;
+      document.getElementById("subform-log_pric").value = 1;
+      document.getElementById("subform-log_tax").value = 1;
       document.getElementById("submit_button").click();
       }
 
@@ -228,21 +276,22 @@
       if (document.getElementById("lbl_but_sub").innerHTML == "update "){
         document.getElementById("lbl_but_sub").innerHTML = "add ";
         document.getElementById("subform-idx").value = 0;
-        document.getElementById("subform-rcd_enca").value = 0;
-        document.getElementById("subform-rcd_ing").value = "";
-        document.getElementById("subform-rcd_qty").value = "";
-        document.getElementById("subform-rcd_unit").value = "";
-        document.getElementById("subform-rcd_yiel").value = "";
-        
+        document.getElementById("subform-log_enca").value = 0;
+        document.getElementById("subform-log_sku").value = "";
+        document.getElementById("subform-log_qty").value = "";
+        document.getElementById("subform-log_pric").value = "";
+        document.getElementById("subform-log_tax").value = "";
+        document.getElementById("subform-log_alm").value = "";
       }
       else{
         document.getElementById("lbl_but_sub").innerHTML = "update ";
         document.getElementById("subform-idx").value = {{session['idx']}}
-        document.getElementById("subform-rcd_enca").value = {{session['rcd_enca']}};
-        document.getElementById("subform-rcd_ing").value = {{session['rcd_ing']}};
-        document.getElementById("subform-rcd_qty").value = {{session['rcd_qty']}};
-        document.getElementById("subform-rcd_unit").value = {{session['rcd_unit']}};
-        document.getElementById("subform-rcd_yiel").value = {{session['rcd_yiel']}};
+        document.getElementById("subform-log_enca").value = {{session['log_enca']}};
+        document.getElementById("subform-log_sku").value = {{session['log_sku']}};
+        document.getElementById("subform-log_qty").value = {{session['log_qty']}};
+        document.getElementById("subform-log_pric").value = {{session['log_pric']}};
+        document.getElementById("subform-log_tax").value = {{session['log_tax']}};
+        document.getElementById("subform-log_alm").value = {{session['log_alm']}};
       }      
     }
   </script>

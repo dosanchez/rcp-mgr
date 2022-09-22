@@ -39,7 +39,7 @@ def navigate_to(nav_button, conn, form, table_list):
     while counter < len(table_list):
         if counter == 0:
 
-            #Ingredient and recipe forms share the same SQL Table == recet_en,hence need to discriminate
+            #Ingredient and recipe forms share the same SQL Table == recet_en, hence need to discriminate
             if type(form).__name__ == 'Ingredient':
                 rcds.append(sel.all(db, table_list[counter], rct_rece = 0))
                 res = sel.max_id(db, table_list[counter], rct_rece = 0)

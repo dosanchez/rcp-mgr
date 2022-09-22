@@ -237,12 +237,16 @@ def recipe():
     form = Recet_en()
     table_list = ['recet_en', 'recet_de']
     #Queries for Selectfields active choices
-    form.rct_unit.choices = form.subform.rcd_unit.choices = sel.ebld(db, 'unitmeas', 'uni_symb', 'uni_ebld')
-    form.subform.rcd_ing.choices = sel.ebld(db, 'recet_en', 'rct_name', 'rct_ebld')
+    form.rct_unit.choices = form.subform.rcd_unit.choices = sel.ebld_choices(db,
+                                                                        'unitmeas',
+                                                                        'uni_symb', 
+                                                                        'uni_ebld')
+    form.subform.rcd_ing.choices = sel.ebld_choices(db, 'recet_en', 'rct_name',
+                                                     'rct_ebld')
 
     #Queries for all possible Selectfields choices
-    rcd_unit_choices = rct_unit_choices = sel.UM_all(db)
-    rcd_ing_choices = sel.ingred_all(db)
+    rcd_unit_choices = rct_unit_choices = sel.all_choices(db, 'unitmeas', 'uni_symb')
+    rcd_ing_choices = sel.all_choices(db, 'recet_en', 'rct_name')
 
     nav_button =  request.form.get('nav') #saves form navigation request
     session['sub_nav_button'] = request.form.get('subnav') #saves subform navigation request
@@ -362,15 +366,16 @@ def sku():
     table_list = ['sku']
 
     #Queries for Selectfields active choices
-    form.sku_ingr.choices = sel.ebld(db, 'recet_en', 'rct_name', 'rct_ebld') 
-    form.sku_unit.choices = form.sku_v_unit.choices = sel.ebld(db, 'unitmeas',
-                                                        'uni_symb', 'uni_ebld')
-    form.sku_pref.choices = sel.ebld(db, 'socio', 'soc_name', 'soc_ebld')
+    form.sku_ingr.choices = sel.ebld_choices(db, 'recet_en', 'rct_name', 'rct_ebld') 
+    form.sku_unit.choices = form.sku_v_unit.choices = sel.ebld_choices(db,
+                                                        'unitmeas','uni_symb',
+                                                        'uni_ebld')
+    form.sku_pref.choices = sel.ebld_choices(db, 'socio', 'soc_name', 'soc_ebld')
 
-
-    sku_ingr_choices = sel.ingred_all(db)
-    sku_unit_choices = sel.UM_all(db) #Queries for all Selectfields choices
-    sku_pref_choices = sel.bp_all(db) #Queries for all Selectfields choices
+    #Queries for all Selectfields choices
+    sku_ingr_choices = sel.all_choices(db, 'recet_en', 'rct_name')
+    sku_unit_choices = sel.all_choices(db, 'unitmeas', 'uni_symb')
+    sku_pref_choices = sel.all_choices(db, 'socio', 'soc_name')
 
     nav_button =  request.form.get('nav') #saves form navigation request
     try:
@@ -456,14 +461,15 @@ def receive():
     form = Rcv_en()
     table_list = ['logix_en', 'logix_de']
     
-    form.lox_vend.choices = sel.bp_ebld(db) #Queries for Selectfields active choices
-    lox_vend_choices = sel.bp_all(db) #Queries for all Selectfields choices
+    #Queries for Selectfields active choices
+    form.lox_vend.choices = sel.ebld_choices(db, 'socio', 'soc_name', 'soc_ebld')
+    form.subform.log_alm.choices = sel.ebld_choices(db, 'almacen', 'alm_name', 'alm_ebld')
+    form.subform.log_sku.choices = sel.ebld_choices(db, 'sku', 'sku_name', 'sku_ebld')
 
-    form.lox_alm.choices = sel.alm_ebld(db) #Queries for Selectfields active choices
-    lox_alm_choices = sel.alm_all(db) #Queries for all Selectfields choices
-
-    form.log_sku.choices = sel.sku_ebld(db) #Queries for Selectfields active choices
-    log_sku_choices = sel.sku_all(db) #Queries for all Selectfields choices
+    #Queries for all Selectfields choices
+    lox_vend_choices = sel.all_choices(db, 'socio', 'soc_name') 
+    log_alm_choices = sel.all_choices(db, 'almacen', 'alm_name')
+    log_sku_choices = sel.all_choices(db, 'sku', 'sku_name')
 
     nav_button =  request.form.get('nav') #saves form navigation request
     session['sub_nav_button'] = request.form.get('subnav') #saves subform navigation request
@@ -497,9 +503,8 @@ def receive():
                                     'lox_nifn':form.lox_nifn.data,
                                     'lox_doc_no':form.lox_doc_no.data,
                                     'lox_desc':form.lox_desc.data,
-                                    'lox_due':form.lox_due.data,
-                                    'lox_tax':form.lox_tax.data,
-                                    'lox_alm':form.lox_alm.data 
+                                    'lox_due':form.lox_sub.data,
+                                    'lox_tax':form.lox_tax.data
                                             }],
                                 table_list[1]:[{
                                     'id':form.subform.idx.data,
@@ -507,7 +512,8 @@ def receive():
                                     'log_sku':form.subform.log_sku.data,
                                     'log_qty':form.subform.log_qty.data,
                                     'log_pric':form.subform.log_pric.data,
-                                    'log_tax':form.subform.log_tax.data  
+                                    'log_tax':form.subform.log_tax.data,  
+                                    'log_alm':form.subform.log_alm.data 
                                             }]
                                 
                                 }
@@ -568,10 +574,10 @@ def receive():
     rcd_len = len(records)
 
     print('recipe records', records)
-    return render_template ('recipe.html', form = form, records = records,
+    return render_template ('receive.html', form = form, records = records,
                             column_names = column_names, 
                             lox_vend_choices = lox_vend_choices,
-                            lox_alm_choices = lox_alm_choices,
+                            log_alm_choices = log_alm_choices,
                             log_sku_choices = log_sku_choices,
                             relation = relation,
                             rcd_len = rcd_len)

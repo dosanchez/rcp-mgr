@@ -27,6 +27,7 @@ class Rcv_de(Form):
     log_pric = DecimalField('Unit Price',validators=[DataRequired(),
                             NumberRange(min = 0)])
     log_tax = DecimalField('Tax amount',validators=[NumberRange(min = 0)])
+    log_alm = SelectField('Receiving warehouse', coerce= int)
 
 class Unitmeas(FlaskForm):
     """wtform for Units of measure"""
@@ -130,15 +131,14 @@ class Sku(FlaskForm):
 
 class Rcv_en(FlaskForm):
     id = HiddenField()
-    lox_date = DateField('Reception Date', format='%d-%m-%Y')
-    lox_datd = DateField('Reception Doc Date', format='%d-%m-%Y')
     lox_vend = SelectField('Vendor', coerce= int)
-    lox_nifn = StringField('receipt tax number', validators = [Length(max=16)])
+    lox_date = DateField('Reception Date', format='%d-%m-%Y')
     lox_doc_no = IntegerField('Vendor Receipt No.', 
                                 render_kw={"placeholder": "optional"})
-    lox_desc = DecimalField('Total Discount',validators=[NumberRange(min = 0)], 
+    lox_datd = DateField('Reception Doc Date', format='%d-%m-%Y')
+    lox_nifn = StringField('receipt tax number', validators = [Length(max=16)])
+    lox_sub = DecimalField('Sub Total',validators=[NumberRange(min = 0)])
+    lox_desc = DecimalField('Discount',validators=[NumberRange(min = 0)], 
                             default = 0.0)
-    lox_due = DecimalField('Total Due',validators=[NumberRange(min = 0)])
     lox_tax = DecimalField('Total Tax',validators=[NumberRange(min = 0)])
-    lox_alm = SelectField('Receiving warehouse', coerce= int)
     subform = FormField(Rcv_de)

@@ -46,7 +46,7 @@
         {{ form.lox_date.label(class="form-label") }}
         {{ form.lox_date(class="datepicker form-control", value = form.lox_date.data) }}
       </div>
-      <div class="col-sm-2 pt-3">
+      <div class="col-sm-2 pt-3 text-center">
         <input type="submit" id ="submit_button" class="btn btn-primary" formmethod="POST" value="submit" name = "nav">
       </div>
     </div>
@@ -118,114 +118,111 @@
         </fieldset>
       </div>
     </div>
-    <div class=" container-fluid rounded my-5 border border-dark border-1">
-      <div class=" row mt-5">
-        <div>
-          {{ form.subform.idx }}
-          {{ form.subform.log_enca }}
-        </div>
-        <div class="col-sm-3">
-          {{ form.subform.log_sku.label(class="form-label") }}
-          {{ form.subform.log_sku(class="form-select", value = form.subform.log_sku.data) }}
-        </div>
-        <div class="col-sm-2">
-          {{ form.subform.log_qty.label(class="form-label") }}
-          {{ form.subform.log_qty(class="form-control", value = form.subform.log_qty.data) }}
-        </div>
-        <div class="col-sm-2">
-          {{ form.subform.log_pric.label(class="form-label") }}
-          {{ form.subform.log_pric(class="form-control", value = form.subform.log_pric.data) }}
-        </div>
-        <div class="col-sm-2">
-          {{ form.subform.log_tax.label(class="form-label") }}
-          {{ form.subform.log_tax(class="form-control", value = form.subform.log_tax.data) }}
-        </div>
-        <div class="col-sm-3">
-          {{ form.subform.log_alm.label(class="form-label") }}
-          {{ form.subform.log_alm(class="form-select", value = form.subform.log_alm.data) }}
-        </div>
-        <div class="col-sm-12 pt-3 d-grid gap-5 d-sm-flex justify-content-md-center" >
-          <button type = "submit" value = "submit1" form ="nav_form" formmethod ="post" class="btn btn-md btn-primary" name ="nav">
-            <strong id = "lbl_but_sub">update </strong><i class="fa-solid fa-circle-arrow-down"></i>
-          </button>
-          <button type="button" class="btn btn-sm btn-primary" id = "sub"  value = "update" onclick="Newsub()">
-            UPDATE/ADD
-          </button>
-        </div>
+    <fieldset class="row rounded border border-dark border-1 mx-1 mt-4" style="--bs-border-opacity: .4;">
+      <legend class="fs-5">Vendor receipt details</legend>
+      <div>
+        {{ form.subform.idx }}
+        {{ form.subform.log_enca }}
       </div>
+      <div class="col-sm-3 form-floating">
+        {{ form.subform.log_sku(class="form-select", value = form.subform.log_sku.data) }}
+        {{ form.subform.log_sku.label() }}
+      </div>
+      <div class="col-sm-2 form-floating">
+        {{ form.subform.log_qty(class="form-control", value = form.subform.log_qty.data) }}
+        {{ form.subform.log_qty.label() }}
+      </div>
+      <div class="col-sm-2 form-floating">
+        {{ form.subform.log_pric(class="form-control", value = form.subform.log_pric.data) }}
+        {{ form.subform.log_pric.label() }}
+      </div>
+      <div class="col-sm-2 form-floating">
+        {{ form.subform.log_tax(class="form-control", value = form.subform.log_tax.data) }}
+        {{ form.subform.log_tax.label() }}
+      </div>
+      <div class="col-sm-3 form-floating">
+        {{ form.subform.log_alm(class="form-select", value = form.subform.log_alm.data) }}
+        {{ form.subform.log_alm.label() }}
+      </div>
+      <div class="col-sm-12 pt-3 d-grid gap-5 d-sm-flex justify-content-md-center" >
+        <button type = "submit" value = "submit1" form ="nav_form" formmethod ="post" class="btn btn-md btn-primary" name ="nav">
+          <strong id = "lbl_but_sub">update </strong><i class="fa-solid fa-circle-arrow-down"></i>
+        </button>
+        <button type="button" class="btn btn-sm btn-primary" id = "sub"  value = "update" onclick="Newsub()">
+          UPDATE/ADD
+        </button>
+      </div>   
   </form>
-    <div>
-    {% if form.errors %}
-      {{ form.errors }}
-    {% endif %}
-    </div>
-    <div class="container mt-5">
-      
+      <div class="row justify-content-center mt-3">
+        <div class="col-11 border border-dark border-top-1" style="--bs-border-opacity: .4;"></div>
+      </div>
+        <div>
+      {% if form.errors %}
+        {{ form.errors }}
+      {% endif %}
+      </div>
       {% for sub in column_names %}
-        <h4>{{ sub[0] }}</h4>
-      <div style="height:445px; overflow:auto;">
-        <table class="table table-hover">
-          <thead class = "bg-light" style="position: sticky;top: 0">
-            <tr>
-              {% for header in sub[1] %}
-                {% if header == 'id' %}
-                  <th style="text-align: center;"></th>
-                {% else %}
-                  <th style="text-align: center;">{{ header }}</th>
-                {% endif %}
-              {% endfor %}
-            </tr>
-          </thead>
-          <tbody>
-            
-            {% for counter in range(rcd_len) %}
-              {% for row in records[counter] %}
-                {% if row['id'] == form.subform.idx.data %}
-                <tr class="table-active">
-                {% else %}
-                <tr>
-                  {% endif %}  
-                  {% for key, value in row.items() %}
-                    {% if key == 'id' %}
-                      <td style="text-align: center;" class="pt-2">
-                        <button type = "submit" value = {{ value }} form ="nav_form" formmethod ="post" class="btn btn-sm btn-primary" name ="subnav">
-                          <small>edit</small>
-                        </button>
-                      </td>
-                      <td style="text-align: center;" class="pt-2">
-                        <button type = "submit" value = {{ value }} form ="nav_form" formmethod ="post" class="btn btn-sm btn-danger" name ="delete">
-                          <small>drop</small>
-                        </button>
-                      </td>
-                    {% elif key == relation[counter][0].get('child_tbl_fld') %} <!-- exception  hides parent-child field-->
-                      <td hidden></td>
-                    {% elif key == 'log_sku' %} <!-- loops for sku names -->
-                      {% for choice in log_sku_choices %}
-                        {% if choice[0] == value %}
-                          <td style="text-align: center;">{{ choice[1] }}</td>
-                        {% endif %}
-                      {% endfor %}                        
-                    {% elif key == 'log_alm' %}<!-- loops for warehouse name-->
-                        {% for choice in rcd_unit_choices %}
+        <label>{{ sub[0] }}</label>
+        <section style="height:445px; overflow:auto;">
+          <table class="table table-hover">
+            <thead class = "bg-light" style="position: sticky;top: 0">
+              <tr>
+                {% for header in sub[1] %}
+                  {% if header == 'id' %}
+                    <th style="text-align: center;"></th>
+                  {% else %}
+                    <th style="text-align: center;">{{ header }}</th>
+                  {% endif %}
+                {% endfor %}
+              </tr>
+            </thead>
+            <tbody>
+              
+              {% for counter in range(rcd_len) %}
+                {% for row in records[counter] %}
+                  {% if row['id'] == form.subform.idx.data %}
+                  <tr class="table-active">
+                  {% else %}
+                  <tr>
+                    {% endif %}  
+                    {% for key, value in row.items() %}
+                      {% if key == 'id' %}
+                        <td style="text-align: center;" class="pt-2">
+                          <button type = "submit" value = {{ value }} form ="nav_form" formmethod ="post" class="btn btn-sm btn-primary" name ="subnav">
+                            <small>edit</small>
+                          </button>
+                        </td>
+                        <td style="text-align: center;" class="pt-2">
+                          <button type = "submit" value = {{ value }} form ="nav_form" formmethod ="post" class="btn btn-sm btn-danger" name ="delete">
+                            <small>drop</small>
+                          </button>
+                        </td>
+                      {% elif key == relation[counter][0].get('child_tbl_fld') %} <!-- exception  hides parent-child field-->
+                        <td hidden></td>
+                      {% elif key == 'log_sku' %} <!-- loops for sku names -->
+                        {% for choice in log_sku_choices %}
                           {% if choice[0] == value %}
                             <td style="text-align: center;">{{ choice[1] }}</td>
                           {% endif %}
-                        {% endfor %}
-                    {% else %}
-                      <td style="text-align: center;">{{ value }}</td>
-                    {% endif %}    
-                  {% endfor %}
-                </tr>
+                        {% endfor %}                        
+                      {% elif key == 'log_alm' %}<!-- loops for warehouse name-->
+                          {% for choice in rcd_unit_choices %}
+                            {% if choice[0] == value %}
+                              <td style="text-align: center;">{{ choice[1] }}</td>
+                            {% endif %}
+                          {% endfor %}
+                      {% else %}
+                        <td style="text-align: center;">{{ value }}</td>
+                      {% endif %}    
+                    {% endfor %}
+                  </tr>
+                {% endfor %}
               {% endfor %}
-            {% endfor %}
-          </tbody>
-        </table>
-      </div> 
+            </tbody>
+          </table>
+        </section> 
       {% endfor %}
-      </div>
-    </div>
-  </div> 
-</div>  
+    </fieldset>  
 {% endblock form %}
 {% block script %}
 {{ super() }}

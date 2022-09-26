@@ -83,7 +83,6 @@ class Recet_en(FlaskForm):
                             choices=['g/ml','g/unit'], default ='g/unit')
     rct_yiel = DecimalField('Recipe yield',validators=[DataRequired()], 
                             render_kw={"placeholder": "e.g. 0.98"}, default = 1)
-    rct_unit = SelectField('Common UM', validators=[DataRequired()], coerce = int)
     rct_ebld = BooleanField('Enabled', default = "checked", false_values=('',))
     subform = FormField(Recet_de)
 
@@ -101,7 +100,7 @@ class Socio(FlaskForm):
     soc_ebld = BooleanField('Enabled', default = "checked", false_values=('',))
     soc_cont = StringField('Contact', validators=[Length(max = 16)], 
                             render_kw={"placeholder": "e.g. Mr. James Watt"})   
-    soc_addr = StringField('Business Partner', validators=[Length(max = 128)], 
+    soc_addr = StringField('Business address', validators=[Length(max = 128)], 
                             render_kw={"placeholder": "up to 64 Chr. long"})
     soc_tel1 = IntegerField('Tel. 1', validators=[NumberRange(max = 9999999999999, message='if no number enter 0')],
                             render_kw={"placeholder": "e.g. 12125551332"})

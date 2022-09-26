@@ -237,15 +237,15 @@ def recipe():
     form = Recet_en()
     table_list = ['recet_en', 'recet_de']
     #Queries for Selectfields active choices
-    form.rct_unit.choices = form.subform.rcd_unit.choices = sel.ebld_choices(db,
-                                                                        'unitmeas',
-                                                                        'uni_symb', 
-                                                                        'uni_ebld')
+    form.subform.rcd_unit.choices = sel.ebld_choices(db,
+                                                    'unitmeas',
+                                                    'uni_symb', 
+                                                    'uni_ebld')
     form.subform.rcd_ing.choices = sel.ebld_choices(db, 'recet_en', 'rct_name',
                                                      'rct_ebld')
-
+    print(form.subform.rcd_ing.choices)
     #Queries for all possible Selectfields choices
-    rcd_unit_choices = rct_unit_choices = sel.all_choices(db, 'unitmeas', 'uni_symb')
+    rcd_unit_choices = sel.all_choices(db, 'unitmeas', 'uni_symb')
     rcd_ing_choices = sel.all_choices(db, 'recet_en', 'rct_name')
 
     nav_button =  request.form.get('nav') #saves form navigation request
@@ -277,7 +277,6 @@ def recipe():
                                     'rct_name':form.rct_name.data,
                                     'rct_cost':form.rct_cost.data,
                                     'rct_cosc':form.rct_cosc.data,
-                                    'rct_unit':form.rct_unit.data,
                                     'rct_dens':form.rct_dens.data,
                                     'rct_denu':form.rct_denu.data,
                                     'rct_yiel':form.rct_yiel.data,
@@ -349,11 +348,9 @@ def recipe():
                      'Ingredient yield']]]
     rcd_len = len(records)
 
-    print('recipe records', records)
     return render_template ('recipe.html', form = form, records = records,
                             column_names = column_names, 
                             rcd_unit_choices = rcd_unit_choices ,
-                            rct_unit_choices = rct_unit_choices,
                             rcd_ing_choices = rcd_ing_choices,
                             relation = relation,
                             rcd_len = rcd_len)

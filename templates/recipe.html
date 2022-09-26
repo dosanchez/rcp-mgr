@@ -8,7 +8,7 @@
     <div class="row mb-3" >
       <div class="col-sm-8">
         <h2>Recipes</h2>
-        <small>add, edit, activate Recipes</small>
+        <small>add, edit, activate Recipes (please input recipe equivalent to one serving)</small>
       </div>
       <div class="col-sm-4" style ="float:right;">
         <button type = "button" class="btn" onclick="Navrecord('out')">
@@ -68,10 +68,6 @@
       <div class="col-sm-3 pt-3">
         {{ form.rct_yiel.label(class="form-label") }}
         {{ form.rct_yiel(class="form-control", value = form.rct_yiel.data) }}
-      </div>
-      <div class="col-sm-3 pt-3">
-        {{ form.rct_unit.label(class="form-label") }}
-        {{ form.rct_unit(class="form-select", value = form.rct_unit.data) }}
       </div>
     </div>
     <div class="mt-10">
@@ -193,7 +189,6 @@
       document.getElementById("rct_dens").value = "";
       document.getElementById("rct_denu").value = "";
       document.getElementById("rct_yiel").value = "";
-      document.getElementById("rct_unit").value = "";
       document.getElementById("rct_subf").value = "";
       document.getElementById("rct_ebld").value = "checked";
       document.getElementById("rcd_ing").value = "";
@@ -211,7 +206,6 @@
       document.getElementById("rct_dens").value = {{session['rct_dens']}};
       document.getElementById("rct_denu").value = '{{session['rct_denu']}}';
       document.getElementById("rct_yiel").value = {{session['rct_yiel']}};
-      document.getElementById("rct_unit").value = {{session['rct_unit']}};
       document.getElementById("rct_ebld").value = '{{session['rct_ebld']}}';
       document.getElementById("id").value = {{session['id']}};
       document.getElementById("submit_button").value = NAV;

@@ -117,7 +117,7 @@
                 <td style="text-align: center;"><i class="fa-solid fa-check"></i></td>
               {% elif key == 'rct_ebld' and not value %}<!-- display checked icon if disabled-->
                 <td style="text-align: center;"><i class="fa-solid fa-xmark"></i></td>
-              {% elif key =='rct_rece' %} <!-- hides on recipe record flag-->
+              {% elif key =='rct_rece' or key =='rct_serv'%} <!-- hides on recipe record flag-->
                 <td hidden></td>
               {% else %}
                 <td style="text-align: center;">{{ value }}</td> 

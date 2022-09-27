@@ -212,8 +212,7 @@ def ingredient():
                                                     }]
                                         }
             ) 
-            print('formiddata', form.id.data)
-            print('existe', existe.chk_sgl_fld())
+
             if  existe.chk_sgl_fld():   #chk if record exists   
                 #update existing record
                 record.update()
@@ -226,9 +225,10 @@ def ingredient():
 
 
     records, relation = navigate_to(nav_button, conn, form, table_list)
+
     column_names =[['Registered Ingredients',['', 'Ingredient', 'Costo Real',
                     'Costo Std', 'Density', 'Densi UM', 'Yield', 'Enabled']]]
-
+    
     return render_template ('ingredient.html', form = form, records = records,
                             column_names = column_names)
 
@@ -280,6 +280,7 @@ def recipe():
                                     'rct_dens':form.rct_dens.data,
                                     'rct_denu':form.rct_denu.data,
                                     'rct_yiel':form.rct_yiel.data,
+                                    'rct_yiel':form.rct_serv.data,
                                     'rct_ebld':form.rct_ebld.data 
                                             }],
                                 table_list[1]:[{

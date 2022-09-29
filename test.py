@@ -12,8 +12,8 @@ from data import select as sel
 # db = conn.cursor(dictionary=True, buffered=True)
 
 
-a = 'hola'
-print(a)
+a = ''
+print(not a)
 
 
 

@@ -183,7 +183,6 @@ class DataHandler():
             for ea_rcd in r:
                 sql = "UPDATE %s SET " %(t)
                 for fn, fv in ea_rcd.items():
-                    print('key >{}'.format(fn),'val >{}'.format(fv) )
                     if not fv and fv != 0:
                         fv = 'NULL'
                         
@@ -207,9 +206,13 @@ class DataHandler():
         for t, r in self.rcd.items():
             value_str = ') VALUES('
             counter += 1
+            print(r)
             for ea_rcd in r:
                 sql = "INSERT INTO %s (" %(t)
                 for fn, fv in ea_rcd.items():
+                    
+                    print(fn+' >', fv,'>',not fv)
+                    print(type(fv).__name__)
                     if not fv and fv != 0:
                         fv = 'NULL'
                     if fn == session.get('relation')[0][0].get('child_tbl_fld'):
@@ -249,7 +252,7 @@ class DataHandler():
             for t, r in rcd.items():
                 for ea_rcd in r:
                     for fn, fv in ea_rcd.items():
-                        if isinstance(fv, str):
+                        if isinstance(fv, str) and fv:
                             ea_rcd[fn]="\'" + fv + "\'"
             
             return cls(conn, rcd)

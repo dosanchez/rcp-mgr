@@ -3,7 +3,7 @@ from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, SelectField, DecimalField, HiddenField, BooleanField 
 from wtforms import Form, FormField, IntegerField, DateField
-from wtforms.validators import DataRequired, Length, NumberRange, InputRequired
+from wtforms.validators import DataRequired, Length, NumberRange
 
 
 class Recet_de(Form):
@@ -121,7 +121,7 @@ class Sku(FlaskForm):
     sku_cont = DecimalField('Label weight',validators=[NumberRange(min = 0)], default = 0)
     sku_unit = SelectField('Unit of measure', validators=[DataRequired()], 
                             coerce = int)
-    sku_barc = StringField('Barcode', validators = [Length(max=16)], 
+    sku_barc = StringField('Barcode', validators = [Length(max=16)],
                             render_kw={"placeholder": "insert barcode here"})
     sku_foto = FileField('Update SKU Picture', validators = [FileAllowed(['jpg', 'png', 'jpeg'])])
     sku_pref = SelectField('Preferred Vendor', default = '', coerce= int)

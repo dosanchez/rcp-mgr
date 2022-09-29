@@ -381,7 +381,6 @@ def sku():
     except:
         pass
     
-    print('skuitbi', request.form.get('sku_itbi'))
     print('validateonsubmit', form.validate_on_submit())
     for error in form.sku_vaci.errors:
         print('skuvaci',error)
@@ -406,7 +405,7 @@ def sku():
                                             'sku_ebld':form.sku_ebld.data  
                                                     }]
                                         })
-
+        print('sku_foto', form.sku_foto.data)
         if nav_button == "submit": #not a nav post
             #creates instance to chk if record exist
             existe = dth.from_dict2sql(conn, {

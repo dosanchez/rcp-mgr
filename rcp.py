@@ -33,7 +33,7 @@ def unitmeas():
     except:
         pass
     
-    print (type(form).__name__)
+   
     if form.validate_on_submit():
         uni_conv = form.qty_base.data / form.qty_um.data
         record = dth.from_dict2sql(conn, {
@@ -188,7 +188,6 @@ def ingredient():
     except:
         pass
     
-    print('validate on submit', form.validate_on_submit())
     if form.validate_on_submit():
 
         record = dth.from_dict2sql(conn, {
@@ -243,7 +242,7 @@ def recipe():
                                                     'uni_ebld')
     form.subform.rcd_ing.choices = sel.ebld_choices(db, 'recet_en', 'rct_name',
                                                      'rct_ebld')
-    print(form.subform.rcd_ing.choices)
+   
     #Queries for all possible Selectfields choices
     rcd_unit_choices = sel.all_choices(db, 'unitmeas', 'uni_symb')
     rcd_ing_choices = sel.all_choices(db, 'recet_en', 'rct_name')
@@ -405,9 +404,9 @@ def sku():
                                             'sku_ebld':form.sku_ebld.data  
                                                     }]
                                         })
-        print('sku_foto', form.sku_foto.data)
         if nav_button == "submit": #not a nav post
             #creates instance to chk if record exist
+
             existe = dth.from_dict2sql(conn, {
                                         table_list[0]:[{
                                             'id':form.id.data
@@ -415,13 +414,22 @@ def sku():
                                         }
             ) 
 
-            if form.sku_foto.data:
-                name = sel.all(db,
-                    table_list[0], id = form.id.data)[0].get('sku_foto') 
+            #update current record instance sku_foto attribute to either 
+            #to pic name in database or new pic name of loaded picture
+            #so info in database stays updated
+            name = sel.all(db, table_list[0], id = form.id.data)[0].get('sku_foto')
+            if form.sku_foto.data:                 
                 record.rcd.get(table_list[0])[0]['sku_foto']  = "\'" + save_file(form.sku_foto.data, 
                     sku_pic_path, f_name = name) + "\'" 
+            else:
+                if not name:
+                    record.rcd.get(table_list[0])[0]['sku_foto'] = name
+                else:
+                    record.rcd.get(table_list[0])[0]['sku_foto'] = "\'" + name + "\'"
+
 
             if  existe.chk_sgl_fld():   #chk if record exists
+
                 #update existing record
                 record.update()
                 return redirect(url_for('sku'))# clears POST data
@@ -433,17 +441,18 @@ def sku():
 
 
     records, relation = navigate_to(nav_button, conn, form, table_list)
-
     #personalise record list headers
     column_names =[['SKUs',['id', 'Name', 'related to', 'Content', 
                     '', 'Barcode','Image', 'Pref Vendor',
                     'Itbis', 'Empty weight', '', 
                     'enabled']]]
     
-    if not form.sku_foto.data:
+    sku_img_name = sel.all(db, table_list[0], id = form.id.data)[0].get('sku_foto')
+
+    if not sku_img_name:
         sku_img = url_for('static', filename = 'skupics/595ab936.jpg') 
     else:
-        sku_img = url_for('static', filename = 'skupics/' + form.sku_foto.data) 
+        sku_img = url_for('static', filename = 'skupics/' + sku_img_name) 
 
     return render_template ('sku.html', form = form, records = records,
                             column_names = column_names, 
@@ -570,7 +579,7 @@ def receive():
                      'Tax Paid']]]
     rcd_len = len(records)
 
-    print('recipe records', records)
+
     return render_template ('receive.html', form = form, records = records,
                             column_names = column_names, 
                             lox_vend_choices = lox_vend_choices,

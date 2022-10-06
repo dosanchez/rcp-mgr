@@ -19,25 +19,36 @@
 
           <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
             <li> <a href="{{ url_for('index') }}" class="nav-link px-2 link-dark">Overview</a></li>
-            <li class= "nav-item dropdown"><a href="#" class="nav-link dropdown-toggle px-2 link-dark" data-bs-toggle="dropdown">Inventory Control</a>
-              <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" href="{{ url_for('receive') }}">Receive Items</a></li>
-                <li><a class="dropdown-item" href="#">Ship Items</a></li>
-                <li><a class="dropdown-item" href="{{ url_for('sku') }}">SKUs</a></li>
-              </ul>
+            <li class= "nav-item dropdown">
+              <a href="#" class="nav-link dropdown-toggle px-2 link-dark" data-bs-toggle="dropdown">Inventory Control</a>
+              <div class="dropdown-menu">
+                <div class="dropdown dropend">
+                  <a class="dropdown-item dropdown-toggle" href="#" data-bs-toggle="dropdown">Receive Items</a>
+                  <div class="dropdown-menu">
+                    <a class="dropdown-item" href="{{ url_for('receive') }}">from vendor</a>
+                    <a class="dropdown-item" href="#">from production </a>
+                    <a class="dropdown-item" href="#">Returns</a>
+                  </div>
+                </div>
+                <a  class= "dropdown-item" href="#">Ship Items</a>
+                <a  class="dropdown-item" href="{{ url_for('sku') }}">SKUs</a>
+              </div>
             </li>
-            <li class= "nav-item dropdown"><a href="#" class="nav-link dropdown-toggle px-2 link-dark" data-bs-toggle="dropdown">Recipes</a>
+            <li class= "nav-item dropdown">
+              <a href="#" class="nav-link dropdown-toggle px-2 link-dark" data-bs-toggle="dropdown">Recipes</a>
               <ul class="dropdown-menu dropdown-menu-end">
                 <li><a class="dropdown-item" href="{{ url_for('ingredient') }}">Ingredients</a></li>
                 <li><a class="dropdown-item" href="{{ url_for('recipe') }}">Recipes</a></li>
               </ul>
             </li>
-            <li class= "nav-item dropdown"><a href="#" class="nav-link dropdown-toggle px-2 link-dark" data-bs-toggle="dropdown">Business Partners</a>
+            <li class= "nav-item dropdown">
+              <a href="#" class="nav-link dropdown-toggle px-2 link-dark" data-bs-toggle="dropdown">Business Partners</a>
               <ul class="dropdown-menu dropdown-menu-end">
                 <li><a class="dropdown-item" href="{{ url_for('socio') }}">add/edit vendors and clients</a></li>
               </ul>
             </li>
-            <li class= "nav-item dropdown"><a href="#" class="nav-link dropdown-toggle px-2 link-dark" data-bs-toggle="dropdown">Settings</a>
+            <li class= "nav-item dropdown">
+              <a href="#" class="nav-link dropdown-toggle px-2 link-dark" data-bs-toggle="dropdown">Settings</a>
               <ul class="dropdown-menu dropdown-menu-end">
                 <li><a class="dropdown-item" href="{{ url_for('unitmeas') }}">Units of measure</a></li>
                 <li><a class="dropdown-item" href="{{ url_for('almacen') }}">Warehouse Setup </a></li>
@@ -76,6 +87,38 @@
     </div>
     {% block script%}
       <script src="{{ url_for('static', filename = 'js/bootstrap.bundle.min.js') }}"></script>
+      <script>
+
+        (function($bs) {
+            const CLASS_NAME = 'has-child-dropdown-show';
+            $bs.Dropdown.prototype.toggle = function(_orginal) {
+                return function() {
+                    document.querySelectorAll('.' + CLASS_NAME).forEach(function(e) {
+                        e.classList.remove(CLASS_NAME);
+                    });
+                    let dd = this._element.closest('.dropdown').parentNode.closest('.dropdown');
+                    for (; dd && dd !== document; dd = dd.parentNode.closest('.dropdown')) {
+                        dd.classList.add(CLASS_NAME);
+                    }
+                    return _orginal.call(this);
+                }
+            }($bs.Dropdown.prototype.toggle);
+        
+            document.querySelectorAll('.dropdown').forEach(function(dd) {
+                dd.addEventListener('hide.bs.dropdown', function(e) {
+                    if (this.classList.contains(CLASS_NAME)) {
+                        this.classList.remove(CLASS_NAME);
+                        e.preventDefault();
+                    }
+                    e.stopPropagation(); // do not need pop in multi level mode
+                });
+            });
+        
+        
+        })(bootstrap);
+        
+        
+      </script>
     {% endblock script%}
   </body>
 </html>

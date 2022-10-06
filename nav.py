@@ -89,11 +89,19 @@ def navigate_to(nav_button, conn, form, table_list):
                                 fld_tbl = 'id'
                             else:
                                 fld_tbl = ii.short_name
+                            
+                            #makes None values empty string for html field value
+                            if rcds[counter][pos].get(fld_tbl) == None:
+                                rcds[counter][pos][fld_tbl] = ''
 
                             ii.data = session[ii.short_name] = rcds[counter][pos].get(fld_tbl)
 
                         counter += 1
                     else:
+                        #makes None values empty string for html field value
+                        if tgt_record.get(i.id) == None:
+                            tgt_record[i.id] = ''
+                        
                         i.data = session[i.id] = tgt_record.get(i.id)
-
+             
     return rcds, relation

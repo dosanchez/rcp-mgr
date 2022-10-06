@@ -206,13 +206,9 @@ class DataHandler():
         for t, r in self.rcd.items():
             value_str = ') VALUES('
             counter += 1
-            print(r)
             for ea_rcd in r:
                 sql = "INSERT INTO %s (" %(t)
                 for fn, fv in ea_rcd.items():
-                    
-                    print(fn+' >', fv,'>',not fv)
-                    print(type(fv).__name__)
                     if not fv and fv != 0:
                         fv = 'NULL'
                     if fn == session.get('relation')[0][0].get('child_tbl_fld'):
@@ -249,7 +245,7 @@ class DataHandler():
     def from_dict2sql(cls, conn, rcd = None):
         """put str dict data between quotes for SQL statement"""
         if rcd:
-            for t, r in rcd.items():
+            for _, r in rcd.items():
                 for ea_rcd in r:
                     for fn, fv in ea_rcd.items():
                         if isinstance(fv, str) and fv:
@@ -259,4 +255,4 @@ class DataHandler():
         else:
             rcd = {}
         
-        return cls(db, rcd)
+        return cls(conn, rcd)

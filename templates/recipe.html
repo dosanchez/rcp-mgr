@@ -1,6 +1,6 @@
 {%extends "base.html" %}
 
-{% block form%}
+{% block form %}
 
 <div class ="form-group bg-light border-2">
   <form method="POST" id="nav_form" >
@@ -17,10 +17,10 @@
         <button type = "button" class="btn" onclick="Navrecord('first')">
           <i class="fa-solid fa-angles-left"></i>
         </button>
-        <button type = "button" class="btn" onclick="Navrecord('back',)">
+        <button type = "button" class="btn" onclick="Navrecord('back')">
           <i class="fa-solid fa-circle-chevron-left"></i>
         </button>
-        <button type ="button" class="btn btn-outline-dark" id = "id" locked>
+        <button type ="button" class="btn btn-outline-dark" id = "iddisplay" locked>
           {{ form.id.data }}
         </button>
         <button type = "button" class="btn" onclick="Navrecord('next')">
@@ -33,9 +33,6 @@
           <i class="fa-solid fa-square-plus"></i>
         </button>
       </div>  
-    </div>
-    <div hidden>
-      {{ form.id() }}
     </div>
     <div class="row">
       <div class="col-sm-3">
@@ -74,8 +71,7 @@
         {{ form.rct_serv(class="form-control", value = form.rct_serv.data) }}
       </div>
     </div>
-    <div class="mt-10">
-    </div>
+    <div class="mt-10"></div>
 
   <div class=" container-fluid rounded my-5 border border-dark border-1">
     <div class=" row mt-5">
@@ -152,7 +148,7 @@
                           <small>drop</small>
                         </button>
                       </td>
-                    {% elif key == relation[counter][0].get('child_tbl_fld') %} <!-- exception  hides parent-child field-->
+                    {% elif key == relation[counter][0].get('child_tbl_fld') %} <!-- exception  hides parent-child field -->
                       <td hidden></td>
                     {% elif key == 'rcd_ing' %} <!-- exception loops for ing name -->
                       {% for choice in rcd_ing_choices %}
@@ -160,7 +156,7 @@
                           <td style="text-align: center;">{{ choice[1] }}</td>
                         {% endif %}
                       {% endfor %}                        
-                    {% elif key == 'rcd_unit' %}<!-- exception loops for UM-->
+                    {% elif key == 'rcd_unit' %} <!-- exception loops for UM-->
                         {% for choice in rcd_unit_choices %}
                           {% if choice[0] == value %}
                             <td style="text-align: center;">{{ choice[1] }}</td>
@@ -180,30 +176,15 @@
       </div>
     </div>
   </div> 
-</div>  
+</div> 
 {% endblock form %}
 {% block script %}
-{{ super() }}
+  {{ super() }}
   <script>
-    function Newrecord() {
-      document.getElementById("id").value = 0;
-      document.getElementById("rct_name").value = "";
-      document.getElementById("rct_cosc").value = "";
-      document.getElementById("rct_cost").value = "";
-      document.getElementById("rct_dens").value = "";
-      document.getElementById("rct_denu").value = "";
-      document.getElementById("rct_yiel").value = "";
-      document.getElementById("rct_subf").value = "";
-      document.getElementById("rct_ebld").value = "checked";
-      document.getElementById("rcd_ing").value = "";
-      document.getElementById("rcd_qty").value = "";
-      document.getElementById("rcd_unit").value = "";
-      document.getElementById("rcd_yiel").value = "";
-      document.getElementById("idx").value = 0;
-      document.getElementById("rcd_enca").value = 0;
-      }
+    console.log('script de inicio Navrecord'); 
 
     function Navrecord(NAV) {
+      console.log("Executing action");
       document.getElementById("rct_name").value = '{{session['rct_name']}}';
       document.getElementById("rct_cosc").value = {{session['rct_cosc']}};
       document.getElementById("rct_cost").value = {{session['rct_cost']}};
@@ -215,15 +196,35 @@
       document.getElementById("submit_button").value = NAV;
       document.getElementById("subform-rcd_qty").value = 1;
       document.getElementById("subform-rcd_yiel").value = 1;
+      //let idx = document.getElementById("subform-idx").value;
+      //if (idx == '') {
+      //document.getElementById("subform-idx").value = 0;
+      //}
       document.getElementById("submit_button").click();
+      }
+  
+      function Newrecord() {
+      document.getElementById("id").value = 0;
+      document.getElementById("rct_name").value = "";
+      document.getElementById("rct_cosc").value = "";
+      document.getElementById("rct_cost").value = "";
+      document.getElementById("rct_dens").value = "";
+      document.getElementById("rct_denu").value = "";
+      document.getElementById("rct_yiel").value = "";
+      document.getElementById("rct_ebld").checked = true;
+      //document.getElementById("subform-rcd_ing").value = "";
+      //document.getElementById("rcd_qty").value = "";
+      //document.getElementById("rcd_unit").value = "";
+      //document.getElementById("rcd_yiel").value = "";
+      //document.getElementById("subform-idx").value = 0;
+      //document.getElementById("rcd_enca").value = 0;
+      console.log('new record');
       }
 
-    function Submit() {
-      document.getElementById("submit_button").click();
-      }
+
 
     function Newsub() {
-      if (document.getElementById("lbl_but_sub").innerHTML == "update "){
+      if (document.getElementById("lbl_but_sub").innerHTML == "update"){
         document.getElementById("lbl_but_sub").innerHTML = "add ";
         document.getElementById("subform-idx").value = 0;
         document.getElementById("subform-rcd_enca").value = 0;
@@ -244,4 +245,4 @@
       }      
     }
   </script>
-{% endblock script%}
+{% endblock script %}

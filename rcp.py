@@ -267,7 +267,7 @@ def recipe():
         pass    
 
     print('formvalidate', form.validate_on_submit())
-
+    print ('form.subform.idx.data prevalidate>', form.subform.idx.data)
     if form.validate_on_submit():
 
         listsql = listsql2 = {
@@ -305,7 +305,7 @@ def recipe():
                                         }
             ) 
 
-
+            print ('form.subform.idx.data nav>', form.subform.idx.data)
             if  existe.chk_sgl_fld():   #chk if record exists   
                 #update existing record
                 record.update()
@@ -325,7 +325,7 @@ def recipe():
                                                     }]
                                         }
             ) 
-
+            print ('form.subform.idx.data not nav>', form.subform.idx.data)
             if  existe.chk_sgl_fld():   #chk if record exists   
                 #update existing record
                 record.update()

@@ -202,15 +202,15 @@
       //}
       document.getElementById("submit_button").click();
       }
-  
+      
       function Newrecord() {
       document.getElementById("id").value = 0;
-      document.getElementById("rct_name").value = "";
-      document.getElementById("rct_cosc").value = "";
-      document.getElementById("rct_cost").value = "";
-      document.getElementById("rct_dens").value = "";
-      document.getElementById("rct_denu").value = "";
-      document.getElementById("rct_yiel").value = "";
+      document.getElementById("rct_name").value = null;
+      document.getElementById("rct_cosc").value = null;
+      document.getElementById("rct_cost").value = null;
+      document.getElementById("rct_dens").value = null;
+      document.getElementById("rct_denu").value = null;
+      document.getElementById("rct_yiel").value = null;
       document.getElementById("rct_ebld").checked = true;
       //document.getElementById("subform-rcd_ing").value = "";
       //document.getElementById("rcd_qty").value = "";
@@ -221,28 +221,31 @@
       console.log('new record');
       }
 
+    
 
 
     function Newsub() {
-      if (document.getElementById("lbl_but_sub").innerHTML == "update"){
+
+      if (document.getElementById("lbl_but_sub").innerHTML == "update "){
         document.getElementById("lbl_but_sub").innerHTML = "add ";
         document.getElementById("subform-idx").value = 0;
         document.getElementById("subform-rcd_enca").value = 0;
-        document.getElementById("subform-rcd_ing").value = "";
-        document.getElementById("subform-rcd_qty").value = "";
-        document.getElementById("subform-rcd_unit").value = "";
-        document.getElementById("subform-rcd_yiel").value = "";
-        
+        document.getElementById("subform-rcd_ing").value = null;
+        document.getElementById("subform-rcd_qty").value = null;
+        document.getElementById("subform-rcd_unit").value = null;
+        document.getElementById("subform-rcd_yiel").value = null;
+       
       }
-      else{
+      else {
         document.getElementById("lbl_but_sub").innerHTML = "update ";
-        document.getElementById("subform-idx").value = {{session['idx']}}
-        document.getElementById("subform-rcd_enca").value = {{session['rcd_enca']}};
-        document.getElementById("subform-rcd_ing").value = {{session['rcd_ing']}};
-        document.getElementById("subform-rcd_qty").value = {{session['rcd_qty']}};
-        document.getElementById("subform-rcd_unit").value = {{session['rcd_unit']}};
-        document.getElementById("subform-rcd_yiel").value = {{session['rcd_yiel']}};
-      }      
+        document.getElementById("subform-idx").value = {{0 if not session['idx'] else session['idx']}};
+        document.getElementById("subform-rcd_enca").value = {{0 if not session['rcd_enca'] else session['rcd_enca']}};
+        document.getElementById("subform-rcd_ing").value = {{'null' if not session['rcd_ing'] else session['rcd_ing']}};
+        document.getElementById("subform-rcd_qty").value = {{'null' if not session['rcd_qty'] else session['rcd_qty']}};
+        document.getElementById("subform-rcd_unit").value = {{'null' if not session['rcd_unit'] else session['rcd_unit']}};
+        document.getElementById("subform-rcd_yiel").value = {{'null' if not session['rcd_yiel'] else session['rcd_yiel']}};
+      }    
+    
     }
   </script>
 {% endblock script %}

@@ -181,10 +181,9 @@
 {% block script %}
   {{ super() }}
   <script>
-    console.log('script de inicio Navrecord'); 
+    
 
-    function Navrecord(NAV) {
-      console.log("Executing action");
+    function Navrecord(NAV) {      
       document.getElementById("rct_name").value = '{{session['rct_name']}}';
       document.getElementById("rct_cosc").value = {{session['rct_cosc']}};
       document.getElementById("rct_cost").value = {{session['rct_cost']}};

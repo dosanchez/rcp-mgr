@@ -124,11 +124,11 @@ class Sku(FlaskForm):
     sku_barc = StringField('Barcode', validators = [Length(max=16)],
                             render_kw={"placeholder": "insert barcode here"})
     sku_foto = FileField('Update SKU Picture', validators = [FileAllowed(['jpg', 'png', 'jpeg'])])
-    sku_pref = SelectField('Preferred Vendor', default = '', coerce= int)
+    sku_pref = SelectField('Preferred Vendor', coerce= int)
     sku_itbi = DecimalField('Sales Tax',validators=[NumberRange(min = 0)], default = 0.18)
     sku_vaci = DecimalField('Empty container weight',validators=[NumberRange(min = 0)])
         
-    sku_v_unit = SelectField('Unit of measure', default = ('','---'), coerce = int)
+    sku_v_unit = SelectField('Unit of measure', coerce = int)
     sku_ebld = BooleanField('Enabled', default = "checked", false_values=('',))
 
 class Rcv_en(FlaskForm):

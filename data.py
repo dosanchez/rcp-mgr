@@ -115,7 +115,7 @@ class select():
         db.execute(sql)
         
         if blank == True:
-            choice = [(0,'---')] 
+            choice = [(None,'---')] 
         else:
             choice =[]
 
@@ -134,7 +134,7 @@ class select():
         db.execute(sql)
         
         if blank == True:
-            choice = [(0,'---')]   
+            choice = [(None,'---')]   
         else:
             choice =[]
 

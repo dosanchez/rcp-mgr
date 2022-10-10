@@ -213,17 +213,18 @@
 {% block script %}
 {{ super() }}
   <script>
+    console.log('script de inicio Navrecord'); 
     function Newrecord() {
-        document.getElementById("sku_name").value = "";
-        document.getElementById("sku_ingr").value = "";
-        document.getElementById("sku_cont").value = "";
-        document.getElementById("sku_unit").value = "";
-        document.getElementById("sku_barc").value = "";
-        document.getElementById("sku_foto").value = "";
-        document.getElementById("sku_pref").value = "";
-        document.getElementById("sku_itbi").value = "";
-        document.getElementById("sku_vaci").value = "";
-        document.getElementById("sku_v_unit").value = "";
+        document.getElementById("sku_name").value = null;
+        document.getElementById("sku_ingr").value = null;
+        document.getElementById("sku_cont").value = null;
+        document.getElementById("sku_unit").value = null;
+        document.getElementById("sku_barc").value = null;
+        document.getElementById("sku_foto").value = null;
+        document.getElementById("sku_pref").value = null;
+        document.getElementById("sku_itbi").value = null;
+        document.getElementById("sku_vaci").value = null;
+        document.getElementById("sku_v_unit").value = null;
         document.getElementById("sku_ebld").value = "checked";
         document.getElementById("id").value = 0;
         }

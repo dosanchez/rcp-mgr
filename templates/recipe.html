@@ -181,7 +181,7 @@
 {% block script %}
   {{ super() }}
   <script>
-    
+    console.log('inicio Script'); 
 
     function Navrecord(NAV) {      
       document.getElementById("rct_name").value = '{{session['rct_name']}}';

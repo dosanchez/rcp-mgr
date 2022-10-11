@@ -7,12 +7,14 @@ def nav_pos(rcds, id, nav_button):
 
     regd_id =[row.get('id') for row in rcds] #making a list of registered ids
     last_index = len(regd_id) -1 #calc id list length
+    print('id',id)
+    print('nav_button',nav_button)
     if not len(regd_id):
         return None, []
-    elif id == None:
-        return -1, regd_id
     elif isinstance(nav_button,(int)):
         return regd_id.index(nav_button), regd_id
+    elif id == None:
+        return -1, regd_id    
     elif nav_button == "first":
         return 0, regd_id
     elif nav_button == "last":
@@ -63,6 +65,8 @@ def navigate_to(nav_button, conn, form, table_list):
         else:
 
             tgt_record = rcds[0][pos]
+            session['curr_rcd_' + type(form).__name__] = tgt_record.get('id')
+            print('for.shortname', type(form).__name__)
             for i in form:
                 if not i.id == 'csrf_token':
                     if i.id == "qty_um" and table_list[0] == 'unitmeas':#exception for unitmeas form
@@ -90,23 +94,20 @@ def navigate_to(nav_button, conn, form, table_list):
                             else:
                                 fld_tbl = ii.short_name
                             
-                            #makes None values empty string for html field value
-                            #if rcds[counter][pos].get(fld_tbl) == None:
-                             #   rcds[counter][pos][fld_tbl] = ''
-                              #  print('NOne ok')
-
-                            ii.data = session[ii.short_name] = rcds[counter][pos].get(fld_tbl)
-                            print('session', ii.short_name,' >',rcds[counter][pos].get(fld_tbl))
+                            #makes None values null string for html form field value
+                            session[ii.short_name] = rcds[counter][pos].get(fld_tbl)
+                            if rcds[counter][pos].get(fld_tbl) == None:
+                                ii.data = ''
+                            else:
+                                ii.data = session[ii.short_name]
 
                         counter += 1
                     else:
-                        #makes None values empty string for html field value
-                        #if tgt_record.get(i.id) == None:
-                         #   print('NOne ok')
-                          #  tgt_record[i.id] = ''
-                        
-                        i.data = session[i.id] = tgt_record.get(i.id)
-                        print('session', i.id,' >',tgt_record.get(i.id))
-
+                        #makes None values null string for html form field value
+                        session[i.id] = tgt_record.get(i.id)
+                        if tgt_record.get(i.id) == None:
+                            i.data = ''
+                        else:
+                            i.data = session[i.id]
 
     return rcds, relation

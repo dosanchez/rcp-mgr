@@ -10,7 +10,8 @@ the challenge is not the app itself but, besides practicing coding skills, desig
 data format to pass to datahandler class (db, {table1name:[{record1field1name:record1field1value},{record1field2name:record1field2value},{record2field1name:record2field1value},{record2field2name:record2field2value}...],table2name:[{record1field1name:record1field1value},{record1field2name:record1field2value},...]})
 table1name should always the parent table-form, all other table names should be child or free tables
 
-All database tables must contain an autoincrement field named id
+All database tables must contain an autoincrement field named id as primary  key
+id field value must be > 0
 foreign key field with autoincrement parent field must be named id_enca.  One permitted per table
 
 All wtf Classes are within forms.py

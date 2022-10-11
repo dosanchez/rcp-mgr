@@ -114,8 +114,8 @@ class select():
                     WHERE {} = True""". format(field, table, truefield)
         db.execute(sql)
         
-        if blank == True:
-            choice = [(None,'---')] 
+        if blank:
+            choice = [(0,'---')] 
         else:
             choice =[]
 
@@ -133,8 +133,8 @@ class select():
                     FROM {}""". format(field, table)
         db.execute(sql)
         
-        if blank == True:
-            choice = [(None,'---')]   
+        if blank:
+            choice = [(0,'---')]   
         else:
             choice =[]
 

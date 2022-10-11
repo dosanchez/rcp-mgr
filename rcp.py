@@ -1,3 +1,4 @@
+from ast import NameConstant
 import mysql.connector
 from flask import Flask, render_template, session, request, redirect, url_for
 from data import DataHandler as dth, select as sel, dlt, save_file
@@ -28,6 +29,15 @@ def unitmeas():
     form = Unitmeas()
     table_list = ['unitmeas']
     nav_button =  request.form.get('nav') #saves form navigation request
+
+    #if request.form.get('nav') in None --> its a redirect 
+    #--> its either an update, new or deleted record hence not necesarilly 
+    #last record should be displayed 
+    if request.form.get('nav'):
+        nav_button =  request.form.get('nav') #saves form navigation request
+    else:
+        nav_button = session.get('curr_rcd_' + type(form).__name__)
+
     try:
         nav_button = int(nav_button)
     except:
@@ -61,6 +71,8 @@ def unitmeas():
 
             else:
                 #adds new record
+                session['curr_rcd_' + type(form).__name__] = None 
+                    # ^ so it navigates to the last record after adding
                 record.add_new()
                 return redirect(url_for('unitmeas'))# clears POST data 
 
@@ -76,7 +88,14 @@ def unitmeas():
 def socio():
     form = Socio()
     table_list = ['socio']
-    nav_button =  request.form.get('nav') #saves form navigation request
+
+    #if request.form.get('nav') in None --> its a redirect 
+    #--> its either an update, new or deleted record hence not necesarilly 
+    #last record should be displayed 
+    if request.form.get('nav'):
+        nav_button =  request.form.get('nav') #saves form navigation request
+    else:
+        nav_button = session.get('curr_rcd_' + type(form).__name__)
     try:
         nav_button = int(nav_button)
     except:
@@ -115,6 +134,8 @@ def socio():
 
             else:
                 #adds new record
+                session['curr_rcd_' + type(form).__name__] = None 
+                    # ^ so it navigates to the last record after adding
                 record.add_new()
                 return redirect(url_for('socio'))# clears POST data 
 
@@ -133,7 +154,14 @@ def almacen():
     form = Almacen()
     table_list = ['almacen']
 
-    nav_button =  request.form.get('nav') #saves form navigation request
+    #if request.form.get('nav') in None --> its a redirect 
+    #--> its either an update, new or deleted record hence not necesarilly 
+    #last record should be displayed 
+    if request.form.get('nav'):
+        nav_button =  request.form.get('nav') #saves form navigation request
+    else:
+        nav_button = session.get('curr_rcd_' + type(form).__name__)
+
     try:
         nav_button = int(nav_button)
     except:
@@ -165,6 +193,8 @@ def almacen():
 
             else:
                 #adds new record
+                session['curr_rcd_' + type(form).__name__] = None 
+                    # ^ so it navigates to the last record after adding
                 record.add_new()
                 return redirect(url_for('almacen'))# clears POST data 
 
@@ -182,7 +212,14 @@ def ingredient():
     table_list = ['recet_en']
 
         
-    nav_button =  request.form.get('nav') #saves form navigation request
+    #if request.form.get('nav') in None --> its a redirect 
+    #--> its either an update, new or deleted record hence not necesarilly 
+    #last record should be displayed 
+    if request.form.get('nav'):
+        nav_button =  request.form.get('nav') #saves form navigation request
+    else:
+        nav_button = session.get('curr_rcd_' + type(form).__name__)
+
     try:
         nav_button = int(nav_button)
     except:
@@ -219,6 +256,8 @@ def ingredient():
 
             else:
                 #adds new record
+                session['curr_rcd_' + type(form).__name__] = None 
+                    # ^ so it navigates to the last record after adding
                 record.add_new(rct_rece = 0)
                 return redirect(url_for('ingredient'))# clears POST data 
 
@@ -247,7 +286,14 @@ def recipe():
     rcd_unit_choices = sel.all_choices(db, 'unitmeas', 'uni_symb')
     rcd_ing_choices = sel.all_choices(db, 'recet_en', 'rct_name')
 
-    nav_button =  request.form.get('nav') #saves form navigation request
+    #if request.form.get('nav') in None --> its a redirect 
+    #--> its either an update, new or deleted record hence not necesarilly 
+    #last record should be displayed 
+    if request.form.get('nav'):
+        nav_button =  request.form.get('nav') #saves form navigation request
+    else:
+        nav_button = session.get('curr_rcd_' + type(form).__name__)
+
     session['sub_nav_button'] = request.form.get('subnav') #saves subform navigation request
     session['delete_id'] = request.form.get('delete')
 
@@ -267,7 +313,6 @@ def recipe():
         pass    
 
     print('formvalidate', form.validate_on_submit())
-    print ('form.subform.idx.data prevalidate>', form.subform.idx.data)
     if form.validate_on_submit():
 
         listsql = listsql2 = {
@@ -305,7 +350,6 @@ def recipe():
                                         }
             ) 
 
-            print ('form.subform.idx.data nav>', form.subform.idx.data)
             if  existe.chk_sgl_fld():   #chk if record exists   
                 #update existing record
                 record.update()
@@ -313,6 +357,8 @@ def recipe():
 
             else:
                 #adds new record
+                session['curr_rcd_' + type(form).__name__] = None 
+                    # ^ so it navigates to the last record after adding
                 record.add_new(rct_rece = 1)
                 return redirect(url_for('recipe'))# clears POST data 
 
@@ -338,6 +384,8 @@ def recipe():
         
         if session['delete_id']:
             dlt.id(conn, table_list[1], session['delete_id'])
+            return redirect(url_for('recipe'))# clears POST data
+           
 
     records, relation = navigate_to(nav_button, conn, form, table_list)
     session['relation'] = relation
@@ -367,14 +415,21 @@ def sku():
     form.sku_unit.choices = form.sku_v_unit.choices = sel.ebld_choices(db,
                                                         'unitmeas','uni_symb',
                                                         'uni_ebld')
-    form.sku_pref.choices = sel.ebld_choices(db, 'socio', 'soc_name', 'soc_ebld')
+    form.sku_pref.choices = sel.ebld_choices(db, 'socio', 'soc_name', 'soc_ebld', blank = True)
 
     #Queries for all Selectfields choices
     sku_ingr_choices = sel.all_choices(db, 'recet_en', 'rct_name')
     sku_unit_choices = sel.all_choices(db, 'unitmeas', 'uni_symb')
     sku_pref_choices = sel.all_choices(db, 'socio', 'soc_name')
 
-    nav_button =  request.form.get('nav') #saves form navigation request
+    #if request.form.get('nav') in None --> its a redirect 
+    #--> its either an update, new or deleted record hence not necesarilly 
+    #last record should be displayed 
+    if request.form.get('nav'):
+        nav_button =  request.form.get('nav') #saves form navigation request
+    else:
+        nav_button = session.get('curr_rcd_' + type(form).__name__)
+    
     try:
         nav_button = int(nav_button)
     except:
@@ -436,6 +491,8 @@ def sku():
 
             else:
                 #adds new record
+                session['curr_rcd_' + type(form).__name__] = None 
+                    # ^ so it navigates to the last record after adding
                 record.add_new()
                 return redirect(url_for('sku'))# clears POST data 
 
@@ -477,7 +534,14 @@ def receive():
     log_alm_choices = sel.all_choices(db, 'almacen', 'alm_name')
     log_sku_choices = sel.all_choices(db, 'sku', 'sku_name')
 
-    nav_button =  request.form.get('nav') #saves form navigation request
+    #if request.form.get('nav') in None --> its a redirect 
+    #--> its either an update, new or deleted record hence not necesarilly 
+    #last record should be displayed 
+    if request.form.get('nav'):
+        nav_button =  request.form.get('nav') #saves form navigation request
+    else:
+        nav_button = session.get('curr_rcd_' + type(form).__name__)
+
     session['sub_nav_button'] = request.form.get('subnav') #saves subform navigation request
     session['delete_id'] = request.form.get('delete')
 
@@ -544,6 +608,8 @@ def receive():
 
             else:
                 #adds new record
+                session['curr_rcd_' + type(form).__name__] = None 
+                    # ^ so it navigates to the last record after adding
                 record.add_new(lox_rece = 1)
                 return redirect(url_for('receive'))# clears POST data 
 

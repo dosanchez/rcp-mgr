@@ -1,4 +1,3 @@
-from ast import NameConstant
 import mysql.connector
 from flask import Flask, render_template, session, request, redirect, url_for
 from data import DataHandler as dth, select as sel, dlt, save_file

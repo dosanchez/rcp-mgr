@@ -24,6 +24,7 @@ def index():
 
     return render_template ('index.html')
 
+
 @app.route('/templates/unitmeas.html', methods=['GET','POST'])
 def unitmeas():
     form = Unitmeas()
@@ -235,7 +236,6 @@ def ingredient():
                                             'rct_cosc':form.rct_cosc.data,
                                             'rct_dens':form.rct_dens.data,
                                             'rct_denu':form.rct_denu.data,
-                                            'rct_yiel':form.rct_yiel.data,
                                             'rct_ebld':form.rct_ebld.data  
                                                     }]
                                         })
@@ -265,10 +265,11 @@ def ingredient():
     records, relation = navigate_to(nav_button, conn, form, table_list)
 
     column_names =[['Registered Ingredients',['', 'Ingredient', 'Costo Real',
-                    'Costo Std', 'Density', 'Densi UM', 'Yield', 'Enabled']]]
+                    'Costo Std', 'Density', 'Densi UM', 'Enabled']]]
     
     return render_template ('ingredient.html', form = form, records = records,
                             column_names = column_names)
+
 
 @app.route('/templates/recipe.html', methods=['GET','POST'])
 def recipe():
@@ -403,6 +404,7 @@ def recipe():
                             relation = relation,
                             rcd_len = rcd_len)
 
+
 @app.route('/templates/sku.html', methods=['GET','POST'])
 def sku():
     # paths for files
@@ -518,6 +520,7 @@ def sku():
                             sku_pref_choices = sku_pref_choices,
                             sku_img = sku_img
                             )
+
 
 @app.route('/templates/receive.html', methods=['GET','POST'])
 def receive():

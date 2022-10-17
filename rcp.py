@@ -409,6 +409,7 @@ def recipe():
 def sku():
     # paths for files
     sku_pic_path = os.path.join(app.root_path,'static/skupics')
+    session['sku_notimg'] = url_for('static',  filename = 'skupics/595ab936.jpg')
     form = Sku()
     table_list = ['sku']
 
@@ -474,7 +475,12 @@ def sku():
             #update current record instance sku_foto attribute to either 
             #to pic name in database or new pic name of loaded picture
             #so info in database stays updated
-            name = sel.all(db, table_list[0], id = form.id.data)[0].get('sku_foto')
+            img_rcd = sel.all(db, table_list[0], id = form.id.data)
+            if  img_rcd:
+                name = img_rcd[0].get('sku_foto')
+            else:
+                name = None
+
             if form.sku_foto.data:                 
                 record.rcd.get(table_list[0])[0]['sku_foto']  = "\'" + save_file(form.sku_foto.data, 
                     sku_pic_path, f_name = name) + "\'" 
@@ -509,9 +515,10 @@ def sku():
     sku_img_name = sel.all(db, table_list[0], id = form.id.data)[0].get('sku_foto')
 
     if not sku_img_name:
-        sku_img = url_for('static', filename = 'skupics/595ab936.jpg') 
+        sku_img = session['sku_notimg']
     else:
-        sku_img = url_for('static', filename = 'skupics/' + sku_img_name) 
+        session['sku_img'] = sku_img = url_for('static', 
+            filename = 'skupics/' + sku_img_name) 
 
     return render_template ('sku.html', form = form, records = records,
                             column_names = column_names, 

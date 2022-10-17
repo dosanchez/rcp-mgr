@@ -96,7 +96,7 @@
 
       </div>
       <div class="col-sm" style="flex: 30%; padding: 5px; max-width: 240px">
-        <img src="{{ sku_img }}" class="img-thumbnail img-fluid" alt="sku image" 
+        <img src="{{ sku_img }}" id = "sku_img" class="img-thumbnail img-fluid" alt="sku image" 
         title="Click button bellow to add new image">
         {{ form.sku_foto(class="form-control-file") }}
         {% if form.sku_foto.errors %}
@@ -215,7 +215,9 @@
   <script>
     console.log('script de inicio Navrecord'); 
     function Newrecord() {
+        console.log('script de inicio newrecord');
         document.getElementById("sku_name").value = null;
+        document.getElementById("sku_img").src = '{{session['sku_notimg']}}';
         document.getElementById("sku_ingr").value = null;
         document.getElementById("sku_cont").value = null;
         document.getElementById("sku_unit").value = null;
@@ -225,7 +227,7 @@
         document.getElementById("sku_itbi").value = null;
         document.getElementById("sku_vaci").value = null;
         document.getElementById("sku_v_unit").value = null;
-        document.getElementById("sku_ebld").value = "checked";
+        document.getElementById("sku_ebld").checked = true;
         document.getElementById("id").value = 0;
         }
 

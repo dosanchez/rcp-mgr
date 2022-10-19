@@ -121,7 +121,7 @@ class Sku(FlaskForm):
     sku_barc = StringField('Barcode', validators = [Length(max=16)],
                             render_kw={"placeholder": "insert barcode here"})
     sku_foto = FileField('Update SKU Picture', validators = [FileAllowed(['jpg', 'png', 'jpeg'])])
-    sku_pref = SelectField('Preferred Vendor', coerce= int)
+    sku_pref = SelectField('Preferred Vendor', coerce= int, default = 0)
     sku_itbi = DecimalField('Sales Tax',validators=[NumberRange(min = 0)], default = 0.18)
     sku_vaci = DecimalField('Empty container weight',validators=[NumberRange(min = 0)])
         

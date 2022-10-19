@@ -12,13 +12,11 @@ from data import select as sel
 #                               database='std')
 # db = conn.cursor(dictionary=True, buffered=True)
 
-d = float(3.1416)
-c='hola'
-a = [{'a':c,'b':None,'c':3.15},None]
+
+a = 'hola'
 b = json.dumps(a)
 print(b)
 
-print('d', type(d).__name__)
 
 
 

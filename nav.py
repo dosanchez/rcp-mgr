@@ -1,3 +1,4 @@
+from decimal import Decimal
 from flask import session
 from flask import render_template
 from data import select as sel
@@ -65,11 +66,15 @@ def navigate_to(nav_button, conn, form, table_list):
             tgt_record = rcds[0][pos]
             session['curr_rcd_' + type(form).__name__] = tgt_record.get('id')
             for i in form:
+                if isinstance(i.data, Decimal):
+                    print(i.data)
+                    i.data = float(i.data)
+
                 if not i.id == 'csrf_token':
                     if i.id == "qty_um" and table_list[0] == 'unitmeas':#exception for unitmeas form
                         i.data = 1
                     elif i.id == "qty_base" and table_list[0] == 'unitmeas':#exception for unitmeas form
-                        i.data = session['uni_conv'] = tgt_record.get('uni_conv')
+                        i.data = session['uni_conv'] = float(tgt_record.get('uni_conv'))
                     elif type(i).__name__ == 'FormField':
 
                         relation.append(sel.foreign_tbl(conn, table_list[0], table_list[counter]))
@@ -86,6 +91,10 @@ def navigate_to(nav_button, conn, form, table_list):
                         pos, regd_id = nav_pos(rcds[counter], i.idx.data, session['sub_nav_button'])
 
                         for ii in i:
+                            if isinstance(ii.data, Decimal):
+                                print(ii.data)
+                                ii.data = float(i.data)
+
                             if ii.short_name == 'idx':
                                 fld_tbl = 'id'
                             else:

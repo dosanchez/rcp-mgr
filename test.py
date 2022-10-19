@@ -1,3 +1,4 @@
+import json
 import mysql.connector
 from nav import navigate_to, nav_pos
 from forms import Almacen
@@ -11,10 +12,13 @@ from data import select as sel
 #                               database='std')
 # db = conn.cursor(dictionary=True, buffered=True)
 
+d = float(3.1416)
+c='hola'
+a = [{'a':c,'b':None,'c':3.15},None]
+b = json.dumps(a)
+print(b)
 
-a = 'None'
-print(a)
-
+print('d', type(d).__name__)
 
 
 

@@ -106,5 +106,6 @@ def navigate_to(nav_button, conn, form, table_list):
                             i.data = ''
                         else:
                             i.data = session[i.id]
-
+    print(rcds)
+    print(relation)
     return rcds, relation

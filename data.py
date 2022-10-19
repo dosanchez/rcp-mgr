@@ -1,4 +1,5 @@
-import mysql.connector
+from decimal import Decimal
+import json
 from flask import flash, session
 import os, secrets
 from PIL import Image

@@ -1,4 +1,3 @@
-from ast import NameConstant
 import mysql.connector
 from flask import Flask, render_template, session, request, redirect, url_for
 from data import DataHandler as dth, select as sel, dlt, save_file
@@ -211,7 +210,6 @@ def almacen():
 def ingredient():
     form = Ingredient()
     table_list = ['recet_en']
-
         
     #if request.form.get('nav') in None --> its a redirect 
     #--> its either an update, new or deleted record hence not necesarilly 
@@ -263,7 +261,6 @@ def ingredient():
 
 
     records, relation = navigate_to(nav_button, conn, form, table_list)
-
     column_names =[['Registered Ingredients',['', 'Ingredient', 'Costo Real',
                     'Costo Std', 'Density', 'Densi UM', 'Enabled']]]
     
@@ -413,6 +410,7 @@ def sku():
     form = Sku()
     table_list = ['sku']
 
+
     #Queries for Selectfields active choices
     form.sku_ingr.choices = sel.ebld_choices(db, 'recet_en', 'rct_name', 'rct_ebld') 
     form.sku_unit.choices = form.sku_v_unit.choices = sel.ebld_choices(db,
@@ -439,7 +437,7 @@ def sku():
         pass
     
     print('validateonsubmit', form.validate_on_submit())
-    for error in form.sku_vaci.errors:
+    for error in form.sku_pref.errors:
         print('skuvaci',error)
     for error in form.sku_cont.errors:
         print('skucont',error)
@@ -462,6 +460,12 @@ def sku():
                                             'sku_ebld':form.sku_ebld.data  
                                                     }]
                                         })
+        
+        #checks if incoming sku_pref is 0 to make it null
+        if record.rcd.get(table_list[0])[0].get('sku_pref') == 0:
+            record.rcd[table_list[0]][0]['sku_pref'] = None
+        
+        
         if nav_button == "submit": #not a nav post
             #creates instance to chk if record exist
 

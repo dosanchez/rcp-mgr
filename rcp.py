@@ -275,7 +275,7 @@ def recipe():
     form = Recet_en()
     table_list = ['recet_en', 'recet_de']
     #Queries for Selectfields active choices
-    form.subform.rcd_unit.choices = sel.ebld_choices(db,
+    form.rct_unit.choices = form.subform.rcd_unit.choices = sel.ebld_choices(db,
                                                     'unitmeas',
                                                     'uni_symb', 
                                                     'uni_ebld')
@@ -324,7 +324,8 @@ def recipe():
                                     'rct_dens':form.rct_dens.data,
                                     'rct_denu':form.rct_denu.data,
                                     'rct_yiel':form.rct_yiel.data,
-                                    'rct_yiel':form.rct_serv.data,
+                                    'rct_serv':form.rct_serv.data,
+                                    'rct_unit':form.rct_unit.data,
                                     'rct_ebld':form.rct_ebld.data 
                                             }],
                                 table_list[1]:[{

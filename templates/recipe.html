@@ -62,13 +62,17 @@
         {{ form.rct_denu.label(class="form-label") }}
         {{ form.rct_denu(class="form-select", value = form.rct_denu.data) }}
       </div>
-      <div class="col-sm-3 pt-3">
+      <div class="col-sm-2 pt-3">
         {{ form.rct_yiel.label(class="form-label") }}
         {{ form.rct_yiel(class="form-control", value = form.rct_yiel.data) }}
       </div>
-      <div class="col-sm-3 pt-3">
+      <div class="col-sm-2 pt-3">
         {{ form.rct_serv.label(class="form-label") }}
         {{ form.rct_serv(class="form-control", value = form.rct_serv.data) }}
+      </div>
+      <div class="col-sm-2 pt-3">
+        {{ form.rct_unit.label(class="form-label") }}
+        {{ form.rct_unit(class="form-control", value = form.rct_unit.data) }}
       </div>
     </div>
     <div class="mt-10"></div>
@@ -226,6 +230,7 @@
     function Newsub() {
 
       if (document.getElementById("lbl_but_sub").innerHTML == "update "){
+        
         document.getElementById("lbl_but_sub").innerHTML = "add ";
         document.getElementById("subform-idx").value = 0;
         document.getElementById("subform-rcd_enca").value = 0;
@@ -233,7 +238,6 @@
         document.getElementById("subform-rcd_qty").value = null;
         document.getElementById("subform-rcd_unit").value = null;
         document.getElementById("subform-rcd_yiel").value = null;
-       
       }
       else {
         document.getElementById("lbl_but_sub").innerHTML = "update ";
@@ -243,6 +247,7 @@
         document.getElementById("subform-rcd_qty").value = {{'null' if not session['rcd_qty'] else session['rcd_qty']}};
         document.getElementById("subform-rcd_unit").value = {{'null' if not session['rcd_unit'] else session['rcd_unit']}};
         document.getElementById("subform-rcd_yiel").value = {{'null' if not session['rcd_yiel'] else session['rcd_yiel']}};
+
       }    
     
     }

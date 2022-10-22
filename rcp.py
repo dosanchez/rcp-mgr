@@ -413,7 +413,7 @@ def sku():
 
 
     #Queries for Selectfields active choices
-    form.sku_ingr.choices = sel.ebld_choices(db, 'recet_en', 'rct_name', 'rct_ebld') 
+    form.sku_ingr.choices = sel.ebld_choices(db, 'recet_en', 'rct_name', 'rct_ebld', blank = True) 
     form.sku_unit.choices = form.sku_v_unit.choices = sel.ebld_choices(db,
                                                         'unitmeas','uni_symb',
                                                         'uni_ebld')
@@ -436,10 +436,10 @@ def sku():
         nav_button = int(nav_button)
     except:
         pass
-    
+    for error in form.sku_ingr.errors:
+        print('skuing',error)
     print('validateonsubmit', form.validate_on_submit())
-    for error in form.sku_pref.errors:
-        print('skuvaci',error)
+
     for error in form.sku_cont.errors:
         print('skucont',error)
         
@@ -462,10 +462,11 @@ def sku():
                                                     }]
                                         })
         
-        #checks if incoming sku_pref is 0 to make it null
+        #checks for Selectfields where 0 is meant to be null
+        if record.rcd.get(table_list[0])[0].get('sku_ingr') == 0:
+            record.rcd[table_list[0]][0]['sku_ingr'] = None
         if record.rcd.get(table_list[0])[0].get('sku_pref') == 0:
             record.rcd[table_list[0]][0]['sku_pref'] = None
-        
         
         if nav_button == "submit": #not a nav post
             #creates instance to chk if record exist

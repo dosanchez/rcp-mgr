@@ -1,9 +1,9 @@
 from unicodedata import decimal
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, SelectField, DecimalField, HiddenField, BooleanField 
-from wtforms import Form, FormField, IntegerField, DateField
-from wtforms.validators import DataRequired, Length, NumberRange
+from wtforms import StringField, SelectField, HiddenField, BooleanField 
+from wtforms import Form, FormField, IntegerField, DateField, FloatField
+from wtforms.validators import DataRequired, Length, NumberRange,InputRequired
 
 
 class Recet_de(Form):
@@ -11,34 +11,34 @@ class Recet_de(Form):
     idx = HiddenField()
     rcd_enca = HiddenField()
     rcd_ing = SelectField('Ingredient', validators=[DataRequired()], coerce= int)
-    rcd_qty = DecimalField('Qty',validators=[DataRequired(), NumberRange(min = 0)],
+    rcd_qty = FloatField('Qty',validators=[DataRequired(), NumberRange(min = 0)],
                             default = 1)
     rcd_unit = SelectField('Unit of measure', validators=[DataRequired()],
                             coerce = int)
-    rcd_yiel = DecimalField('Ingredient yield', validators=[DataRequired(),
+    rcd_yiel = FloatField('Ingredient yield', validators=[DataRequired(),
                             NumberRange(min = 0)],default = 0.98)
 class Rcv_de(Form):
     """wtform for receive form details"""
     idx = HiddenField()
     log_enca = HiddenField()
     log_sku = SelectField('Sku', validators=[DataRequired()], coerce= int)
-    log_qty = DecimalField('Qty',validators=[DataRequired(),
+    log_qty = FloatField('Qty',validators=[DataRequired(),
                             NumberRange(min = 0)], default = 1)
-    log_pric = DecimalField('Unit Price',validators=[DataRequired(),
+    log_pric = FloatField('Unit Price',validators=[DataRequired(),
                             NumberRange(min = 0)])
-    log_tax = DecimalField('Tax amount',validators=[NumberRange(min = 0)])
+    log_tax = FloatField('Tax amount',validators=[NumberRange(min = 0)])
     log_alm = SelectField('Receiving warehouse', coerce= int)
 
 class Unitmeas(FlaskForm):
     """wtform for Units of measure"""
     id = HiddenField()
-    qty_um = DecimalField('Qty',validators=[DataRequired(), 
+    qty_um = FloatField('Qty',validators=[DataRequired(), 
                             NumberRange(min=0.001)], 
                             render_kw={"placeholder": "qty"}, default = 1)
     uni_symb = StringField('Unit of measurement', validators=[DataRequired(),
                             Length(max=8)], 
                             render_kw={"placeholder": "Unit of measurement"})
-    qty_base = DecimalField('Qty',validators=[DataRequired(), 
+    qty_base = FloatField('Qty',validators=[DataRequired(), 
                             NumberRange(min=0.001)], 
                             render_kw={"placeholder": "qty"}, default = 1)
     uni_un_t = SelectField('UM Type', validators=[DataRequired()], 
@@ -58,9 +58,9 @@ class Ingredient(FlaskForm):
     rct_name = StringField('Ingredient', validators=[DataRequired(),
                             Length(max=16)], 
                             render_kw={"placeholder": "e.g. Paprika"})
-    rct_cost = DecimalField('Actual Cost', render_kw = {'disabled':''}, default = 0)
-    rct_cosc = DecimalField('Standard Cost', render_kw = {'disabled':''}, default = 0)
-    rct_dens = DecimalField('Ingredient density',validators=[DataRequired()], 
+    rct_cost = FloatField('Actual Cost', render_kw = {'disabled':''}, default = 0)
+    rct_cosc = FloatField('Standard Cost', render_kw = {'disabled':''}, default = 0)
+    rct_dens = FloatField('Ingredient density',validators=[DataRequired()], 
                             render_kw={"placeholder": "Density"}, default = 1)
     rct_denu = SelectField('Density UM', validators=[DataRequired()], 
                             choices=['g/ml','g/unit'], default ='g/ml')
@@ -72,15 +72,15 @@ class Recet_en(FlaskForm):
     rct_name = StringField('Recipe/Plate Name', validators=[DataRequired(),
                             Length(max=16)], 
                             render_kw={"placeholder": "e.g. French Fries Side"})
-    rct_cost = DecimalField('Actual Cost', render_kw = {'disabled':''}, default = 0)
-    rct_cosc = DecimalField('Standard Cost', render_kw = {'disabled':''}, default = 0)
-    rct_dens = DecimalField('Recipe/Plate density',validators=[DataRequired()], 
+    rct_cost = FloatField('Actual Cost', render_kw = {'disabled':''}, default = 0)
+    rct_cosc = FloatField('Standard Cost', render_kw = {'disabled':''}, default = 0)
+    rct_dens = FloatField('Recipe/Plate density',validators=[DataRequired()], 
                             render_kw={"placeholder": "density"}, default = 1)
     rct_denu = SelectField('Recipe/Plate density UM', validators=[DataRequired()], 
                             choices=['g/ml','g/unit'], default ='g/unit')
-    rct_yiel = DecimalField('Recipe yield',validators=[DataRequired()], 
+    rct_yiel = FloatField('Recipe yield',validators=[DataRequired()], 
                             render_kw={"placeholder": "e.g. 0.98"}, default = 0.95)
-    rct_serv = DecimalField('Servings',validators=[DataRequired()], 
+    rct_serv = FloatField('Servings',validators=[DataRequired()], 
                             render_kw={"placeholder": "e.g. 0.98"}, default = 1)
     rct_unit = SelectField('serv UM', validators=[DataRequired()], coerce = int)
     rct_ebld = BooleanField('Enabled', default = "checked", false_values=('',))
@@ -114,19 +114,23 @@ class Sku(FlaskForm):
     sku_name = StringField('SKU Name', validators=[DataRequired(),
                             Length(max=16)], 
                             render_kw={"placeholder": "e.g. Heinz Tomato Soup"})
-    sku_ingr = SelectField('Rel Recipe/ingr', default = None, coerce= int) 
-    sku_cont = DecimalField('Label weight',validators=[NumberRange(min = 0)], default = 0)
-    sku_unit = SelectField('Unit of measure', validators=[DataRequired()], 
+    sku_ingr = SelectField('Rel Recipe/ingr', default = 0, coerce=int) 
+    sku_cont = FloatField('Label weight',validators=[NumberRange(min = 0), 
+                            InputRequired()], default=0)
+    sku_unit = SelectField('Unit of measure', validators=[InputRequired()], 
                             coerce = int)
     sku_barc = StringField('Barcode', validators = [Length(max=16)],
                             render_kw={"placeholder": "insert barcode here"})
-    sku_foto = FileField('Update SKU Picture', validators = [FileAllowed(['jpg', 'png', 'jpeg'])])
-    sku_pref = SelectField('Preferred Vendor', coerce= int, default = 0)
-    sku_itbi = DecimalField('Sales Tax',validators=[NumberRange(min = 0)], default = 0.18)
-    sku_vaci = DecimalField('Empty container weight',validators=[NumberRange(min = 0)])
-        
-    sku_v_unit = SelectField('Unit of measure', coerce = int)
-    sku_ebld = BooleanField('Enabled', default = "checked", false_values=('',))
+    sku_foto = FileField('Update SKU Picture',
+                            validators = [FileAllowed(['jpg', 'png', 'jpeg'])])
+    sku_pref = SelectField('Preferred Vendor', default = 0, coerce=int)
+    sku_itbi = FloatField('Sales Tax',validators=[InputRequired(), 
+                            NumberRange(min=0, max=0.18)], default = 0.18)
+    sku_vaci = FloatField('Empty container weight',validators=[InputRequired(), 
+                            NumberRange(min = 0)])
+    sku_v_unit = SelectField('Unit of measure',validators=[InputRequired()],
+                            coerce = int)
+    sku_ebld = BooleanField('Enabled', default = "checked")
 
 class Rcv_en(FlaskForm):
     id = HiddenField()
@@ -136,8 +140,8 @@ class Rcv_en(FlaskForm):
                                 render_kw={"placeholder": "optional"})
     lox_datd = DateField('Reception Doc Date', format='%d-%m-%Y')
     lox_nifn = StringField('receipt tax number', validators = [Length(max=16)])
-    lox_sub = DecimalField('Sub Total',validators=[NumberRange(min = 0)])
-    lox_desc = DecimalField('Discount',validators=[NumberRange(min = 0)], 
+    lox_sub = FloatField('Sub Total',validators=[NumberRange(min = 0)])
+    lox_desc = FloatField('Discount',validators=[NumberRange(min = 0)], 
                             default = 0.0)
-    lox_tax = DecimalField('Total Tax',validators=[NumberRange(min = 0)])
+    lox_tax = FloatField('Total Tax',validators=[NumberRange(min = 0)])
     subform = FormField(Rcv_de)

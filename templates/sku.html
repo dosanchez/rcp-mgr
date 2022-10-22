@@ -151,11 +151,15 @@
                   </button>
                 </td>
               {% elif key == 'sku_ingr' %}<!-- looks for ingredient name-->
-                {% for choice in sku_ingr_choices %}
-                  {% if choice[0] == value %}
-                    <td style="text-align: center;">{{ choice[1] }}</td>
-                  {% endif %}
-                {% endfor %} 
+                {% if not value %}
+                  <td style="text-align: center;">{{ value }}</td>
+                {% else %}
+                  {% for choice in sku_ingr_choices %}
+                    {% if choice[0] == value %}
+                      <td style="text-align: center;">{{ choice[1] }}</td>
+                    {% endif %}
+                  {% endfor %}
+                {% endif %}
               <!-- substitute null values with string or looks for UM name--> 
               {% elif key == 'sku_v_unit' %}
                 {% if value is none %}
@@ -218,7 +222,7 @@
         console.log('script de inicio newrecord');
         document.getElementById("sku_name").value = null;
         document.getElementById("sku_img").src = '{{session['sku_notimg']}}';
-        document.getElementById("sku_ingr").value = null;
+        document.getElementById("sku_ingr").value = 0;
         document.getElementById("sku_cont").value = null;
         document.getElementById("sku_unit").value = null;
         document.getElementById("sku_barc").value = null;
@@ -233,7 +237,7 @@
 
     function Navrecord(NAV) {
         document.getElementById("sku_name").value = '{{session['sku_name']}}';
-        document.getElementById("sku_ingr").value = {{session['sku_ingr']}};
+        //document.getElementById("sku_ingr").value = {{session['sku_ingr']}}; // optional and null allowed
         document.getElementById("sku_cont").value = {{session['sku_cont']}};
         document.getElementById("sku_unit").value = {{session['sku_unit']}};
         document.getElementById("sku_barc").value = '{{session['sku_barc']}}';

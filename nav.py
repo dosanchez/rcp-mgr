@@ -54,9 +54,7 @@ def navigate_to(nav_button, conn, form, table_list):
 
             session['parent_last_row_id'] = res[0].get('parent_last_row_id')
             id = form.id.data
-            print('counter', counter)
-            print('type rcds', type(rcds))
-            print(rcds)
+
 
             pos, regd_id = nav_pos(rcds[counter], id, nav_button)
             counter += 1
@@ -111,4 +109,5 @@ def navigate_to(nav_button, conn, form, table_list):
                             i.data = ''
                         else:
                             i.data = session[i.id]
+    print(rcds)
     return rcds, relation

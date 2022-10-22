@@ -14,17 +14,8 @@ from data import select as sel
 # db = conn.cursor(dictionary=True, buffered=True)
 
 
-c = Decimal(15)
-print(type(c).__name__)
-c = float(c)
-a = 'hola'
-b = json.dumps(a)
-d = json.dumps(c)
-print(b, d)
-
-a = [{'ana':15.6, 'jose':None }]
-a = dumps(a)
-print(type(a))
+c = float(None)
+print(c)
 
 
 #print([('','')].append((2,2)))

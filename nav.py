@@ -52,12 +52,14 @@ def navigate_to(nav_button, conn, form, table_list):
                 rcds.append(sel.all(db, table_list[counter]))
                 res = sel.max_id(db, table_list[counter])
 
-
             session['parent_last_row_id'] = res[0].get('parent_last_row_id')
             id = form.id.data
+            print('counter', counter)
+            print('type rcds', type(rcds))
+            print(rcds)
+
             pos, regd_id = nav_pos(rcds[counter], id, nav_button)
             counter += 1
-
         #visualize the target record on main form (if any rcd)
         if not len(regd_id):
             counter += 1
@@ -71,7 +73,7 @@ def navigate_to(nav_button, conn, form, table_list):
                     if i.id == "qty_um" and table_list[0] == 'unitmeas':#exception for unitmeas form
                         i.data = 1
                     elif i.id == "qty_base" and table_list[0] == 'unitmeas':#exception for unitmeas form
-                        i.data = session['uni_conv'] = float(tgt_record.get('uni_conv'))
+                        i.data = session['uni_conv'] = json.dumps(float(tgt_record.get('uni_conv')))
                     elif type(i).__name__ == 'FormField':
 
                         relation.append(sel.foreign_tbl(conn, table_list[0], table_list[counter]))
@@ -109,6 +111,4 @@ def navigate_to(nav_button, conn, form, table_list):
                             i.data = ''
                         else:
                             i.data = session[i.id]
-    print(rcds)
-    print(relation)
     return rcds, relation

@@ -1,4 +1,5 @@
 from decimal import Decimal
+from enum import Flag
 import json
 from flask import flash, session
 import os, secrets
@@ -46,7 +47,7 @@ class select():
     #various queries
     
         
-    def all(db, tbl,  **kwargs):
+    def all(db, tbl, **kwargs):
         """returns all records from a given table filtered when given"""
         if not kwargs:
             sql = "Select * from {}".format(tbl)
@@ -62,6 +63,7 @@ class select():
                 sql += "AND "
             
             db.execute(sql[:-4]) #drop trailing 'AND '
+
         return(db.fetchall())
 
 

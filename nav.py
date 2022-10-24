@@ -1,5 +1,3 @@
-from decimal import Decimal
-import json
 from flask import session
 from flask import render_template
 from data import select as sel
@@ -71,13 +69,15 @@ def navigate_to(nav_button, conn, form, table_list):
                     if i.id == "qty_um" and table_list[0] == 'unitmeas':#exception for unitmeas form
                         i.data = 1
                     elif i.id == "qty_base" and table_list[0] == 'unitmeas':#exception for unitmeas form
-                        i.data = session['uni_conv'] = json.dumps(float(tgt_record.get('uni_conv')))
+                        i.data = session['uni_conv'] = tgt_record.get('uni_conv')
                     elif type(i).__name__ == 'FormField':
 
-                        relation.append(sel.foreign_tbl(conn, table_list[0], table_list[counter]))
+                        relation.append(sel.foreign_tbl(conn, table_list[0],
+                                                        table_list[counter]))
 
                         subform_rcds = sel.chld_vals(db, table_list[0], table_list[counter],
-                                relation[counter-1][0].get('child_tbl_fld'), tgt_record.get('id'))
+                                relation[counter-1][0].get('child_tbl_fld'),
+                                tgt_record.get('id'))
 
                         #first time subform entry
                         if subform_rcds:
@@ -85,7 +85,8 @@ def navigate_to(nav_button, conn, form, table_list):
                         else:
                             rcds.append([{}])
 
-                        pos, regd_id = nav_pos(rcds[counter], i.idx.data, session['sub_nav_button'])
+                        pos, regd_id = nav_pos(rcds[counter],
+                            i.idx.data, session['sub_nav_button'])
 
                         for ii in i:
                             if ii.short_name == 'idx':
@@ -94,20 +95,18 @@ def navigate_to(nav_button, conn, form, table_list):
                                 fld_tbl = ii.short_name
                             
                             #makes None values null string for html form field value
-                            ii.data = rcds[counter][pos].get(fld_tbl)
-                            session[ii.short_name] = ii.data
-                            if rcds[counter][pos].get(fld_tbl) == None:
+                            session[ii.short_name] = rcds[counter][pos].get(fld_tbl)
+                            if not session[ii.short_name]:
                                 ii.data = ''
                             else:
                                 ii.data = session[ii.short_name]
-
                         counter += 1
+
                     else:
                         #makes None values null string for html form field value
                         session[i.id] = tgt_record.get(i.id)
-                        if tgt_record.get(i.id) == None:
+                        if not session[i.id]:
                             i.data = ''
                         else:
                             i.data = session[i.id]
-    print(rcds)
     return rcds, relation

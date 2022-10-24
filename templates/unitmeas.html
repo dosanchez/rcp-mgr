@@ -11,47 +11,22 @@
         <small>add, edit, delete unit of measures and create your own table of equivalents</small>
       </div>
       <div class="col-sm-4" style ="float:right;">
-        <button type = "button" class="btn" onclick="Navrecord(
-          'out', 
-          '{{session['uni_symb']}}', 
-          {{session['uni_conv']}}, 
-          '{{session['uni_un_t']}}'
-          )">
+        <button type = "button" class="btn" onclick="Navrecord('out')">
           <i class="fa-solid fa-door-open"></i>
         </button>
-        <button type = "button" class="btn" onclick="Navrecord(
-          'first', 
-          '{{session['uni_symb']}}', 
-          {{session['uni_conv']}}, 
-          '{{session['uni_un_t']}}'
-          )">
+        <button type = "button" class="btn" onclick="Navrecord('first')">
           <i class="fa-solid fa-angles-left"></i>
         </button>
-        <button type = "button" class="btn" onclick="Navrecord(
-          'back',
-          '{{session['uni_symb']}}', 
-          {{session['uni_conv']}}, 
-          '{{session['uni_un_t']}}'
-          )">
+        <button type = "button" class="btn" onclick="Navrecord('back')">
           <i class="fa-solid fa-circle-chevron-left"></i>
         </button>
         <button type ="button" class="btn btn-outline-dark" id = "id" locked>
           {{ form.id.data }}
         </button>
-        <button type = "button" class="btn" onclick="Navrecord(
-          'next', 
-          '{{session['uni_symb']}}', 
-          {{session['uni_conv']}}, 
-          '{{session['uni_un_t']}}'
-          )">
+        <button type = "button" class="btn" onclick="Navrecord('next')">
           <i class="fa-solid fa-circle-chevron-right"></i>
         </button>
-        <button type = "button" class="btn" onclick="Navrecord(
-          'last',  
-          '{{session['uni_symb']}}', 
-          {{session['uni_conv']}}, 
-          '{{session['uni_un_t']}}'
-          )">
+        <button type = "button" class="btn" onclick="Navrecord('last')">
           <i class="fa-solid fa-angles-right"></i>
         </button>
         <button type = "button" value = "new" class="btn" name ="nav" onclick="Newrecord()">
@@ -84,7 +59,7 @@
       </div>
       <div class="col-sm-2 mt-3 pt-4" style="float:right;">
         {{ form.uni_ebld.label(class="form-check-label") }}
-        {{ form.uni_ebld(class="form-check-input", value = form.uni_ebld.data, onclick="Submit()") }}
+        {{ form.uni_ebld(class="form-check-input", value = form.uni_ebld.data) }}
       </div>
     </div>
     <div style="float:right;">
@@ -151,18 +126,18 @@
 {{ super() }}
   <script>
     function Newrecord() {
-        document.getElementById("uni_symb").value = "";
-        document.getElementById("qty_um").value = "";
-        document.getElementById("qty_base").value = "";
-        document.getElementById("uni_un_t").value = "";
-        document.getElementById("uni_ebld").checked = True;
+        document.getElementById("uni_symb").value = null;
+        document.getElementById("qty_um").value = null;
+        document.getElementById("qty_base").value = null;
+        document.getElementById("uni_un_t").value = null;
+        document.getElementById("uni_ebld").checked = true;
         }
 
-    function Navrecord(NAV, UNISYMB,UNICONV, UNIUNT) {
-        document.getElementById("uni_symb").value = UNISYMB;
+    function Navrecord(NAV,UNICONV, UNIUNT) {
+        document.getElementById("uni_symb").value = '{{session['uni_symb']}}';
         document.getElementById("qty_um").value = 1;
-        document.getElementById("qty_base").value = UNICONV;
-        document.getElementById("uni_un_t").value = UNIUNT;
+        document.getElementById("qty_base").value = {{session['uni_conv']}};
+        document.getElementById("uni_un_t").value = '{{session['uni_un_t']}}';
         document.getElementById("submit_button").value = NAV;
         document.getElementById("submit_button").click();
         }

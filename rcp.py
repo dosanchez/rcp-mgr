@@ -29,6 +29,7 @@ def unitmeas():
     form = Unitmeas()
     table_list = ['unitmeas']
     nav_button =  request.form.get('nav') #saves form navigation request
+    print ('form.uni_ebld.data', form.uni_ebld.data)
 
     #if request.form.get('nav') in None --> its a redirect 
     #--> its either an update, new or deleted record hence not necesarilly 
@@ -66,6 +67,7 @@ def unitmeas():
             ) 
             if  existe.chk_sgl_fld():   #chk if record exists   
                 #update existing record
+                print('form.uni_ebld.data',form.uni_ebld.data)
                 record.update()
                 return redirect(url_for('unitmeas'))# clears POST data
 

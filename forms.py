@@ -43,7 +43,7 @@ class Unitmeas(FlaskForm):
                             render_kw={"placeholder": "qty"}, default = 1)
     uni_un_t = SelectField('UM Type', validators=[DataRequired()], 
                             choices=['g','ml'], default = 'g')
-    uni_ebld = BooleanField('Enabled', default = True, false_values=('',))
+    uni_ebld = BooleanField('Enabled', default = "checked", false_values=('',False,'false',))
 
 class Almacen(FlaskForm):
     """wtform for Warehouses"""

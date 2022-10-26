@@ -260,18 +260,12 @@
         }
 
     function Toggle(){
-      if (document.getElementById("sku_ebld").value) {
+      if (document.getElementById("sku_ebld").value == 1) {
         document.getElementById("sku_ebld").value = 0;
-        //console.log(document.getElementById("sku_ebld").value);
-        //document.getElementById("sku_ebld").value = 0;
-        //console.log(document.getElementById("sku_ebld").value);
-        //document.getElementById("sku_ebld").value = 1;
-
-      } //else {
-        //document.getElementById("sku_ebld").value = 1;
-        //console.log('Toggle true');
-        //}   
-
+      } else {
+        document.getElementById("sku_ebld").value = 1;
+        }   
+       
     }
   </script>
 {% endblock script%}

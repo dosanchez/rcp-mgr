@@ -86,7 +86,7 @@
 
           <div class="col-md-9" style="float: right;">
             {{ form.sku_ebld.label(class="form-check-label") }}
-            {{ form.sku_ebld(class="form-check-input", value = form.sku_ebld.data, onclick="Toggle()") }}
+            {{ form.sku_ebld(class="form-check-input", value = form.sku_name.data) }}
           </div>
         
           <div class="col-md-3">
@@ -254,18 +254,5 @@
         document.getElementById("submit_button").value = NAV;
         document.getElementById("submit_button").click();
         }
-
-    function Submit() {
-        document.getElementById("submit_button").click();
-        }
-
-    function Toggle(){
-      if (document.getElementById("sku_ebld").value == 1) {
-        document.getElementById("sku_ebld").value = 0;
-      } else {
-        document.getElementById("sku_ebld").value = 1;
-        }   
-       
-    }
   </script>
 {% endblock script%}

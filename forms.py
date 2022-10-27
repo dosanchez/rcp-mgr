@@ -124,7 +124,7 @@ class Sku(FlaskForm):
     sku_foto = FileField('Update SKU Picture',
                             validators = [FileAllowed(['jpg', 'png', 'jpeg'])])
     sku_pref = SelectField('Preferred Vendor', default = 0, coerce=int)
-    sku_itbi = FloatField('Sales Tax',validators=[InputRequired(), 
+    sku_itbi = FloatField('Sales Tax',validators=[DataRequired(), 
                             NumberRange(min=0, max=0.18)], default = 0.18)
     sku_vaci = FloatField('Empty container weight',validators=[InputRequired(), 
                             NumberRange(min = 0)])

@@ -52,7 +52,7 @@
       </div>
       <div class="col-sm-2 mt-3 pt-4" style="float:right;">
         {{ form.soc_ebld.label(class="form-check-label") }}
-        {{ form.soc_ebld(class="form-check-input", value = form.soc_name.data, onclick="Submit()") }}
+        {{ form.soc_ebld(class="form-check-input", value = form.soc_name.data) }}
       </div>
     </div>
     <div class="row">
@@ -167,9 +167,6 @@
         document.getElementById("submit_button").value = NAV;
         document.getElementById("submit_button").click();
         }
-
-    function Submit() {
-        document.getElementById("submit_button").click();
-        }
+      
   </script>
 {% endblock script%}

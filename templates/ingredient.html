@@ -52,7 +52,7 @@
       </div>
       <div class="form-check col-sm-1 pt-4" style="padding-left: 30px;">
         {{ form.rct_ebld.label(class="form-check-label") }}
-        {{ form.rct_ebld(class="form-check-input", value = form.rct_ebld.data) }}
+        {{ form.rct_ebld(class="form-check-input", value = form.rct_name.data) }}
       </div>
       <div class="col-sm-2 pt-3" style="text-align:center; float:right" >
         <input type="submit" id ="submit_button" class="btn btn-primary" formmethod="POST" value="submit" name = "nav">
@@ -156,8 +156,12 @@
         document.getElementById("submit_button").click();
         }
 
-        function Submit() {
-        document.getElementById("submit_button").click();
-        }
+    function Toggle(){
+      if (document.getElementById("rct_ebld").value == 1) {
+        document.getElementById("rct_ebld").value = 0;
+      } else {
+        document.getElementById("rct_ebld").value = 1;
+        }      
+      }
   </script>
 {% endblock script%}

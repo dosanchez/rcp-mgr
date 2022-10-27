@@ -59,7 +59,7 @@
       </div>
       <div class="col-sm-2 mt-3 pt-4" style="float:right;">
         {{ form.uni_ebld.label(class="form-check-label") }}
-        {{ form.uni_ebld(class="form-check-input", value = form.uni_ebld.data) }}
+        {{ form.uni_ebld(class="form-check-input", value = form.uni_symb.data) }}
       </div>
     </div>
     <div style="float:right;">
@@ -142,8 +142,5 @@
         document.getElementById("submit_button").click();
         }
 
-    function Submit() {
-        document.getElementById("submit_button").click();
-        }
   </script>
 {% endblock script%}

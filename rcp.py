@@ -29,7 +29,6 @@ def unitmeas():
     form = Unitmeas()
     table_list = ['unitmeas']
     nav_button =  request.form.get('nav') #saves form navigation request
-    print ('form.uni_ebld.data', form.uni_ebld.data)
 
     #if request.form.get('nav') in None --> its a redirect 
     #--> its either an update, new or deleted record hence not necesarilly 
@@ -59,15 +58,16 @@ def unitmeas():
 
         if nav_button == "submit": #not a nav post
             #creates instance to chk if record exist
+            print('form.id.data',form.id.data)
+            print('form.uni_symb.data', form.uni_symb.data)
             existe = dth.from_dict2sql(conn, {
                                         table_list[0]:[{
-                                            'uni_symb':form.uni_symb.data
+                                            'id':form.id.data
                                                     }]
                                         }
             ) 
             if  existe.chk_sgl_fld():   #chk if record exists   
                 #update existing record
-                print('form.uni_ebld.data',form.uni_ebld.data)
                 record.update()
                 return redirect(url_for('unitmeas'))# clears POST data
 
@@ -184,7 +184,7 @@ def almacen():
             #creates instance to chk if record exist
             existe = dth.from_dict2sql(conn, {
                                         table_list[0]:[{
-                                            'alm_name':form.alm_name.data
+                                            'id':form.id.data
                                                     }]
                                         }
             ) 

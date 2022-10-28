@@ -130,11 +130,13 @@
         document.getElementById("qty_um").value = null;
         document.getElementById("qty_base").value = null;
         document.getElementById("uni_un_t").value = null;
-        document.getElementById("uni_ebld").checked = true;
+        document.getElementById("uni_ebld").value = "checked";
+        document.getElementById("id").value = 0;
         }
 
-    function Navrecord(NAV,UNICONV, UNIUNT) {
+    function Navrecord(NAV) {
         document.getElementById("uni_symb").value = '{{session['uni_symb']}}';
+        document.getElementById("uni_symb").value = '{{session['uni_ebld']}}';
         document.getElementById("qty_um").value = 1;
         document.getElementById("qty_base").value = {{session['uni_conv']}};
         document.getElementById("uni_un_t").value = '{{session['uni_un_t']}}';

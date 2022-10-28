@@ -108,11 +108,14 @@
 {{ super() }}
   <script>
     function Newrecord() {
-        document.getElementById("alm_name").value = "";
+        document.getElementById("alm_name").value = null;
+        document.getElementById("alm_ebld").value = "checked";
+        document.getElementById("id").value = 0;
         }
 
     function Navrecord(NAV) {
         document.getElementById("alm_name").value = '{{session['alm_name']}}';
+        document.getElementById("alm_ebld").value = '{{session['alm_ebld']}}';
         document.getElementById("submit_button").value = NAV;
         document.getElementById("submit_button").click();
         }

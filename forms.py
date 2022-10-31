@@ -24,8 +24,9 @@ class Rcv_de(Form):
     log_qty = FloatField('Qty',validators=[DataRequired(),
                             NumberRange(min = 0)], default = 1)
     log_pric = FloatField('Unit Price',validators=[DataRequired(),
-                            NumberRange(min = 0)])
-    log_tax = FloatField('Tax amount',validators=[NumberRange(min = 0)])
+                            NumberRange(min = 0)], default = 0)
+    log_tax = FloatField('Tax amount', default = 0,
+                            validators=[NumberRange(min = 0, max = 1)])
     log_alm = SelectField('Receiving warehouse', coerce= int)
 
 class Unitmeas(FlaskForm):
@@ -137,9 +138,11 @@ class Rcv_en(FlaskForm):
     lox_vend = SelectField('Vendor',validators=[InputRequired()],coerce= int)
     lox_date = DateField('Reception Date', validators=[DataRequired()])
     lox_doc_no = IntegerField('Vendor Receipt No.', validators=[Optional()],
-                            render_kw={"placeholder": "optional"})
+                            render_kw={"placeholder": "if other than rcpt tax No."})
     lox_datd = DateField('Reception Doc Date', validators=[DataRequired()])
-    lox_nifn = StringField('receipt tax number', validators = [Length(max=16)])
+    lox_nifn = StringField('receipt tax number', default='',
+                            validators = [Optional(), Length(max=16)],
+                            render_kw={"placeholder": "optional"})
     lox_sub = FloatField('Sub Total',validators=[NumberRange(min = 0)], 
                             default = 0.0)
     lox_desc = FloatField('Discount',validators=[NumberRange(max = 0)], 

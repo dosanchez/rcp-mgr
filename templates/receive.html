@@ -44,7 +44,7 @@
       </div>
       <div class="col-sm-4">
         {{ form.lox_date.label(class="form-label") }}
-        {{ form.lox_date(class="datepicker form-control", value = form.lox_date.data) }}
+        {{ form.lox_date(class="form-control", value = form.lox_date.data) }}
       </div>
       <div class="col-sm-2 pt-3 text-center">
         <input type="submit" id ="submit_button" class="btn btn-primary" formmethod="POST" value="submit" name = "nav">
@@ -61,7 +61,7 @@
           <div class="w-100"></div>
           <div class="col-sm">
             {{ form.lox_datd.label(class="form-label") }}
-            {{ form.lox_datd(class="datepicker form-control", value = form.lox_datd.data) }}
+            {{ form.lox_datd(class="form-control", value = form.lox_datd.data) }}
           </div>
           <div class="w-100"></div>
           <div class="col-sm">
@@ -229,20 +229,17 @@
   <script>
     function Newrecord() {
       document.getElementById("id").value = 0;
-      document.getElementById("lox_vend").value = "";
-      document.getElementById("lox_date").value = "";
-      document.getElementById("lox_doc_no").value = "";
-      document.getElementById("lox_datd").value = "";
-      document.getElementById("lox_nifn").value = "";
-      document.getElementById("lox_desc").value = "";
-      document.getElementById("lox_due").value = "";
-      document.getElementById("lox_tax").value = "";
-      document.getElementById("log_qty").value = "";
-      document.getElementById("log_pric").value = "";
-      document.getElementById("log_tax").value = "";
-      document.getElementById("log_alm").value = "";
-      document.getElementById("idx").value = 0;
-      document.getElementById("log_enca").value = 0;
+      document.getElementById("lox_vend").value = null;
+      document.getElementById("lox_date").value = null;
+      document.getElementById("lox_doc_no").value = null;
+      document.getElementById("lox_datd").value = null;
+      document.getElementById("lox_nifn").value = null;
+      document.getElementById("lox_desc").value = null;
+      document.getElementById("lox_due").value = null;
+      document.getElementById("lox_tax").value = null;
+      document.getElementById("subform-log_qty").value = null;
+      document.getElementById("subform-log_pric").value = null;
+      document.getElementById("subform-log_tax").value = null;
       }
 
 
@@ -263,10 +260,6 @@
       document.getElementById("submit_button").click();
       }
 
-    function Submit() {
-      document.getElementById("submit_button").click();
-      }
-
     function Newsub() {
       if (document.getElementById("lbl_but_sub").innerHTML == "update "){
         document.getElementById("lbl_but_sub").innerHTML = "add ";
@@ -280,13 +273,13 @@
       }
       else{
         document.getElementById("lbl_but_sub").innerHTML = "update ";
-        document.getElementById("subform-idx").value = {{session['idx']}}
-        document.getElementById("subform-log_enca").value = {{session['log_enca']}};
-        document.getElementById("subform-log_sku").value = {{session['log_sku']}};
-        document.getElementById("subform-log_qty").value = {{session['log_qty']}};
-        document.getElementById("subform-log_pric").value = {{session['log_pric']}};
-        document.getElementById("subform-log_tax").value = {{session['log_tax']}};
-        document.getElementById("subform-log_alm").value = {{session['log_alm']}};
+        document.getElementById("subform-idx").value = {{0 if not session['idx'] else session['idx']}}
+        document.getElementById("subform-log_enca").value =  {{0 if not session['rcd_enca'] else session['rcd_enca']}};
+        document.getElementById("subform-log_sku").value = {{0 if not session['log_sku'] else session['log_sku']}};
+        document.getElementById("subform-log_qty").value = {{'null' if not session['log_qty'] else session['log_qty']}};
+        document.getElementById("subform-log_pric").value = {{'null' if not session['log_pric'] else session['log_pric']}};
+        document.getElementById("subform-log_tax").value = {{'null' if not session['log_tax'] else session['log_tax']}};
+        document.getElementById("subform-log_alm").value = {{0 if not session['log_alm'] else session['log_alm']}};
       }      
     }
   </script>

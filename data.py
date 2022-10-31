@@ -181,7 +181,7 @@ class DataHandler():
     def update(self):
         """update record in table based on dict with tbl, fld and vals
             NEEDS an id field for update condition"""
-
+        
         for t, r in self.rcd.items():
             for ea_rcd in r:
                 sql = "UPDATE %s SET " %(t)

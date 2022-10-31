@@ -286,7 +286,7 @@ def recipe():
     rcd_unit_choices = sel.all_choices(db, 'unitmeas', 'uni_symb')
     rcd_ing_choices = sel.all_choices(db, 'recet_en', 'rct_name')
 
-    #if request.form.get('nav') in None --> its a redirect 
+    #if request.form.get('nav') is None --> its a redirect 
     #--> its either an update, new or deleted record hence not necesarilly 
     #last record should be displayed 
     if request.form.get('nav'):
@@ -541,6 +541,7 @@ def sku():
 def receive():
     form = Rcv_en()
     table_list = ['logix_en', 'logix_de']
+    print('form.lox_doc_no.data', form.lox_doc_no.data)
     
     #Queries for Selectfields active choices
     form.lox_vend.choices = sel.ebld_choices(db, 'socio', 'soc_name', 'soc_ebld')
@@ -552,7 +553,7 @@ def receive():
     log_alm_choices = sel.all_choices(db, 'almacen', 'alm_name')
     log_sku_choices = sel.all_choices(db, 'sku', 'sku_name')
 
-    #if request.form.get('nav') in None --> its a redirect 
+    #if request.form.get('nav') is None --> its a redirect 
     #--> its either an update, new or deleted record hence not necesarilly 
     #last record should be displayed 
     if request.form.get('nav'):
@@ -653,7 +654,9 @@ def receive():
         
         if session['delete_id']:
             dlt.id(conn, table_list[1], session['delete_id'])
+            return redirect(url_for('receive'))# clears POST data
 
+            
     records, relation = navigate_to(nav_button, conn, form, table_list)
     session['relation'] = relation
 

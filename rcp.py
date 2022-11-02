@@ -592,7 +592,7 @@ def receive():
                                     'lox_nifn':form.lox_nifn.data,
                                     'lox_doc_no':form.lox_doc_no.data,
                                     'lox_desc':form.lox_desc.data,
-                                    'lox_due':form.lox_sub.data,
+                                    'lox_sub':form.lox_sub.data,
                                     'lox_tax':form.lox_tax.data
                                             }],
                                 table_list[1]:[{
@@ -608,6 +608,8 @@ def receive():
                                 }
         listsql1 ={list(listsql.keys())[0]: list(listsql.values())[0]} 
         del listsql2 [list(listsql.keys())[0]]
+        if not form.id.data: #gives form.id.data some value on very first entry
+            form.id.data = 0
 
         if nav_button == "submit": #not a nav post
             #creates instance to chk if record exist

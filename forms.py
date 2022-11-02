@@ -24,7 +24,7 @@ class Rcv_de(Form):
     log_qty = FloatField('Qty',validators=[DataRequired(),
                             NumberRange(min = 0)], default = 1)
     log_pric = FloatField('Unit Price',validators=[DataRequired(),
-                            NumberRange(min = 0)], default = 0)
+                            NumberRange(min = 0)], default = 0.1)
     log_tax = FloatField('Tax amount', default = 0,
                             validators=[NumberRange(min = 0, max = 1)])
     log_alm = SelectField('Receiving warehouse', coerce= int)

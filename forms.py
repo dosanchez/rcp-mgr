@@ -143,8 +143,8 @@ class Rcv_en(FlaskForm):
     lox_nifn = StringField('receipt tax number', default='',
                             validators = [Optional(), Length(max=16)],
                             render_kw={"placeholder": "optional"})
-    lox_sub = FloatField('Sub Total',validators=[NumberRange(min = 0)], 
-                            default = 0.0)
+    lox_sub = FloatField('Sub Total', default = 0.0,
+                            validators=[NumberRange(min = 0)])
     lox_desc = FloatField('Discount',validators=[NumberRange(max = 0)], 
                             default = 0.0)
     lox_tax = FloatField('Total Tax',validators=[NumberRange(min = 0)], 

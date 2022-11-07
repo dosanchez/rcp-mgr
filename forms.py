@@ -93,21 +93,22 @@ class Socio(FlaskForm):
     soc_name = StringField('Business Partner', validators=[DataRequired(),
                             Length(max=32)], 
                             render_kw={"placeholder": "e.g. Ohio Steel Co."})
-    soc_come= StringField('Reg. Name', validators=[Length(max = 16)], 
+    soc_come= StringField('Reg. Name', validators=[Optional(), Length(max = 16)], 
                             render_kw={"placeholder": "reg, fiscal name"})
     soc_rnc = IntegerField('Fiscal No.', validators=[NumberRange(max = 9999999999999)],
                             render_kw={"placeholder": "e.g. 101583983"})
-    soc_ebld = BooleanField('Enabled', default = "checked", false_values=('',))
+    soc_ebld = BooleanField('Enabled', default = "checked")
     soc_cont = StringField('Contact', validators=[Length(max = 16)], 
                             render_kw={"placeholder": "e.g. Mr. James Watt"})   
     soc_addr = StringField('Business address', validators=[Length(max = 128)], 
-                            render_kw={"placeholder": "up to 64 Chr. long"})
-    soc_tel1 = IntegerField('Tel. 1', validators=[NumberRange(max = 9999999999999, message='if no number enter 0')],
-                            render_kw={"placeholder": "e.g. 12125551332"})
-    soc_tel2 = IntegerField('Tel. 1', validators=[NumberRange(max = 9999999999999)],
-                            render_kw={"placeholder": "e.g. 12125551332"})
-    soc_tel3 = IntegerField('Tel. 1', validators=[NumberRange(max = 9999999999999)],
-                            render_kw={"placeholder": "e.g. 12125551332"})
+                            render_kw={"placeholder": "up to 128 Chr. long"})
+    soc_tel1 = StringField('Tel. 1', validators=[Optional(), Length(max=20)],
+                            render_kw={"placeholder": "e.g. (212) 555-1332"})
+    soc_tel2 = StringField('Tel. 2', validators=[Optional(), Length(max=20)],
+                            render_kw={"placeholder": "e.g. (212) 555-1332"})
+    soc_tel3 = StringField('Tel. 3', validators=[Optional(), Length(max=20)],
+                            render_kw={"placeholder": "e.g. (212) 555-1332"})
+    soc_wtax = BooleanField('Enabled', default = "checked")
     
 class Sku(FlaskForm):
     id = HiddenField()
@@ -140,13 +141,12 @@ class Rcv_en(FlaskForm):
     lox_doc_no = IntegerField('Vendor Receipt No.', validators=[Optional()],
                             render_kw={"placeholder": "if other than rcpt tax No."})
     lox_datd = DateField('Reception Doc Date', validators=[DataRequired()])
-    lox_nifn = StringField('receipt tax number', default='',
-                            validators = [Optional(), Length(max=16)],
+    lox_nifn = StringField('receipt tax number',validators = [Optional(), Length(max=16)],
                             render_kw={"placeholder": "optional"})
-    lox_sub = FloatField('Sub Total', default = 0.0,
+    lox_sub = FloatField('Sub Total', default = 0,
                             validators=[NumberRange(min = 0)])
     lox_desc = FloatField('Discount',validators=[NumberRange(max = 0)], 
-                            default = 0.0)
+                            default = 0)
     lox_tax = FloatField('Total Tax',validators=[NumberRange(min = 0)], 
-                            default = 0.0)
+                            default = 0)
     subform = FormField(Rcv_de)

@@ -1,4 +1,4 @@
-import json
+import datetime
 from decimal import Decimal
 import mysql.connector
 from nav import navigate_to, nav_pos
@@ -14,9 +14,13 @@ from data import select as sel
 # db = conn.cursor(dictionary=True, buffered=True)
 
 
-c = float(None)
-print(c)
+c = datetime.date(2022,11,1)
 
+print(c)
+print(isinstance(c,datetime.date))
+
+d=c.strftime("%Y%m%d")
+print(d)
 
 #print([('','')].append((2,2)))
 # print ('blank', blank)

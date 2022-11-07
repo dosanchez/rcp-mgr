@@ -96,8 +96,8 @@ def navigate_to(nav_button, conn, form, table_list):
                             
                             #makes None values null string for html form field value
                             session[ii.short_name] = rcds[counter][pos].get(fld_tbl)
-                            if not session[ii.short_name]:
-                                ii.data = ''
+                            if not session[ii.short_name] or session[ii.short_name] == 'None':
+                                ii.data = ii.default
                             else:
                                 ii.data = session[ii.short_name]
                         counter += 1
@@ -105,8 +105,13 @@ def navigate_to(nav_button, conn, form, table_list):
                     else:
                         #makes None values null string for html form field value
                         session[i.id] = tgt_record.get(i.id)
-                        if not session[i.id]:
-                            i.data = ''
+                        
+
+                        if not session[i.id] or session[i.id] == 'None':
+                            i.data = i.default
+                            print('i.id', i.id, 'session[i.id] no validó->', session[i.id], type(session[i.id]),'i.data', i.data)
                         else:
                             i.data = session[i.id]
+                            print('i.id->', i.id, 'session[i.id]->', session[i.id], type(session[i.id]), 'i.data', i.data)
+                            
     return rcds, relation

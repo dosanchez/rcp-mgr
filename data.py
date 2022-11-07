@@ -1,6 +1,4 @@
-from decimal import Decimal
-from enum import Flag
-import json
+import datetime
 from flask import flash, session
 import os, secrets
 from PIL import Image
@@ -191,7 +189,7 @@ class DataHandler():
                         
                     if not fn == 'id':
                         sql += "%s = %s, " %(fn, fv)    
-                sql += "WHERE id = %s" %(ea_rcd['id'])
+                sql += "WHERE id = {}" .format(ea_rcd.get('id'))
                 sql = sql.replace(", WHERE id =", " WHERE id =") #removes trailing ,
                 self.conn.cursor(dictionary=True, buffered=True).execute(sql)
                 self.conn.commit()
@@ -233,6 +231,7 @@ class DataHandler():
                 sql +=value_str + ')'
                 sql = sql.replace(", )", ")") #removes trailing ,
                 db.execute(sql)
+
                 self.conn.commit()
   
         
@@ -251,8 +250,10 @@ class DataHandler():
             for _, r in rcd.items():
                 for ea_rcd in r:
                     for fn, fv in ea_rcd.items():
+                        if isinstance(fv, datetime.date) and fv:
+                            fv = fv.strftime("%Y-%m-%d")
                         if isinstance(fv, str) and fv:
-                            ea_rcd[fn]="\'" + fv + "\'"
+                            ea_rcd[fn] = "\'" + fv + "\'"
             
             return cls(conn, rcd)
         else:

@@ -117,7 +117,8 @@ def socio():
                                             'soc_addr':form.soc_addr.data,
                                             'soc_tel1':form.soc_tel1.data,
                                             'soc_tel2':form.soc_tel2.data,
-                                            'soc_tel3':form.soc_tel3.data
+                                            'soc_tel3':form.soc_tel3.data,
+                                            'soc_wtax':form.soc_wtax.data
                                                     }]
                                         })
 
@@ -145,7 +146,7 @@ def socio():
     records, relation = navigate_to(nav_button, conn, form, table_list)
     column_names =[['Registered Business Partners',['id', 'Name', 'Fiscal Name',
                      'Tax No.', 'enabled', 'Contact', 'Adress', 'Tel. 1', 'Tel. 2',
-                      'Tel. 3']]]
+                      'Tel. 3','Tax incld in prc']]]
 
     return render_template ('socio.html', form = form, records = records,
                             column_names = column_names)
@@ -614,6 +615,7 @@ def receive():
         if nav_button == "submit": #not a nav post
             #creates instance to chk if record exist
             record = dth.from_dict2sql(conn, listsql1)
+            print ('record',record.rcd)
             existe = dth.from_dict2sql(conn, {
                                         table_list[0]:[{
                                             'id':form.id.data

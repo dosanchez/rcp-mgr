@@ -44,7 +44,7 @@
         </div>
         <div class="col-sm-3">
           {{ form.soc_come.label(class="form-label") }}
-          {{ form.soc_come(class="form-control", value = form.soc_come.data) }}
+          {{ form.soc_come(class="form-control", value = session['soc_come']) }}
         </div>
         <div class="col-sm-3">
           {{ form.soc_rnc.label(class="form-label") }}
@@ -157,14 +157,14 @@
 
         function Navrecord(NAV) {
         document.getElementById("soc_name").value = '{{session['soc_name']}}';
-        document.getElementById("soc_come").value = {{'null' if not session['soc_come'] or session['soc_come'] == 'None' else  "\'{}\'".format(session['soc_come'])}};
+        document.getElementById("soc_come").value = '{{null if not session['soc_come'] or session['soc_come'] == 'None' else  session['soc_come']}}';
         document.getElementById("soc_rnc").value = {{'null' if not session['soc_rnc'] else session['soc_rnc']}};
         document.getElementById("soc_ebld").value = '{{session['soc_ebld']}}';
-        //document.getElementById("soc_cont").value = {{'null' if not session['soc_cont'] or session['soc_cont']== 'None' else '\'' + session['soc_cont'] + '\''}};
-        //document.getElementById("soc_addr").value = {{'null' if not session['soc_addr'] or session['soc_addr'] == 'None' else session['soc_addr']}};
-        //document.getElementById("soc_tel1").value = {{'null' if not session['soc_tel1'] or session['soc_tel1']== 'None' else session['soc_tel1']}};
-        //document.getElementById("soc_tel2").value = {{'null' if not session['soc_tel2'] or session['soc_tel2']== 'None' else session['soc_tel2']}};
-        //document.getElementById("soc_tel3").value = {{'null' if not session['soc_tel3'] or session['soc_tel3']== 'None' else session['soc_tel3']}};
+        document.getElementById("soc_cont").value = '{{null if not session['soc_cont'] or session['soc_cont']== 'None' else session['soc_cont']}}';
+        document.getElementById("soc_addr").value = '{{null if not session['soc_addr'] or session['soc_addr']== 'None' else session['soc_addr']}}';
+        document.getElementById("soc_tel1").value = '{{null if not session['soc_tel1'] or session['soc_tel1']== 'None' else session['soc_tel1']}}';
+        document.getElementById("soc_tel2").value = '{{null if not session['soc_tel2'] or session['soc_tel2']== 'None' else session['soc_tel2']}}';
+        document.getElementById("soc_tel3").value = '{{null if not session['soc_tel3'] or session['soc_tel3']== 'None' else session['soc_tel3']}}';
         document.getElementById("id").value = {{session['id']}};
         document.getElementById("submit_button").value = NAV;
         document.getElementById("submit_button").click();

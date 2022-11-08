@@ -95,8 +95,8 @@ class Socio(FlaskForm):
                             render_kw={"placeholder": "e.g. Ohio Steel Co."})
     soc_come= StringField('Reg. Name', validators=[Optional(), Length(max = 16)], 
                             render_kw={"placeholder": "reg, fiscal name"})
-    soc_rnc = IntegerField('Fiscal No.', validators=[NumberRange(max = 9999999999999)],
-                            render_kw={"placeholder": "e.g. 101583983"})
+    soc_rnc = IntegerField('Fiscal No.', render_kw={"placeholder": "e.g. 101583983"}, 
+                            validators=[Optional(), NumberRange(max = 9999999999999)])
     soc_ebld = BooleanField('Enabled', default = "checked")
     soc_cont = StringField('Contact', validators=[Length(max = 16)], 
                             render_kw={"placeholder": "e.g. Mr. James Watt"})   

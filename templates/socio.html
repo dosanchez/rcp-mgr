@@ -34,9 +34,8 @@
         </button>
       </div>  
     </div>
-    <div>
       {{ form.id() }}
-    </div style="display:flex;">
+    <div style="display:flex;">
       <div class="row" style="align-items: center;">
         <div class="col-sm-4">
           {{ form.soc_name.label(class="form-label") }}
@@ -56,35 +55,50 @@
         </div>
       </div>
       <div class="row mt-3";>
-        <div class="col-sm">
+        <div class="col-sm-12">
           {{ form.soc_addr.label(class="form-label") }}
           {{ form.soc_addr(class="form-control", value = form.soc_addr.data) }}
         </div>
       </div>
-      <div class="row mt-3">
-        <div class="col-sm-3">
-          {{ form.soc_cont.label(class="form-label") }}
-          {{ form.soc_cont(class="form-control", value = form.soc_cont.data) }}
+      <div class="d-sm-flex">  
+        <div class="d-flex align-items-stretch" style="flex: 75%;">
+          <fieldset class="row rounded border border-dark border-1 mx-1 pb-1" style="--bs-border-opacity: .4;">  
+            <legend class="fs-5">Contact info</legend>
+            <div class="col-sm">
+              {{ form.soc_cont.label(class="form-label") }}
+              {{ form.soc_cont(class="form-control", value = form.soc_cont.data) }}
+            </div>
+            <div class="w-100"></div>
+            <div class="col-sm">
+              {{ form.soc_tel1.label(class="form-label") }}
+              {{ form.soc_tel1(class="form-control", value = form.soc_tel1.data) }}
+            </div>
+            <div class="w-100"></div>
+            <div class="col-sm">
+              {{ form.soc_tel2.label(class="form-label") }}
+              {{ form.soc_tel2(class="form-control", value = form.soc_tel2.data) }}
+            </div>
+            <div class="w-100"></div>
+            <div class="col-sm">
+              {{ form.soc_tel3.label(class="form-label") }}
+              {{ form.soc_tel3(class="form-control", value = form.soc_tel3.data) }}
+            </div>
+          </fieldset>
         </div>
-        <div class="col-sm-3">
-          {{ form.soc_tel1.label(class="form-label") }}
-          {{ form.soc_tel1(class="form-control", value = form.soc_tel1.data) }}
-        </div>
-        <div class="col-sm-3">
-          {{ form.soc_tel2.label(class="form-label") }}
-          {{ form.soc_tel2(class="form-control", value = form.soc_tel2.data) }}
-        </div>
-        <div class="col-sm-3">
-          {{ form.soc_tel3.label(class="form-label") }}
-          {{ form.soc_tel3(class="form-control", value = form.soc_tel3.data) }}
+        <div class="d-flex align-items-stretch" style="flex: 25%;">
+          <fieldset class="row rounded border border-dark border-1 mx-1" style="--bs-border-opacity: .4;">
+            <legend class="fs-5">Vendor Option</legend>
+            
+          </fieldset>
         </div>
       </div>
       <div class="row mt-3"  style="justify-content: flex-end;">
         <div class="col-sm-1">
           <input type="submit" id ="submit_button" class="btn btn-primary" formmethod="POST" value="submit" name = "nav">
         </div>
+      </div>
     </div>
-    </form>
+  </form>
 
 
   <div class="container mt-5">

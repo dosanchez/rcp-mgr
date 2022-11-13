@@ -141,8 +141,8 @@ class Rcv_en(FlaskForm):
     lox_doc_no = IntegerField('Vendor Receipt No.', validators=[Optional()],
                             render_kw={"placeholder": "if other than rcpt tax No."})
     lox_datd = DateField('Reception Doc Date', validators=[DataRequired()])
-    lox_nifn = StringField('receipt tax number',validators = [Optional(), Length(max=16)],
-                            render_kw={"placeholder": "optional"})
+    lox_nifn = StringField('receipt tax number',validators = [Optional(), 
+                            Length(max=16)], render_kw={"placeholder": "optional"})
     lox_sub = FloatField('Sub Total', default = 0,
                             validators=[NumberRange(min = 0)])
     lox_desc = FloatField('Discount',validators=[NumberRange(max = 0)], 

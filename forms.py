@@ -108,7 +108,7 @@ class Socio(FlaskForm):
                             render_kw={"placeholder": "e.g. (212) 555-1332"})
     soc_tel3 = StringField('Tel. 3', validators=[Optional(), Length(max=20)],
                             render_kw={"placeholder": "e.g. (212) 555-1332"})
-    soc_wtax = BooleanField('Enabled', default = "checked")
+    soc_wtax = BooleanField('Receipt item price includes tax', default = "checked")
     
 class Sku(FlaskForm):
     id = HiddenField()

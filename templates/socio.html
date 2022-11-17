@@ -35,7 +35,7 @@
       </div>  
     </div>
       {{ form.id() }}
-    <div style="display:flex;">
+    
       <div class="row" style="align-items: center;">
         <div class="col-sm-4">
           {{ form.soc_name.label(class="form-label") }}
@@ -54,14 +54,14 @@
           {{ form.soc_ebld(class="form-check-input", value = form.soc_name.data) }}
         </div>
       </div>
-      <div class="row mt-3";>
+      <div class="row mt-3">
         <div class="col-sm-12">
           {{ form.soc_addr.label(class="form-label") }}
           {{ form.soc_addr(class="form-control", value = form.soc_addr.data) }}
         </div>
       </div>
-      <div class="d-sm-flex">  
-        <div class="d-flex align-items-stretch" style="flex: 75%;">
+      <div class="row mt-5">  
+        <div class="d-flex align-items-stretch" style="flex: 50%;">
           <fieldset class="row rounded border border-dark border-1 mx-1 pb-1" style="--bs-border-opacity: .4;">  
             <legend class="fs-5">Contact info</legend>
             <div class="col-sm">
@@ -85,10 +85,13 @@
             </div>
           </fieldset>
         </div>
-        <div class="d-flex align-items-stretch" style="flex: 25%;">
+        <div class="d-flex align-items-stretch" style="flex: 50%; align-self: flex-start;">
           <fieldset class="row rounded border border-dark border-1 mx-1" style="--bs-border-opacity: .4;">
             <legend class="fs-5">Vendor Option</legend>
-            
+            <div class="col-sm">
+              {{ form.soc_wtax.label(class="form-check-label") }}
+              {{ form.soc_wtax(class="form-check-input", value = form.soc_name.data) }}
+            </div>
           </fieldset>
         </div>
       </div>
@@ -97,7 +100,7 @@
           <input type="submit" id ="submit_button" class="btn btn-primary" formmethod="POST" value="submit" name = "nav">
         </div>
       </div>
-    </div>
+    
   </form>
 
 

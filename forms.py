@@ -21,9 +21,9 @@ class Rcv_de(Form):
     idx = HiddenField()
     log_enca = HiddenField()
     log_sku = SelectField('Sku', validators=[DataRequired()], coerce= int)
-    log_qty = FloatField('Qty',validators=[DataRequired(),
+    log_qty = FloatField('Receipt item qty',validators=[DataRequired(),
                             NumberRange(min = 0)], default = 1)
-    log_pric = FloatField('Unit Price',validators=[DataRequired(),
+    log_pric = FloatField('Receipt item total price',validators=[DataRequired(),
                             NumberRange(min = 0)], default = 0.1)
     log_tax = FloatField('Tax amount', default = 0,
                             validators=[NumberRange(min = 0, max = 1)])

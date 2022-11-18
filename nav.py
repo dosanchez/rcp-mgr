@@ -114,9 +114,7 @@ def navigate_to(nav_button, conn, form, table_list):
                             i.data = i.default
                             if not i.data:
                                 i.data = ''
-                            print('i.id', i.id, 'session[i.id] no validó->', session[i.id], type(session[i.id]),'i.data', i.data)
                         else:
                             i.data = session[i.id]
-                            print('i.id->', i.id, 'session[i.id]->', session[i.id], type(session[i.id]), 'i.data', i.data)
                             
     return rcds, relation

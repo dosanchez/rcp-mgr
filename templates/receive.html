@@ -145,12 +145,20 @@
         {{ form.subform.log_alm.label() }}
       </div>
       <div class="col-sm-12 pt-3 d-grid gap-5 d-sm-flex justify-content-md-center" >
-        <button type = "submit" value = "submit1" form ="nav_form" formmethod ="post" class="btn btn-md btn-primary" name ="nav">
-          <strong id = "lbl_but_sub">update </strong><i class="fa-solid fa-circle-arrow-down"></i>
-        </button>
-        <button type="button" class="btn btn-sm btn-primary" id = "sub"  value = "update" onclick="Newsub()">
-          UPDATE/ADD
-        </button>
+        <div>
+          <button type = "submit" value = "submit1" form ="nav_form" formmethod ="post" class="btn btn-md btn-primary" name ="nav">
+            <strong id = "lbl_but_sub">update </strong><i class="fa-solid fa-circle-arrow-down"></i>
+          </button>
+        </div>
+        <div>
+          <button type="button" class="btn btn-md btn-primary" id = "sub"  value = "update" onclick="Newsub()">
+            <strong >UPDATE/ADD</strong>
+          </button>
+        </div>
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" id="flexSwitch" checked>
+          <label class="form-check-label" for="flexSwitch">Total item price includes tax</label>
+        </div>
       </div>   
   </form>
       <div class="row justify-content-center my-3">
@@ -227,7 +235,8 @@
 {% block script %}
   {{ super() }}
   <script>
-    console.log('script pag'); 
+    console.log('script pag');
+    document.getElementById("flexSwitch").checked = Boolean({{session['flexSwitch']}});
     function Newrecord() {
       document.getElementById("id").value = null;
       document.getElementById("lox_vend").value = null;

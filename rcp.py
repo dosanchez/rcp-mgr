@@ -670,6 +670,13 @@ def receive():
                      'Tax Paid']]]
     rcd_len = len(records)
 
+    #checks if line items price includes tax for current vendor displayed
+    session['flexSwitch'] = 1
+    if form.lox_vend.data:
+        sql = "SELECT soc_wtax FROM socio WHERE id = {}".format(form.lox_vend.data)
+        db.execute(sql)
+        session['flexSwitch'] = db.fetchall()[0].get('soc_wtax')
+        print(session['flexSwitch'])
 
     return render_template ('receive.html', form = form, records = records,
                             column_names = column_names, 

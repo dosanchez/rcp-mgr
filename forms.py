@@ -25,7 +25,7 @@ class Rcv_de(Form):
                             NumberRange(min = 0)], default = 1)
     log_pric = FloatField('Receipt item total price',validators=[DataRequired(),
                             NumberRange(min = 0)], default = 0.1)
-    log_tax = FloatField('Tax amount', default = 0,
+    log_tax = FloatField('Tax amount', default = '0',
                             validators=[NumberRange(min = 0, max = 1)])
     log_alm = SelectField('Receiving warehouse', coerce= int)
 
@@ -43,14 +43,14 @@ class Unitmeas(FlaskForm):
                             render_kw={"placeholder": "qty"}, default = 1)
     uni_un_t = SelectField('UM Type', validators=[DataRequired()], 
                             choices=['g','ml'], default = 'g')
-    uni_ebld = BooleanField('Enabled', default = "checked", false_values=('',False,'false',))
+    uni_ebld = BooleanField('Enabled')
 
 class Almacen(FlaskForm):
     """wtform for Warehouses"""
     id = HiddenField()
     alm_name = StringField('Warehouse', validators=[DataRequired(),Length(max=16)], 
                             render_kw={"placeholder": "e.g. Branch 01"})
-    alm_ebld = BooleanField('Enabled', default = True, false_values=('',))
+    alm_ebld = BooleanField('Enabled')
 
 class Ingredient(FlaskForm):
     """wtform for Ingredients"""
@@ -64,7 +64,7 @@ class Ingredient(FlaskForm):
                             render_kw={"placeholder": "Density"}, default = 1)
     rct_denu = SelectField('Density UM', validators=[DataRequired()], 
                             choices=['g/ml','g/unit'], default ='g/ml')
-    rct_ebld = BooleanField('Enabled', default = True, false_values=('',))
+    rct_ebld = BooleanField('Enabled')
 
 class Recet_en(FlaskForm):
     """wtform for recipe form header"""
@@ -83,7 +83,7 @@ class Recet_en(FlaskForm):
     rct_serv = FloatField('Servings',validators=[DataRequired()], 
                             render_kw={"placeholder": "e.g. 0.98"}, default = 1)
     rct_unit = SelectField('serv UM', validators=[DataRequired()], coerce = int)
-    rct_ebld = BooleanField('Enabled', default = "checked", false_values=('',))
+    rct_ebld = BooleanField('Enabled')
     subform = FormField(Recet_de)
 
 
@@ -97,7 +97,7 @@ class Socio(FlaskForm):
                             render_kw={"placeholder": "reg, fiscal name"})
     soc_rnc = IntegerField('Fiscal No.', render_kw={"placeholder": "e.g. 101583983"}, 
                             validators=[Optional(), NumberRange(max = 9999999999999)])
-    soc_ebld = BooleanField('Enabled', default = "checked")
+    soc_ebld = BooleanField('Enabled')
     soc_cont = StringField('Contact', validators=[Length(max = 16)], 
                             render_kw={"placeholder": "e.g. Mr. James Watt"})   
     soc_addr = StringField('Business address', validators=[Length(max = 128)], 
@@ -108,7 +108,7 @@ class Socio(FlaskForm):
                             render_kw={"placeholder": "e.g. (212) 555-1332"})
     soc_tel3 = StringField('Tel. 3', validators=[Optional(), Length(max=20)],
                             render_kw={"placeholder": "e.g. (212) 555-1332"})
-    soc_wtax = BooleanField('Receipt item price includes tax', default = "checked")
+    soc_wtax = BooleanField('Receipt item price includes tax')
     
 class Sku(FlaskForm):
     id = HiddenField()
@@ -132,7 +132,7 @@ class Sku(FlaskForm):
                             NumberRange(min = 0)])
     sku_v_unit = SelectField('Unit of measure',validators=[InputRequired()],
                             coerce = int)
-    sku_ebld = BooleanField('Enabled', default = "checked")
+    sku_ebld = BooleanField('Enabled')
 
 class Rcv_en(FlaskForm):
     id = HiddenField()
@@ -143,10 +143,10 @@ class Rcv_en(FlaskForm):
     lox_datd = DateField('Reception Doc Date', validators=[DataRequired()])
     lox_nifn = StringField('receipt tax number',validators = [Optional(), 
                             Length(max=16)], render_kw={"placeholder": "optional"})
-    lox_sub = FloatField('Sub Total', default = 0,
+    lox_sub = FloatField('Sub Total', default = '0',
                             validators=[NumberRange(min = 0)])
     lox_desc = FloatField('Discount',validators=[NumberRange(max = 0)], 
-                            default = 0)
+                            default = '0')
     lox_tax = FloatField('Total Tax',validators=[NumberRange(min = 0)], 
-                            default = 0)
+                            default = '0')
     subform = FormField(Rcv_de)

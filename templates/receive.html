@@ -129,7 +129,7 @@
         {{ form.subform.log_sku.label() }}
       </div>
       <div class="col-sm-2 form-floating">
-        {{ form.subform.log_qty(class="form-control", value = form.subform.log_qty.data) }}
+        {{ form.subform.log_qty(class="form-control", value = form.subform.log_qty.data, onchange="Complete()") }}
         {{ form.subform.log_qty.label() }}
       </div>
       <div class="col-sm-2 form-floating">
@@ -288,7 +288,17 @@
         document.getElementById("subform-log_pric").value = {{'null' if not session['log_pric'] else session['log_pric']}};
         document.getElementById("subform-log_tax").value = {{'null' if not session['log_tax'] else session['log_tax']}};
         document.getElementById("subform-log_alm").value = {{0 if not session['log_alm'] else session['log_alm']}};
-      }      
-    }
+          }      
+        } 
+      
+      function Complete() { 
+      if (document.getElementById("flexSwitch").checked){
+        document.getElementById("subform-log_qty").value && document.getElementById("subform-log_pric";
+      }
+      else {
+        ;
+          }      
+        }  
+
   </script>
 {% endblock script%}

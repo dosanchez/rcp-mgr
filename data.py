@@ -193,7 +193,6 @@ class DataHandler():
                 sql = sql.replace(", WHERE id =", " WHERE id =") #removes trailing ,
                 self.conn.cursor(dictionary=True, buffered=True).execute(sql)
                 self.conn.commit()
-                print(sql)
 
             flash('Record updated!')
 

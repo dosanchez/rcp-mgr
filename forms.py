@@ -21,13 +21,14 @@ class Rcv_de(Form):
     idx = HiddenField()
     log_enca = HiddenField()
     log_sku = SelectField('Sku', validators=[DataRequired()], coerce= int)
-    log_qty = FloatField('Receipt item qty',validators=[DataRequired(),
-                            NumberRange(min = 0)], default = 0)
-    log_pric = FloatField('Receipt item total price',validators=[DataRequired(),
-                            NumberRange(min = 0)], default = 0)
-    log_tax = FloatField('Tax amount', default = '0',
-                            validators=[NumberRange(min = 0, max = 1)])
-    log_alm = SelectField('Receiving warehouse', coerce= int)
+    log_qty = FloatField('Receipt item qty', default = 0, 
+                            validators=[NumberRange(min = 0), Optional()])
+    log_pric = FloatField('Receipt item total price', default = 0, 
+                            validators=[NumberRange(min = 0), Optional()])
+    log_tax = FloatField('Tax amount', default = 0, 
+                            validators=[NumberRange(min = 0), Optional()])
+    log_alm = SelectField('Receiving warehouse', validators=[DataRequired()], 
+                            coerce= int)
 
 class Unitmeas(FlaskForm):
     """wtform for Units of measure"""

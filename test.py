@@ -14,13 +14,16 @@ from data import select as sel
 # db = conn.cursor(dictionary=True, buffered=True)
 
 
-c = datetime.date(2022,11,1)
+c = None
+d = 12
 
-print(c)
-print(isinstance(c,datetime.date))
 
-d=c.strftime("%Y%m%d")
-print(d)
+print ('bool(c)',bool(c))
+print ('bool(d)',bool(d))
+print('c xor d --->', bool(c) ^ bool(d))
+
+
+
 
 #print([('','')].append((2,2)))
 # print ('blank', blank)

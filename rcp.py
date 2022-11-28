@@ -542,7 +542,6 @@ def sku():
 def receive():
     form = Rcv_en()
     table_list = ['logix_en', 'logix_de']
-    print('form.lox_doc_no.data', form.lox_doc_no.data)
     
     #Queries for Selectfields active choices
     form.lox_vend.choices = sel.ebld_choices(db, 'socio', 'soc_name', 'soc_ebld')
@@ -603,7 +602,8 @@ def receive():
                                     'log_qty':form.subform.log_qty.data,
                                     'log_pric':form.subform.log_pric.data,
                                     'log_tax':form.subform.log_tax.data,  
-                                    'log_alm':form.subform.log_alm.data 
+                                    'log_alm':form.subform.log_alm.data,
+                                    'log_wtax':form.subform.log_wtax.data 
                                             }]
                                 
                                 }
@@ -636,9 +636,7 @@ def receive():
 
         if nav_button == "submit1": #not a nav post
             
-            #helps calculate total price and tax per receipt item when
-            #receipt item price displayed includes total also completes
-            #missing receipt item info when left blank
+            #completes missing receipt item price or tax  info when left blank
             #unique for this form
 
             sql = "SELECT sku_itbi FROM sku WHERE id = {}".format(form.subform.log_sku.data)
@@ -646,17 +644,20 @@ def receive():
             dbtax = db.fetchall()[0].get('sku_itbi')
             if not form.subform.log_qty.data:
                 listsql2.get(table_list[1])[0]['log_qty'] = 0
-            if bool(form.subform.log_pric.data) ^ bool(form.subform.log_tax.data):
+            print('log_pric--->', listsql2.get(table_list[1])[0]['log_pric'])
+            if bool(form.subform.log_pric.data == None) ^ bool(form.subform.log_tax.data == None):
                 if not form.subform.log_pric.data:
-                    listsql2.get(table_list[1])[0]['log_pric'] = form.subform.log_tax.data / dbtax
+                    if form.subform.log_wtax.data:
+                        listsql2.get(table_list[1])[0]['log_pric'] = form.subform.log_tax.data * (1 + dbtax) / dbtax
+                    else:
+                        listsql2.get(table_list[1])[0]['log_pric'] = form.subform.log_tax.data / dbtax
                 else:
-                    if request.form.get('flexSwitch'):
+                    if form.subform.log_wtax.data:
                         listsql2.get(table_list[1])[0]['log_tax'] = listsql2.get(table_list[1])[0].get('log_pric') * dbtax / (1 + dbtax)
-                        listsql2.get(table_list[1])[0]['log_pric'] -= listsql2.get(table_list[1])[0].get('log_tax')  
                     else:
                         listsql2.get(table_list[1])[0]['log_tax'] = listsql2.get(table_list[1])[0].get('log_pric') * dbtax
             else:
-                    if request.form.get('flexSwitch'):
+                    if form.subform.log_wtax.data:
                         listsql2.get(table_list[1])[0]['log_tax'] = listsql2.get(table_list[1])[0].get('log_tax') or 0
                         listsql2.get(table_list[1])[0]['log_pric'] = (listsql2.get(table_list[1])[0].get('log_pric') or 0 ) - (listsql2.get(table_list[1])[0].get('log_tax') or 0)
                     else:
@@ -693,11 +694,12 @@ def receive():
 
     records.pop(0) #form header records not needed nav populates header
 
-    column_names =[['Receipt items',['', '', 'SKU', 'Qty', 'Unit price',
-                     'Tax Paid']]]
+    column_names =[['Receipt items',['', '', 'SKU', 'Qty', 'Price',
+                     'Tax', 'Price has tax incld']]]
     rcd_len = len(records)
 
     #checks if line items price includes tax for current vendor displayed
+    #unique for this form
     session['flexSwitch'] = 1
     if form.lox_vend.data:
         sql = "SELECT soc_wtax FROM socio WHERE id = {}".format(form.lox_vend.data)

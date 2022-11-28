@@ -40,7 +40,7 @@
     <div class="row mb-4">
       <div class="col-sm-6 pl-2">
         {{ form.lox_vend.label(class="form-label") }}
-        {{ form.lox_vend(class="form-select", value = form.lox_vend.data) }}
+        {{ form.lox_vend(class="form-select", value = form.lox_vend.data, onchange="Locksubform()") }}
       </div>
       <div class="col-sm-4">
         {{ form.lox_date.label(class="form-label") }}
@@ -146,9 +146,9 @@
       </div>
       <div class="col-sm-12 pt-3 d-grid gap-5 d-sm-flex justify-content-md-center" >
         <div>
-          <button type = "submit" value = "submit1" form ="nav_form" formmethod ="post" class="btn btn-md btn-primary" name ="nav">
-            <strong id = "lbl_but_sub">update </strong><i class="fa-solid fa-circle-arrow-down"></i>
-          </button>
+            <button type = "submit" value = "submit1" form ="nav_form" formmethod ="post" class="btn btn-md btn-primary" name ="nav" id="updaddbtn">
+              <strong id = "lbl_but_sub">update </strong><i class="fa-solid fa-circle-arrow-down"></i>
+            </button>
         </div>
         <div>
           <button type="button" class="btn btn-md btn-primary" id = "sub"  value = "update" onclick="Newsub()">
@@ -156,8 +156,8 @@
           </button>
         </div>
         <div class="form-check form-switch">
-          <input class="form-check-input" type="checkbox" id="flexSwitch" name="flexSwitch" checked>
-          <label class="form-check-label" for="flexSwitch">Total item price includes tax</label>
+          {{ form.subform.log_wtax(class="form-check-input") }}
+          {{ form.subform.log_wtax.label(class="form-check-label") }}
         </div>
       </div>   
   </form>
@@ -196,16 +196,16 @@
                     {% for key, value in row.items() %}
                       {% if key == 'id' %}
                         <td style="text-align: center;" class="pt-2">
-                          <button type = "submit" value = {{ value }} form ="nav_form" formmethod ="post" class="btn btn-sm btn-primary" name ="subnav">
+                          <button type = "submit" value = {{ value }} form ="nav_form" formmethod ="post" class="btn btn-sm btn-primary" name ="subnav" id ="subnav">
                             <small>edit</small>
                           </button>
                         </td>
                         <td style="text-align: center;" class="pt-2">
-                          <button type = "submit" value = {{ value }} form ="nav_form" formmethod ="post" class="btn btn-sm btn-danger" name ="delete">
+                          <button type = "submit" value = {{ value }} form ="nav_form" formmethod ="post" class="btn btn-sm btn-danger" name ="delete" id ="delete">
                             <small>drop</small>
                           </button>
                         </td>
-                      {% elif key == relation[counter][0].get('child_tbl_fld') %} <!-- exception  hides parent-child field-->
+                      {% elif key == relation[counter][0].get('child_tbl_fld') %} <!-- hides parent-child value-->
                         <td hidden></td>
                       {% elif key == 'log_sku' %} <!-- loops for sku names -->
                         {% for choice in log_sku_choices %}
@@ -219,6 +219,10 @@
                               <td style="text-align: center;">{{ choice[1] }}</td>
                             {% endif %}
                           {% endfor %}
+                        {% elif key == 'log_wtax' and value %}<!-- display check icon if true-->
+                          <td style="text-align: center;"><i class="fa-solid fa-check"></i></td>
+                        {% elif key == 'log_wtax' and not value %}<!-- display check icon if false-->
+                          <td style="text-align: center;"><i class="fa-solid fa-xmark"></i></td>
                       {% else %}
                         <td style="text-align: center;">{{ value }}</td>
                       {% endif %}    
@@ -236,7 +240,16 @@
   {{ super() }}
   <script>
     console.log('script pag');
-    document.getElementById("flexSwitch").checked = Boolean({{session['flexSwitch']}});
+    document.getElementById("subform-log_wtax").checked = Boolean({{session['flexSwitch']}});
+    console.log('cargué no son iguales');
+    console.log(document.getElementById("lox_vend").value);
+    console.log({{session['lox_vend']}});
+    if (document.getElementById("lox_vend").value != {{session['lox_vend']}}){
+      document.getElementById("updaddbtn").disabled = true;
+      document.getElementById("subnav").disabled = true;
+      document.getElementById("delete").disabled = true;
+    }
+
     function Newrecord() {
       document.getElementById("id").value = null;
       document.getElementById("lox_vend").value = null;
@@ -257,7 +270,7 @@
       document.getElementById("lox_date").value = '{{session['lox_date']}}';
       document.getElementById("lox_doc_no").value = {{'null' if not session['lox_doc_no'] else session['lox_doc_no']}};
       document.getElementById("lox_datd").value = '{{session['lox_datd']}}';
-      document.getElementById("lox_nifn").value = {{'null' if session['lox_nifn']== 'None' else session['lox_nifn']}};
+      document.getElementById("lox_nifn").value = {{'null' if not session['lox_nifn'] else session['lox_nifn']}};
       document.getElementById("lox_desc").value = {{session['lox_desc']}};
       document.getElementById("lox_sub").value = {{session['lox_sub']}};
       document.getElementById("lox_tax").value = {{session['lox_tax']}};
@@ -276,12 +289,12 @@
         document.getElementById("subform-log_sku").value = null;
         document.getElementById("subform-log_qty").value = null;
         document.getElementById("subform-log_pric").value = null;
-        document.getElementById("subform-log_tax").value = null
+        document.getElementById("subform-log_tax").value = null;
         document.getElementById("subform-log_alm").value = null;
       }
       else {
         document.getElementById("lbl_but_sub").innerHTML = "update ";
-        document.getElementById("subform-idx").value = {{0 if not session['idx'] else session['idx']}}
+        document.getElementById("subform-idx").value = {{0 if not session['idx'] else session['idx']}};
         document.getElementById("subform-log_enca").value =  {{0 if not session['log_enca'] else session['log_enca']}};
         document.getElementById("subform-log_sku").value = {{0 if not session['log_sku'] else session['log_sku']}};
         document.getElementById("subform-log_qty").value = {{'null' if not session['log_qty'] else session['log_qty']}};
@@ -291,14 +304,20 @@
           }      
         } 
       
-      //function Complete() { 
-      //if (document.getElementById("flexSwitch").checked){
-      //  document.getElementById("subform-log_qty").value && document.getElementById("subform-log_pric";
-      //}
-      //else {
-      //  ;
-      //    }      
-      //  }  
+      function Locksubform() {
+        if (document.getElementById("lox_vend").value != {{session['lox_vend']}}){   
+          document.getElementById("updaddbtn").disabled = true;
+          document.getElementById("subnav").disabled = true;
+          document.getElementById("sub").disabled = true;
+          document.getElementById("delete").disabled = true;
+        }
+        else{
+          document.getElementById("updaddbtn").disabled = false;
+          document.getElementById("subnav").disabled = false;
+          document.getElementById("sub").disabled = false;
+          document.getElementById("delete").disabled = false;
+        }
+      }  
 
   </script>
 {% endblock script%}

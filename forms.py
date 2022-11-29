@@ -140,7 +140,7 @@ class Rcv_en(FlaskForm):
     id = HiddenField()
     lox_vend = SelectField('Vendor',validators=[InputRequired()],coerce= int)
     lox_date = DateField('Reception Date', validators=[DataRequired()])
-    lox_doc_no = StringField('Vendor Receipt No.', validators=[Optional()],Length(max=16)],
+    lox_doc_no = StringField('Vendor Receipt No.', validators=[Optional(),Length(max=16)],
                             render_kw={"placeholder": "if other than rcpt tax No."})
     lox_datd = DateField('Reception Doc Date', validators=[DataRequired()])
     lox_nifn = StringField('receipt tax number',validators = [Optional(), 

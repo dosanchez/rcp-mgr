@@ -606,8 +606,9 @@ def receive():
                                     'log_wtax':form.subform.log_wtax.data 
                                             }]
                                 
-                                }
-        listsql1 ={list(listsql.keys())[0]: list(listsql.values())[0]} 
+                            }
+        listsql1 ={list(listsql.keys())[0]: list(listsql.values())[0]}
+        print(listsql1)
         del listsql2 [list(listsql.keys())[0]]
         if not form.id.data: #gives form.id.data some value on very first entry
             form.id.data = 0
@@ -635,6 +636,22 @@ def receive():
                 return redirect(url_for('receive'))# clears POST data 
 
         if nav_button == "submit1": #not a nav post
+
+            listsql3 = {
+                        table_list[1]:[{
+                            'id':form.subform.idx.data,
+                            'kar_sku':form.subform.log_sku.data,
+                            'kar_qty':form.subform.log_qty.data,
+                            'kar_date':'timestamphere',
+                            'kar_enca':form.subform.log_enca.data,
+                            'kar_bal':'stock qty bal after record',
+                            'log_pric':form.subform.log_pric.data,
+                            'log_tax':form.subform.log_tax.data,  
+                            'kar_alm':form.subform.log_alm.data,
+                            'log_wtax':form.subform.log_wtax.data 
+                                    }]
+                                
+                        }
             
             #completes missing receipt item price or tax  info when left blank
             #unique for this form

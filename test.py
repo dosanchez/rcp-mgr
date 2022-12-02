@@ -14,13 +14,14 @@ from data import select as sel
 # db = conn.cursor(dictionary=True, buffered=True)
 
 
-c = None
-d = 12
+c = [1,2,3,4]
+d = ['a', 'b', 'c', 'd']
+
+a = {list(d):list(c)}
 
 
-print ('bool(c)',bool(c))
-print ('bool(d)',bool(d))
-print('c xor d --->', bool(c) ^ bool(d))
+print (a)
+
 
 
 

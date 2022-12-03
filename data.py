@@ -141,7 +141,24 @@ class select():
 
         return choice + sorted([(int(d['id']), d[field]) for d in list(db.fetchall() )], 
                         key = lambda fld: fld[1])
-
+    #adds up given fields for specific table and specific where field value
+    def sumfields(db, table, *args, **kwargs):
+        """returns the sum of given fields given specific fields values"""
+        sql = "SELECT "
+        for value in args:
+                sql += "SUM({}), ".format(value)
+                
+        sql += "FROM {} ".format(table)
+        sql = sql.replace(", F", " F") #removes trailing ,
+        sql += "WHERE "
+        for field, value in kwargs.items():
+                if isinstance(value, str):
+                    sql += "{} = '{}' ".format(field, value)
+                else:
+                    sql += "{} = {} ".format(field, value)
+                sql += "AND " 
+        db.execute(sql[:-4]) #drops trailing AND
+        return(db.fetchall())
 
 class DataHandler():
 
@@ -194,6 +211,7 @@ class DataHandler():
                 self.conn.cursor(dictionary=True, buffered=True).execute(sql)
                 self.conn.commit()
 
+            print(sql)
             flash('Record updated!')
 
 

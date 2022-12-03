@@ -645,10 +645,10 @@ def receive():
                             'kar_date':'timestamphere',
                             'kar_enca':form.subform.log_enca.data,
                             'kar_bal':'stock qty bal after record',
-                            'log_pric':form.subform.log_pric.data,
-                            'log_tax':form.subform.log_tax.data,  
+                            'kar_cost':'calc cost after record',
+                            'kar_mod_doc':'type mod indicator',  
                             'kar_alm':form.subform.log_alm.data,
-                            'log_wtax':form.subform.log_wtax.data 
+                            'kar_note':'note if any' 
                                     }]
                                 
                         }

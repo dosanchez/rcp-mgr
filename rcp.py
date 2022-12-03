@@ -591,7 +591,7 @@ def receive():
                                     'lox_vend':form.lox_vend.data,
                                     'lox_nifn':form.lox_nifn.data,
                                     'lox_doc_no':form.lox_doc_no.data,
-                                    'lox_desc':form.lox_desc.data,
+                                    'lox_disc':form.lox_disc.data,
                                     'lox_sub':form.lox_sub.data,
                                     'lox_tax':form.lox_tax.data
                                             }],
@@ -711,8 +711,8 @@ def receive():
 
     records.pop(0) #form header records not needed nav populates header
 
-    column_names =[['Receipt items',['', '', 'SKU', 'Qty', 'Price',
-                     'Tax', 'Price has tax incld']]]
+    column_names =[['Receipt items',['', '', 'SKU', 'Qty', 'Total Price',
+                     'Total Tax', 'Price has tax incld']]]
     rcd_len = len(records)
 
     #checks if line items price includes tax for current vendor displayed
@@ -722,6 +722,25 @@ def receive():
         sql = "SELECT soc_wtax FROM socio WHERE id = {}".format(form.lox_vend.data)
         db.execute(sql)
         session['flexSwitch'] = db.fetchall()[0].get('soc_wtax')
+    #updates aggregate fields in form
+    #unique for this form
+    aggrfields = sel.sumfields(db,'logix_de_norm','log_pric','log_tax',log_enca=form.id.data)[0]
+    if aggrfields.get('sumoflog_pric'):
+        form.lox_sub.data = aggrfields.get('sumoflog_pric')
+    else:    
+        form.lox_sub.data = 0
+        
+    if aggrfields.get('sumoflog_tax'):   
+        form.lox_tax.data = aggrfields.get('sumoflog_tax')
+    else:
+        form.lox_tax.data = 0
+
+    if not form.lox_disc.data:
+        form.lox_disc.data = 0
+
+    session['Sub-total'] = form.lox_sub.data - form.lox_disc.data
+    session['Total'] = session['Sub-total'] + form.lox_tax.data
+    
 
     return render_template ('receive.html', form = form, records = records,
                             column_names = column_names, 

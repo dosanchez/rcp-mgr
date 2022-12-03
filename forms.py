@@ -147,8 +147,8 @@ class Rcv_en(FlaskForm):
                             Length(max=16)], render_kw={"placeholder": "optional"})
     lox_sub = FloatField('Sub Total', default = '0',
                             validators=[NumberRange(min = 0)])
-    lox_desc = FloatField('Discount',validators=[NumberRange(max = 0)], 
-                            default = '0')
+    lox_disc = FloatField('Discount',validators=[NumberRange(max = 0)], 
+                            default = 0)
     lox_tax = FloatField('Total Tax',validators=[NumberRange(min = 0)], 
                             default = '0')
     subform = FormField(Rcv_de)

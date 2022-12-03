@@ -82,10 +82,10 @@
             </div>
             <div class="w-100"></div>
             <div class="col-sm-4">
-              {{ form.lox_desc.label(class="form-label form-label-sm") }}
+              {{ form.lox_disc.label(class="form-label form-label-sm") }}
             </div>
             <div class="col-sm-8">
-              {{ form.lox_desc(class ="form-control form-control-sm", value = form.lox_sub.data) }}
+              {{ form.lox_disc(class ="form-control form-control-sm", value = form.lox_disc.data) }}
             </div>
             <div class="w-100"></div>
             <div class="col-sm-4"></div>
@@ -241,6 +241,8 @@
   <script>
     console.log('script pag');
     document.getElementById("subform-log_wtax").checked = Boolean({{session['flexSwitch']}});
+    document.getElementById("Sub-total").value = {{session['Sub-total']}};
+    document.getElementById("Total").value = {{session['Total']}};
     console.log('cargué no son iguales');
     console.log(document.getElementById("lox_vend").value);
     console.log({{session['lox_vend']}});
@@ -257,7 +259,7 @@
       document.getElementById("lox_doc_no").value = null;
       document.getElementById("lox_datd").value = null;
       document.getElementById("lox_nifn").value = null;
-      document.getElementById("lox_desc").value = 0;
+      document.getElementById("lox_disc").value = 0;
       document.getElementById("lox_sub").value = 0;
       document.getElementById("lox_tax").value = 0;
       document.getElementById("subform-log_qty").value = null;
@@ -271,7 +273,7 @@
       document.getElementById("lox_doc_no").value = {{'null' if not session['lox_doc_no'] else session['lox_doc_no']}};
       document.getElementById("lox_datd").value = '{{session['lox_datd']}}';
       document.getElementById("lox_nifn").value = {{'null' if not session['lox_nifn'] else session['lox_nifn']}};
-      document.getElementById("lox_desc").value = {{session['lox_desc']}};
+      document.getElementById("lox_disc").value = {{session['lox_disc']}};
       document.getElementById("lox_sub").value = {{session['lox_sub']}};
       document.getElementById("lox_tax").value = {{session['lox_tax']}};
       document.getElementById("id").value = {{session['id']}};

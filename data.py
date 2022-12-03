@@ -146,7 +146,7 @@ class select():
         """returns the sum of given fields given specific fields values"""
         sql = "SELECT "
         for value in args:
-                sql += "SUM({}), ".format(value)
+                sql += "SUM({}) AS {}, ".format(value, 'sumof'+ value )
                 
         sql += "FROM {} ".format(table)
         sql = sql.replace(", F", " F") #removes trailing ,
@@ -157,6 +157,7 @@ class select():
                 else:
                     sql += "{} = {} ".format(field, value)
                 sql += "AND " 
+        print(sql)
         db.execute(sql[:-4]) #drops trailing AND
         return(db.fetchall())
 

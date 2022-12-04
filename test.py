@@ -16,9 +16,8 @@ from data import select as sel
 
 #print(sel.sumfields(db, 'recet_de','rcd_qty','rcd_yiel',rcd_enca=28))
 
-estampa = datetime.datetime.timestamp()
-
-print (estampa)
+estampa = datetime.date.today()
+print(estampa)
 
 
 

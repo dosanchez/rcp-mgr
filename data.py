@@ -61,7 +61,7 @@ class select():
                 sql += "AND "
             
             db.execute(sql[:-4]) #drop trailing 'AND '
-
+            
         return(db.fetchall())
 
 
@@ -157,9 +157,16 @@ class select():
                 else:
                     sql += "{} = {} ".format(field, value)
                 sql += "AND " 
-        print(sql)
         db.execute(sql[:-4]) #drops trailing AND
         return(db.fetchall())
+
+class update():
+
+    def stockqty(db, table, id, qty):
+        print(table)
+        print(id)
+        print(qty)
+        pass
 
 class DataHandler():
 
@@ -212,7 +219,6 @@ class DataHandler():
                 self.conn.cursor(dictionary=True, buffered=True).execute(sql)
                 self.conn.commit()
 
-            print(sql)
             flash('Record updated!')
 
 

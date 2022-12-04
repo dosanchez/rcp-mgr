@@ -1,6 +1,7 @@
+import datetime
 import mysql.connector
 from flask import Flask, render_template, session, request, redirect, url_for
-from data import DataHandler as dth, select as sel, dlt, save_file
+from data import DataHandler as dth, select as sel, dlt, update, save_file
 from nav import navigate_to
 from forms import Ingredient, Sku, Unitmeas, Almacen, Recet_en, Socio, Rcv_en
 import os
@@ -58,8 +59,6 @@ def unitmeas():
 
         if nav_button == "submit": #not a nav post
             #creates instance to chk if record exist
-            print('form.id.data',form.id.data)
-            print('form.uni_symb.data', form.uni_symb.data)
             existe = dth.from_dict2sql(conn, {
                                         table_list[0]:[{
                                             'id':form.id.data
@@ -103,7 +102,6 @@ def socio():
     except:
         pass
     
-    print('form.soc_ebld.data', form.soc_ebld.data)
     if form.validate_on_submit():
 
         record = dth.from_dict2sql(conn, {
@@ -373,7 +371,7 @@ def recipe():
                                                     }]
                                         }
             ) 
-            print ('form.subform.idx.data not nav>', form.subform.idx.data)
+
             if  existe.chk_sgl_fld():   #chk if record exists   
                 #update existing record
                 record.update()
@@ -608,7 +606,7 @@ def receive():
                                 
                             }
         listsql1 ={list(listsql.keys())[0]: list(listsql.values())[0]}
-        print(listsql1)
+
         del listsql2 [list(listsql.keys())[0]]
         if not form.id.data: #gives form.id.data some value on very first entry
             form.id.data = 0
@@ -636,22 +634,6 @@ def receive():
                 return redirect(url_for('receive'))# clears POST data 
 
         if nav_button == "submit1": #not a nav post
-
-            listsql3 = {
-                        table_list[1]:[{
-                            'id':form.subform.idx.data,
-                            'kar_sku':form.subform.log_sku.data,
-                            'kar_qty':form.subform.log_qty.data,
-                            'kar_date':'timestamphere',
-                            'kar_enca':form.subform.log_enca.data,
-                            'kar_bal':'stock qty bal after record',
-                            'kar_cost':'calc cost after record',
-                            'kar_mod_doc':'type mod indicator',  
-                            'kar_alm':form.subform.log_alm.data,
-                            'kar_note':'note if any' 
-                                    }]
-                                
-                        }
             
             #completes missing receipt item price or tax  info when left blank
             #unique for this form
@@ -661,7 +643,6 @@ def receive():
             dbtax = db.fetchall()[0].get('sku_itbi')
             if not form.subform.log_qty.data:
                 listsql2.get(table_list[1])[0]['log_qty'] = 0
-            print('log_pric--->', listsql2.get(table_list[1])[0]['log_pric'])
             if bool(form.subform.log_pric.data == None) ^ bool(form.subform.log_tax.data == None):
                 if not form.subform.log_pric.data:
                     if form.subform.log_wtax.data:
@@ -680,7 +661,7 @@ def receive():
                     else:
                         listsql2.get(table_list[1])[0]['log_tax'] = listsql2.get(table_list[1])[0].get('log_tax') or 0
                         listsql2.get(table_list[1])[0]['log_pric'] = listsql2.get(table_list[1])[0].get('log_pric') or 0
-            
+
             
             #creates instance to chk if record exist
             record = dth.from_dict2sql(conn, listsql2)
@@ -689,11 +670,14 @@ def receive():
                                             'id':form.subform.idx.data
                                                     }]
                                         }
-            ) 
+            )   
 
             if  existe.chk_sgl_fld():   #chk if record exists   
                 #update existing record
                 record.update()
+                update.stockqty(db, list(listsql2.keys())[0], 
+                    list(listsql2.values())[0][0].get('id'), 
+                    list(listsql2.values())[0][0].get('log_qty'))
                 return redirect(url_for('receive'))# clears POST data
 
             else:
@@ -722,6 +706,7 @@ def receive():
         sql = "SELECT soc_wtax FROM socio WHERE id = {}".format(form.lox_vend.data)
         db.execute(sql)
         session['flexSwitch'] = db.fetchall()[0].get('soc_wtax')
+
     #updates aggregate fields in form
     #unique for this form
     aggrfields = sel.sumfields(db,'logix_de_norm','log_pric','log_tax',log_enca=form.id.data)[0]

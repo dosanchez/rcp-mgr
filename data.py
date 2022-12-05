@@ -45,33 +45,36 @@ class select():
     #various queries
     
         
-    def all(db, tbl, **kwargs):
-        """returns all records from a given table filtered when given"""
+    def all(db, table,**kwargs):
+        """returns all records from a given table filtered when given
+            ordered by id"""
+
         if not kwargs:
-            sql = "Select * from {}".format(tbl)
+            sql = "Select * FROM {}".format(table)
+            sql += " ORDER BY id ASC"
             db.execute(sql)
 
         else:
-            sql = "Select * from {} WHERE ".format(tbl)
+            sql = "SELECT * FROM {} WHERE ".format(table)
             for field, value in kwargs.items():
                 if isinstance(value, str):
                     sql += "{} = '{}' ".format(field, value)
                 else:
                     sql += "{} = {} ".format(field, value)
                 sql += "AND "
-            
-            db.execute(sql[:-4]) #drop trailing 'AND '
-            
+                sql = sql[:-4] + " ORDER BY id ASC" #drop trailing 'AND '
+            db.execute(sql) 
+   
         return(db.fetchall())
 
 
-    def max_id(db, tbl, **kwargs):
+    def max_id(db, table, **kwargs):
         """returns max id field value from a given table filtered when given"""
         if not kwargs:
-            sql = "Select MAX(id) AS parent_last_row_id from {}".format(tbl)
+            sql = "Select MAX(id) AS parent_last_row_id from {}".format(table)
             db.execute(sql)
         else:
-            sql = "SELECT MAX(id) AS parent_last_row_id FROM {} WHERE ".format(tbl)
+            sql = "SELECT MAX(id) AS parent_last_row_id FROM {} WHERE ".format(table)
             for field, value in kwargs.items():
                 if isinstance(value, str):
                     sql += "{} = '{}' ".format(field, value)
@@ -159,13 +162,62 @@ class select():
                 sql += "AND " 
         db.execute(sql[:-4]) #drops trailing AND
         return(db.fetchall())
+    
+    
+    def secondtop(db, table, **kwargs):
+        """special function to get 2nd highest record id for a given field value"""
+
+        if not kwargs:
+            sql = "Select id FROM {}".format(table)
+            sql += " ORDER BY id DESC LIMIT 1,1"
+            db.execute(sql)
+
+        else:
+            sql = "SELECT * FROM {} WHERE ".format(table)
+            for field, value in kwargs.items():
+                if isinstance(value, str):
+                    sql += "{} = '{}' ".format(field, value)
+                else:
+                    sql += "{} = {} ".format(field, value)
+                sql += "AND "
+                sql = sql[:-4] + " ORDER BY id DESC LIMIT 1,1" #drop trailing 'AND '
+            db.execute(sql) 
+        result = db.fetchall()
+        if not result or not result[0]:
+            return 0
+        else:
+            return result[0].get('id')
+        return(db.fetchall())
 
 class update():
 
-    def stockqty(db, table, id, qty):
-        print(table)
-        print(id)
-        print(qty)
+    def cumfield(db, table, id, basefield, cumfield, **kwargs):
+        """updates cumulative field from a base field in a table
+            for a specific field value from a given id on"""
+
+        if isinstance(id, str):
+            id =int(id.strip(' \"\' '))
+
+        runningstockbal = 0
+        rcds =select.all(db, table)
+        for dict in rcds:
+            if kwargs.items() <= dict.items() and dict.get('id') >= id:
+                sql = """UPDATE {} 
+                        SET {} = {} 
+                        WHERE id = {} """.format(table, cumfield,
+                                                prevstockbal + dict.get(basefield), 
+                                                dict.get('id'))
+                if kwargs:
+                    sql += "AND "
+                    for field, value in kwargs.items():
+                        sql += "{} = {} AND ".format(field, value)
+                sql = sql[:-4]
+
+                print(sql)
+                runningstockbal += dict.get(basefield)
+        
+
+        print(rcds)
         pass
 
 class DataHandler():

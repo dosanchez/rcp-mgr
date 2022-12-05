@@ -672,18 +672,26 @@ def receive():
                                         }
             )   
 
+            idstckdupd =sel.secondtop(db, 'logix_de', log_sku = form.subform.log_sku.data)
+
             if  existe.chk_sgl_fld():   #chk if record exists   
                 #update existing record
                 record.update()
-                update.stockqty(db, list(listsql2.keys())[0], 
-                    list(listsql2.values())[0][0].get('id'), 
-                    list(listsql2.values())[0][0].get('log_qty'))
-                return redirect(url_for('receive'))# clears POST data
+                
+                update.cumfield(db, 'logix_de', idstckdupd, 'log_qty',
+                                'log_bal',log_sku =form.subform.log_sku.data)
+                return redirect(url_for('receive'))# clears POST data 
+                
 
             else:
                 #adds new record
+                
+
                 record.add_new()
-                return redirect(url_for('receive'))# clears POST data
+                update.cumfield(db, 'logix_de', idstckdupd, 'log_qty',
+                                'log_bal',log_sku =form.subform.log_sku.data)
+                print('sel.max_id()', sel.max_id()[0].get('parent_last_row_id'))
+                return redirect(url_for('receive'))# clears POST data 
         
         if session['delete_id']:
             dlt.id(conn, table_list[1], session['delete_id'])

@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, SelectField, HiddenField, BooleanField 
-from wtforms import Form, FormField, IntegerField, DateField, FloatField
+from wtforms import Form, FormField, IntegerField, DateField, FloatField, DecimalField
 from wtforms.validators import DataRequired, Length, NumberRange,InputRequired
 from wtforms.validators import Optional
 
@@ -21,11 +21,11 @@ class Rcv_de(Form):
     idx = HiddenField()
     log_enca = HiddenField()
     log_sku = SelectField('Sku', validators=[DataRequired()], coerce= int)
-    log_qty = FloatField('Receipt item qty', default = 0, 
+    log_qty = DecimalField('Receipt item qty', default = 0, 
                             validators=[NumberRange(min = 0), Optional()])
-    log_pric = FloatField('Receipt item total price', default = 0,
+    log_pric = DecimalField('Receipt item total price', default = 0,
                             validators=[NumberRange(min = 0), Optional()])
-    log_tax = FloatField('Tax amount', default = 0,
+    log_tax = DecimalField('Tax amount', default = 0,
                             validators=[NumberRange(min = 0), Optional()])
     log_alm = SelectField('Receiving warehouse', validators=[DataRequired()], 
                             coerce= int)
@@ -128,7 +128,7 @@ class Sku(FlaskForm):
                             validators = [FileAllowed(['jpg', 'png', 'jpeg'])])
     sku_pref = SelectField('Preferred Vendor', default = 0, coerce=int, 
                             validators=[Optional()])
-    sku_itbi = FloatField('Sales Tax',validators=[DataRequired(), 
+    sku_itbi = DecimalField('Sales Tax',validators=[DataRequired(), 
                             NumberRange(min=0, max=0.18)], default = 0.18)
     sku_vaci = FloatField('Empty container weight',validators=[InputRequired(), 
                             NumberRange(min = 0)])
@@ -145,10 +145,10 @@ class Rcv_en(FlaskForm):
     lox_datd = DateField('Reception Doc Date', validators=[DataRequired()])
     lox_nifn = StringField('receipt tax number',validators = [Optional(), 
                             Length(max=16)], render_kw={"placeholder": "optional"})
-    lox_sub = FloatField('Sub Total', default = 0,
+    lox_sub = DecimalField('Sub Total', default = 0,
                             validators=[NumberRange(min = 0)])
-    lox_disc = FloatField('Discount',validators=[NumberRange(min = 0)], 
+    lox_disc = DecimalField('Discount',validators=[NumberRange(min = 0)], 
                             default = 0)
-    lox_tax = FloatField('Total Tax',validators=[NumberRange(min = 0)], 
+    lox_tax = DecimalField('Total Tax',validators=[NumberRange(min = 0)], 
                             default = 0)
     subform = FormField(Rcv_de)

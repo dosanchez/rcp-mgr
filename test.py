@@ -15,7 +15,7 @@ db = conn.cursor(dictionary=True, buffered=True)
 
 
 #print(sel.sumfields(db, 'recet_de','rcd_qty','rcd_yiel',rcd_enca=28))
-print(sel.secondtop(db, 'logix_de', log_sku = 134))
+print(sel.all(db, 'logix_en'))
 
 
 

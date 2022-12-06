@@ -45,7 +45,7 @@ class select():
     #various queries
     
         
-    def all(db, table,**kwargs):
+    def all(db, table, **kwargs):
         """returns all records from a given table filtered when given
             ordered by id"""
 
@@ -164,61 +164,71 @@ class select():
         return(db.fetchall())
     
     
-    def secondtop(db, table, **kwargs):
-        """special function to get 2nd highest record id for a given field value"""
+    def secondfromtop(db, table, id = None, **kwargs):
+        """special function to get 2nd highest record id for a given field,
+        a top id can be given"""
+
+        sql = "Select id FROM {} WHERE ".format(table)
 
         if not kwargs:
-            sql = "Select id FROM {}".format(table)
-            sql += " ORDER BY id DESC LIMIT 1,1"
-            db.execute(sql)
-
+            if not id:
+                sql+= sql[:-7] #drop trailing 'WHERE '
+            else:
+                if isinstance(id, str):
+                    id =int(id.strip(' \"\' '))
+                sql +="id <= {}".format(id)
         else:
-            sql = "SELECT * FROM {} WHERE ".format(table)
             for field, value in kwargs.items():
                 if isinstance(value, str):
                     sql += "{} = '{}' ".format(field, value)
                 else:
                     sql += "{} = {} ".format(field, value)
                 sql += "AND "
-                sql = sql[:-4] + " ORDER BY id DESC LIMIT 1,1" #drop trailing 'AND '
-            db.execute(sql) 
+                
+                if not id:
+                    sql = sql[:-4] #drop trailing 'AND '
+                else:
+                    if isinstance(id, str):
+                        id =int(id.strip(' \"\' '))
+                    sql +="id <= {}".format(id)
+
+        sql += " ORDER BY id DESC LIMIT 1,1"
+        db.execute(sql) 
         result = db.fetchall()
+       
         if not result or not result[0]:
             return 0
         else:
             return result[0].get('id')
-        return(db.fetchall())
+
 
 class update():
 
-    def cumfield(db, table, id, basefield, cumfield, **kwargs):
+    def cumfield(conn, table, id, basefield, cumfield, **kwargs):
         """updates cumulative field from a base field in a table
             for a specific field value from a given id on"""
-
+        print('id--->',id)
         if isinstance(id, str):
             id =int(id.strip(' \"\' '))
 
         runningstockbal = 0
-        rcds =select.all(db, table)
-        for dict in rcds:
-            if kwargs.items() <= dict.items() and dict.get('id') >= id:
-                sql = """UPDATE {} 
-                        SET {} = {} 
-                        WHERE id = {} """.format(table, cumfield,
-                                                prevstockbal + dict.get(basefield), 
-                                                dict.get('id'))
-                if kwargs:
-                    sql += "AND "
-                    for field, value in kwargs.items():
-                        sql += "{} = {} AND ".format(field, value)
-                sql = sql[:-4]
-
-                print(sql)
-                runningstockbal += dict.get(basefield)
+        rcds =select.all(conn.cursor(dictionary=True, buffered=True), table)
         
+        for dict in rcds:
+            if kwargs.items() <= dict.items():
+                if dict.get('id') == id:
+                    runningstockbal = dict.get(cumfield)
+                if dict.get('id') > id:
+                    sql = """UPDATE {} 
+                            SET {} = {} 
+                            WHERE id = {} """.format(table, cumfield,
+                                                    runningstockbal + dict.get(basefield), 
+                                                    dict.get('id'))
 
-        print(rcds)
-        pass
+                    runningstockbal += dict.get(basefield)
+                    print(sql)
+                    conn.cursor(dictionary=True, buffered=True).execute(sql)
+                    conn.commit()
 
 class DataHandler():
 

@@ -672,29 +672,36 @@ def receive():
                                         }
             )   
 
-            idstckdupd =sel.secondtop(db, 'logix_de', log_sku = form.subform.log_sku.data)
-
             if  existe.chk_sgl_fld():   #chk if record exists   
-                #update existing record
-                record.update()
-                
-                update.cumfield(db, 'logix_de', idstckdupd, 'log_qty',
+                #update existing record and from previous record updates stock qty balance 
+                # from updated record on
+                idstckdupd =sel.secondfromtop(db, 'logix_de', 
+                                            id = form.subform.idx.data, 
+                                            log_sku = form.subform.log_sku.data)
+                record.update()               
+                update.cumfield(conn, 'logix_de', idstckdupd, 'log_qty',
                                 'log_bal',log_sku =form.subform.log_sku.data)
                 return redirect(url_for('receive'))# clears POST data 
                 
 
             else:
                 #adds new record
-                
-
                 record.add_new()
-                update.cumfield(db, 'logix_de', idstckdupd, 'log_qty',
+                #from previous record updates stock qty balance in new record
+                idstckdupd =sel.secondfromtop(db, 'logix_de',  
+                                            log_sku = form.subform.log_sku.data)
+                update.cumfield(conn, 'logix_de', idstckdupd, 'log_qty',
                                 'log_bal',log_sku =form.subform.log_sku.data)
-                print('sel.max_id()', sel.max_id()[0].get('parent_last_row_id'))
+                
                 return redirect(url_for('receive'))# clears POST data 
         
         if session['delete_id']:
+            dltsku = sel.all(db, 'logix_de', session['delete_id'])[0].get['log_sku']
+            idstckdupd = sel.secondfromtop(db, 'logix_de', 
+                                id = session['delect_id'], log_sku = dltsku)
             dlt.id(conn, table_list[1], session['delete_id'])
+            update.cumfield(conn, 'logix_de', idstckdupd, 'log_qty',
+                                'log_bal',log_sku = dltsku)
             return redirect(url_for('receive'))# clears POST data
 
             

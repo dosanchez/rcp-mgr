@@ -45,13 +45,13 @@ class select():
     #various queries
     
         
-    def all(db, table, **kwargs):
+    def all(db, table, orderby='id', **kwargs):
         """returns all records from a given table filtered when given
-            ordered by id"""
+            ordered asc by given field"""
 
         if not kwargs:
             sql = "Select * FROM {}".format(table)
-            sql += " ORDER BY id ASC"
+            sql += " ORDER BY {} ASC".format(orderby)
             db.execute(sql)
 
         else:
@@ -164,19 +164,19 @@ class select():
         return(db.fetchall())
     
     
-    def secondfromtop(db, table, id = None, **kwargs):
-        """special function to get 2nd highest record id for a given field,
-        a top id can be given"""
+    def secondfromtop(db, table, secondfor= 'id', max = None, **kwargs):
+        """special function to get 2nd highest record for a field (secondfor)
+        with a given filter, a top field(secondfor) can be given"""
 
-        sql = "Select id FROM {} WHERE ".format(table)
+        sql = "Select {} FROM {} WHERE ".format(secondfor, table)
 
         if not kwargs:
-            if not id:
+            if not max:
                 sql+= sql[:-7] #drop trailing 'WHERE '
             else:
-                if isinstance(id, str):
-                    id =int(id.strip(' \"\' '))
-                sql +="id <= {}".format(id)
+                if isinstance(max, str):
+                    max =int(max.strip(' \"\' '))
+                sql +="{} <= {}".format(secondfor, max)
         else:
             for field, value in kwargs.items():
                 if isinstance(value, str):
@@ -185,24 +185,49 @@ class select():
                     sql += "{} = {} ".format(field, value)
                 sql += "AND "
                 
-                if not id:
+                if not max:
                     sql = sql[:-4] #drop trailing 'AND '
                 else:
-                    if isinstance(id, str):
-                        id =int(id.strip(' \"\' '))
-                    sql +="id <= {}".format(id)
+                    if isinstance(max, str):
+                        max =int(max.strip(' \"\' '))
+                    sql +="{} <= {}".format(secondfor, max)
 
-        sql += " ORDER BY id DESC LIMIT 1,1"
+        sql += " ORDER BY {} DESC LIMIT 1,1".format(secondfor)
         db.execute(sql) 
         result = db.fetchall()
        
         if not result or not result[0]:
             return 0
         else:
-            return result[0].get('id')
+            return result[0].get(secondfor)
 
 
 class update():
+    def field(conn, table, field, value, **kwargs):
+        """updates a single field from a table with a value 
+        given a criteria"""
+        
+        sql = "UPDATE {} SET ".format(table)
+        if isinstance(value, str):
+            sql += "{} = '{}' ".format(field, value)
+        else:
+            sql += "{} = {} ".format(field, value)
+           
+        if not kwargs:
+            pass
+        else:
+            sql += "WHERE " 
+            for filter, arg in kwargs.items():
+                if isinstance(value, str):
+                    sql += "{} = '{}' ".format(filter, arg)
+                else:
+                    sql += "{} = {} ".format(filter, arg)
+                sql += "AND "
+            sql = sql[:-4] #drop trailing 'AND '
+        print(sql)
+        conn.cursor().execute(sql)
+        conn.commit()
+
 
     def cumfield(conn, table, id, basefield, cumfield, **kwargs):
         """updates cumulative field from a base field in a table

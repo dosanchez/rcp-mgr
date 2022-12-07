@@ -676,11 +676,12 @@ def receive():
                 #update existing record and from previous record updates stock qty balance 
                 # from updated record on
                 idstckdupd =sel.secondfromtop(db, 'logix_de', 
-                                            id = form.subform.idx.data, 
+                                            max = form.subform.idx.data, 
                                             log_sku = form.subform.log_sku.data)
                 record.update()               
                 update.cumfield(conn, 'logix_de', idstckdupd, 'log_qty',
-                                'log_bal',log_sku =form.subform.log_sku.data)
+                                'log_bal',log_sku =form.subform.log_sku.data,
+                                log_alm = form.subform.log_alm.data)
                 return redirect(url_for('receive'))# clears POST data 
                 
 
@@ -691,17 +692,19 @@ def receive():
                 idstckdupd =sel.secondfromtop(db, 'logix_de',  
                                             log_sku = form.subform.log_sku.data)
                 update.cumfield(conn, 'logix_de', idstckdupd, 'log_qty',
-                                'log_bal',log_sku =form.subform.log_sku.data)
+                                'log_bal',log_sku =form.subform.log_sku.data,
+                                log_alm = form.subform.log_alm.data)
                 
                 return redirect(url_for('receive'))# clears POST data 
         
         if session['delete_id']:
             dltsku = sel.all(db, 'logix_de', session['delete_id'])[0].get['log_sku']
             idstckdupd = sel.secondfromtop(db, 'logix_de', 
-                                id = session['delect_id'], log_sku = dltsku)
+                                max = session['delect_id'], log_sku = dltsku)
             dlt.id(conn, table_list[1], session['delete_id'])
             update.cumfield(conn, 'logix_de', idstckdupd, 'log_qty',
-                                'log_bal',log_sku = dltsku)
+                                'log_bal',log_sku = dltsku,
+                                log_alm = form.subform.log_alm.data)
             return redirect(url_for('receive'))# clears POST data
 
             

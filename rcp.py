@@ -7,10 +7,13 @@ from forms import Ingredient, Sku, Unitmeas, Almacen, Recet_en, Socio, Rcv_en
 import os
 
 #database connection
-conn = mysql.connector.connect(user='sql5514428', password='C3b4Xn6K4Z',
-                              host='sql5.freesqldatabase.com',
-                              database='sql5514428')
+#conn = mysql.connector.connect(user='sql5514428', password='C3b4Xn6K4Z',
+ #                             host='sql5.freesqldatabase.com',
+ #                             database='sql5514428')
 
+conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
+                              host='192.168.100.254',
+                              database='std')
 db = conn.cursor(dictionary=True, buffered=True)
 
 
@@ -680,8 +683,11 @@ def receive():
                                             log_sku = form.subform.log_sku.data)
                 record.update()               
                 update.cumfield(conn, 'logix_de', idstckdupd, 'log_qty',
-                                'log_bal',log_sku =form.subform.log_sku.data,
+                                'log_bal',log_sku = form.subform.log_sku.data,
                                 log_alm = form.subform.log_alm.data)
+                update.stockweightedcost(conn, 'logix_de',idstckdupd, 'log_pric',
+                                         'log_cost', 'log_bal', 
+                                         log_sku = form.subform.log_sku.data)
                 return redirect(url_for('receive'))# clears POST data 
                 
 

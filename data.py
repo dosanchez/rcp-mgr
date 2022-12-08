@@ -231,26 +231,55 @@ class update():
 
     def cumfield(conn, table, id, basefield, cumfield, **kwargs):
         """updates cumulative field from a base field in a table
-            for a specific field value from a given id on"""
-        print('id--->',id)
+            for a given criteria from a given id on. Returns
+            id and Cumulated value"""
         if isinstance(id, str):
             id =int(id.strip(' \"\' '))
 
-        runningstockbal = 0
+        runningbal = 0
         rcds =select.all(conn.cursor(dictionary=True, buffered=True), table)
         
         for dict in rcds:
             if kwargs.items() <= dict.items():
                 if dict.get('id') == id:
-                    runningstockbal = dict.get(cumfield)
+                    runningbal = dict.get(cumfield)
                 if dict.get('id') > id:
+                    runningbal += dict.get(basefield)
                     sql = """UPDATE {} 
                             SET {} = {} 
                             WHERE id = {} """.format(table, cumfield,
-                                                    runningstockbal + dict.get(basefield), 
+                                                    runningbal, 
                                                     dict.get('id'))
+                    
+                    conn.cursor(dictionary=True, buffered=True).execute(sql)
+                    conn.commit()
+    
+    def stockweightedcost(conn, table, id, basefield, cumfield, cumweightfield, **kwargs):
+        """Special function that calculates Stock weighted cost for each sku"""
 
-                    runningstockbal += dict.get(basefield)
+        if isinstance(id, str):
+            id =int(id.strip(' \"\' '))
+
+        runningbal = 0
+        runningweight = 0
+        rcds =select.all(conn.cursor(dictionary=True, buffered=True), table + '_norm')
+        
+        for dict in rcds:
+            if kwargs.items() <= dict.items():
+                if dict.get('id') == id:
+                    runningbal = dict.get(cumfield)
+                    runningweight = dict.get(cumweightfield)
+
+                if dict.get('id') > id:
+
+                    runningbal = (runningweight*runningbal + dict.get(basefield))/ dict.get(cumweightfield)
+                    runningweight = dict.get(cumweightfield)
+                    sql = """UPDATE {} 
+                            SET {} = {} 
+                            WHERE id = {} """.format(table, cumfield,
+                                                    runningbal, 
+                                                    dict.get('id'))
+                    
                     print(sql)
                     conn.cursor(dictionary=True, buffered=True).execute(sql)
                     conn.commit()

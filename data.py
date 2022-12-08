@@ -44,7 +44,13 @@ class select():
     
     #various queries
     
+    def bom(db, table, flag= 'rct_rece', **kwargs):
         
+        bom = select.all(db, table)
+        if not bom =[] or and not bom[{}]:
+            while 
+        
+
     def all(db, table, orderby='id', **kwargs):
         """returns all records from a given table filtered when given
             ordered asc by given field"""

@@ -7,13 +7,13 @@ from forms import Ingredient, Sku, Unitmeas, Almacen, Recet_en, Socio, Rcv_en
 import os
 
 #database connection
-#conn = mysql.connector.connect(user='sql5514428', password='C3b4Xn6K4Z',
- #                             host='sql5.freesqldatabase.com',
- #                             database='sql5514428')
+conn = mysql.connector.connect(user='sql5514428', password='C3b4Xn6K4Z',
+                             host='sql5.freesqldatabase.com',
+                             database='sql5514428')
 
-conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
-                              host='192.168.100.254',
-                              database='std')
+#conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
+#                              host='192.168.100.254',
+#                              database='std')
 db = conn.cursor(dictionary=True, buffered=True)
 
 

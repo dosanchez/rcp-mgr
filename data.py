@@ -47,8 +47,8 @@ class select():
     def bom(db, table, flag= 'rct_rece', **kwargs):
         
         bom = select.all(db, table)
-        if not bom =[] or and not bom[{}]:
-            while 
+        if not bom == [] and not bom[{}]:
+            pass
         
 
     def all(db, table, orderby='id', **kwargs):

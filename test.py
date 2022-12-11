@@ -15,8 +15,7 @@ db = conn.cursor(dictionary=True, buffered=True)
 
 
 #print(sel.sumfields(db, 'recet_de','rcd_qty','rcd_yiel',rcd_enca=28))
-print(sel.all(db, 'logix_de' +'_norm'))
-
+sel.bom(db)
 
 
 

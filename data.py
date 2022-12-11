@@ -44,11 +44,43 @@ class select():
     
     #various queries
     
-    def bom(db, table, flag= 'rct_rece', **kwargs):
-        
-        bom = select.all(db, table)
-        if not bom == [] and not bom[{}]:
-            pass
+    def bom(db):
+        sql = """SELECT  chld.rcd_ing AS 'ingr', chld.rcd_qty,
+                        chld.rcd_unit, chld.rcd_yiel, chld.rct_rece
+                FROM recet_en AS prnt
+                LEFT JOIN (SELECT subprnt.*, subchld.rct_rece  
+                            FROM recet_de AS subprnt
+          	                LEFT JOIN recet_en AS subchld
+          	                ON subprnt.rcd_ing = subchld.id) AS chld
+                ON prnt.id = chld.rcd_enca
+                WHERE prnt.id IN (28)"""
+        db.execute(sql)
+        bom = db.fetchall()
+        print(bom)
+        if not bom == [] and not bom == [{}]:
+            pos = 0
+            for rcd in bom:
+                if {'rct_rece':1}.items() < rcd.items():
+                    sql = """SELECT chld.rcd_ing AS 'ingr', chld.rcd_qty,
+                                    chld.rcd_unit, chld.rcd_yiel, chld.rct_rece
+                            FROM recet_en AS prnt
+                            LEFT JOIN (SELECT subprnt.*, subchld.rct_rece  
+                                        FROM recet_de AS subprnt
+                                        LEFT JOIN recet_en AS subchld
+                                        ON subprnt.rcd_ing = subchld.id) AS chld
+                            ON prnt.id = chld.rcd_enca
+                            WHERE prnt.id = {}""".format(rcd.get('ingr'))
+                    db.execute(sql)
+                    xpldingr = db.fetchall()
+                    if not xpldingr == [] and not xpldingr == [{}]:
+                        for addedlines in xpldingr:
+                            bom.append(addedlines)
+                        del bom[pos]
+                pos += 1
+                    
+        print(bom)
+
+                    
         
 
     def all(db, table, orderby='id', **kwargs):

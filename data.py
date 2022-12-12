@@ -46,14 +46,23 @@ class select():
     
     def bom(db):
         sql = """SELECT  chld.rcd_ing AS 'ingr', chld.rcd_qty,
-                        chld.rcd_unit, chld.rcd_yiel, chld.rct_rece
+                        chld.rcd_unit, chld.rcd_yiel, prnt.id, chld.rct_rece
                 FROM recet_en AS prnt
-                LEFT JOIN (SELECT subprnt.*, subchld.rct_rece  
-                            FROM recet_de AS subprnt
+                LEFT JOIN (SELECT rcd_ing, rcd_qty, rcd_unit, rcd_yiel, rcd_enca, 
+                                subchld.rct_rece  
+                            FROM (  SELECT rcd_ing, rcd_qty * uni_conv AS rcd_qty, 
+                                        CASE
+                                            WHEN rcd_unit = 'unit' THEN rcd_unit
+                                            ELSE uni_un_t
+                                        END AS rcd_unit, 
+                                        rcd_yiel, rcd_enca
+                                    FROM recet_de
+                                    LEFT JOIN unitmeas
+                                    ON recet_de.rcd_unit = unitmeas.id) AS subprnt
           	                LEFT JOIN recet_en AS subchld
           	                ON subprnt.rcd_ing = subchld.id) AS chld
                 ON prnt.id = chld.rcd_enca
-                WHERE prnt.id IN (28)"""
+                WHERE prnt.id IN (34)"""
         db.execute(sql)
         bom = db.fetchall()
         print(bom)
@@ -62,10 +71,19 @@ class select():
             for rcd in bom:
                 if {'rct_rece':1}.items() < rcd.items():
                     sql = """SELECT chld.rcd_ing AS 'ingr', chld.rcd_qty,
-                                    chld.rcd_unit, chld.rcd_yiel, chld.rct_rece
+                                    chld.rcd_unit, chld.rcd_yiel, prnt.id, chld.rct_rece
                             FROM recet_en AS prnt
-                            LEFT JOIN (SELECT subprnt.*, subchld.rct_rece  
-                                        FROM recet_de AS subprnt
+                            LEFT JOIN (SELECT rcd_ing, rcd_qty, rcd_unit, rcd_yiel, 
+                                        rcd_enca, subchld.rct_rece  
+                                        FROM    (SELECT rcd_ing, rcd_qty * uni_conv AS rcd_qty, 
+                                                        CASE
+                                                            WHEN rcd_unit = 'unit' THEN rcd_unit
+                                                            ELSE uni_un_t
+                                                        END AS rcd_unit, 
+                                                        rcd_yiel, rcd_enca
+                                                FROM recet_de
+                                                LEFT JOIN unitmeas
+                                                ON recet_de.rcd_unit = unitmeas.id) AS subprnt
                                         LEFT JOIN recet_en AS subchld
                                         ON subprnt.rcd_ing = subchld.id) AS chld
                             ON prnt.id = chld.rcd_enca

@@ -27,5 +27,5 @@ an exception is the ingredient and recipe forms which share same sql table
 
 elifs in htmls are used for particular formatting of certain fields else clause is used for cases in general
 
-
+unitmeas table must have the following records 1g = 1g, 1 ml = 1ml and 1 unit = 1 ml
 

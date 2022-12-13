@@ -44,7 +44,11 @@ class select():
     
     #various queries
     
-    def bom(db):
+    
+    def bom(db, recipes= None):
+        """special function to sum up all ingredient quantities needed for one, a group
+        or all recipes"""
+        unit_id = select.all(db, 'unitmeas', uni_symb = 'unit')[0].get('id')
         sql = """SELECT  chld.rcd_ing AS 'ingr', chld.rcd_qty,
                         chld.rcd_unit, chld.rcd_yiel, prnt.id, chld.rct_rece
                 FROM recet_en AS prnt
@@ -52,7 +56,7 @@ class select():
                                 subchld.rct_rece  
                             FROM (  SELECT rcd_ing, rcd_qty * uni_conv AS rcd_qty, 
                                         CASE
-                                            WHEN rcd_unit = 'unit' THEN rcd_unit
+                                            WHEN rcd_unit = {} THEN 'unit'
                                             ELSE uni_un_t
                                         END AS rcd_unit, 
                                         rcd_yiel, rcd_enca
@@ -61,8 +65,15 @@ class select():
                                     ON recet_de.rcd_unit = unitmeas.id) AS subprnt
           	                LEFT JOIN recet_en AS subchld
           	                ON subprnt.rcd_ing = subchld.id) AS chld
-                ON prnt.id = chld.rcd_enca
-                WHERE prnt.id IN (34)"""
+                ON prnt.id = chld.rcd_enca""".format(unit_id)
+        if not recipes:
+            sql += ' WHERE prnt.rct_rece = 1'
+        else:
+            sql += ' WHERE prnt.id IN ('
+            for recipe in recipes:
+                sql += '{}, '.format(recipes)
+            sql = sql[:-2] + ')'
+
         db.execute(sql)
         bom = db.fetchall()
         print(bom)
@@ -77,7 +88,7 @@ class select():
                                         rcd_enca, subchld.rct_rece  
                                         FROM    (SELECT rcd_ing, rcd_qty * uni_conv AS rcd_qty, 
                                                         CASE
-                                                            WHEN rcd_unit = 'unit' THEN rcd_unit
+                                                            WHEN rcd_unit = {} THEN 'unit'
                                                             ELSE uni_un_t
                                                         END AS rcd_unit, 
                                                         rcd_yiel, rcd_enca
@@ -87,7 +98,7 @@ class select():
                                         LEFT JOIN recet_en AS subchld
                                         ON subprnt.rcd_ing = subchld.id) AS chld
                             ON prnt.id = chld.rcd_enca
-                            WHERE prnt.id = {}""".format(rcd.get('ingr'))
+                            WHERE prnt.id = {}""".format(unit_id, rcd.get('ingr'))
                     db.execute(sql)
                     xpldingr = db.fetchall()
                     if not xpldingr == [] and not xpldingr == [{}]:

@@ -1,4 +1,3 @@
-import datetime
 import mysql.connector
 from flask import Flask, render_template, session, request, redirect, url_for
 from data import DataHandler as dth, select as sel, dlt, update, save_file
@@ -7,13 +6,13 @@ from forms import Ingredient, Sku, Unitmeas, Almacen, Recet_en, Socio, Rcv_en
 import os
 
 #database connection
-conn = mysql.connector.connect(user='sql5514428', password='C3b4Xn6K4Z',
-                             host='sql5.freesqldatabase.com',
-                             database='sql5514428')
+#conn = mysql.connector.connect(user='sql5514428', password='C3b4Xn6K4Z',
+#                             host='sql5.freesqldatabase.com',
+#                             database='sql5514428')
 
-##conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
-##                              host='192.168.100.254',
-##                              database='std')
+conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
+                               host='192.168.100.254',
+                               database='rct')
 db = conn.cursor(dictionary=True, buffered=True)
 
 
@@ -214,7 +213,17 @@ def almacen():
 def ingredient():
     form = Ingredient()
     table_list = ['recet_en']
+    if not session.get('denu_1_choices'):
         
+        form.rct_dens_1.render_kw = render_kw={"placeholder": "Addl. Density", 
+                                        "disabled" : "true"}
+        form.rct_denu_1.render_kw = {"placeholder": "Addl. Density UM", 
+                                        "disabled" : "true"}
+    else:
+        form.rct_denu_1.choices = session['denu_1_choices']
+        form.rct_dens_1.render_kw = render_kw={"placeholder": "Addl. Density"}
+        form.rct_denu_1.render_kw = {"placeholder": "Addl. Density UM"}
+
     #if request.form.get('nav') in None --> its a redirect 
     #--> its either an update, new or deleted record hence not necesarilly 
     #last record should be displayed 
@@ -238,6 +247,8 @@ def ingredient():
                                             'rct_cosc':form.rct_cosc.data,
                                             'rct_dens':form.rct_dens.data,
                                             'rct_denu':form.rct_denu.data,
+                                            'rct_dens_1':form.rct_dens_1.data,
+                                            'rct_denu_1':form.rct_denu_1.data,
                                             'rct_ebld':form.rct_ebld.data  
                                                     }]
                                         })
@@ -254,8 +265,15 @@ def ingredient():
             if  existe.chk_sgl_fld():   #chk if record exists   
                 #update existing record
                 record.update()
-                return redirect(url_for('ingredient'))# clears POST data
 
+                #checks if additional density info is needed in which case
+                #determine which ones, activates addl fields in form to update,
+                #checks in table that addl info exists and warns user
+                missdensUM = sel.missingdens(conn, ingr = form.id.data)
+                
+                session['denu_1_choices'] = missdensUM
+
+                return redirect(url_for('ingredient'))# clears POST data
             else:
                 #adds new record
                 session['curr_rcd_' + type(form).__name__] = None 
@@ -265,8 +283,9 @@ def ingredient():
 
 
     records, relation = navigate_to(nav_button, conn, form, table_list)
+
     column_names =[['Registered Ingredients',['', 'Ingredient', 'Costo Real',
-                    'Costo Std', 'Density', 'Densi UM', 'Enabled']]]
+                    'Costo Std', 'Density', 'Densi UM','addl. Density', 'addl. Densi UM', 'Enabled']]]
     
     return render_template ('ingredient.html', form = form, records = records,
                             column_names = column_names)
@@ -505,6 +524,7 @@ def sku():
 
                 #update existing record
                 record.update()
+
                 return redirect(url_for('sku'))# clears POST data
 
             else:

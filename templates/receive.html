@@ -239,13 +239,11 @@
 {% block script %}
   {{ super() }}
   <script>
-    console.log('script pag');
+
     document.getElementById("subform-log_wtax").checked = Boolean({{session['flexSwitch']}});
     document.getElementById("Sub-total").value = {{session['Sub-total']}};
     document.getElementById("Total").value = {{session['Total']}};
-    console.log('cargué no son iguales');
-    console.log(document.getElementById("lox_vend").value);
-    console.log({{session['lox_vend']}});
+
     if (document.getElementById("lox_vend").value != {{session['lox_vend']}}){
       document.getElementById("updaddbtn").disabled = true;
       document.getElementById("subnav").disabled = true;

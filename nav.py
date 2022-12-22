@@ -41,21 +41,23 @@ def navigate_to(nav_button, conn, form, table_list):
 
             #Ingredient and recipe forms share the same SQL Table == recet_en, hence need to discriminate
             if type(form).__name__ == 'Ingredient':
+
                 rcds.append(sel.all(db, table_list[counter], rct_rece = 0))
                 res = sel.max_id(db, table_list[counter], rct_rece = 0)
+
             elif type(form).__name__ == 'Recet_en':
                 rcds.append(sel.all(db, table_list[counter], rct_rece = 1))
                 res = sel.max_id(db, table_list[counter], rct_rece = 1) 
             else:
                 rcds.append(sel.all(db, table_list[counter]))
                 res = sel.max_id(db, table_list[counter])
-
+            
             session['parent_last_row_id'] = res[0].get('parent_last_row_id')
             id = form.id.data
 
-
             pos, regd_id = nav_pos(rcds[counter], id, nav_button)
             counter += 1
+
         #visualize the target record on main form (if any rcd)
         if not len(regd_id):
             counter += 1

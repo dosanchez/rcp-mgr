@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, SelectField, HiddenField, BooleanField 
 from wtforms import Form, FormField, IntegerField, DateField, FloatField, DecimalField
-from wtforms.validators import DataRequired, Length, NumberRange,InputRequired
+from wtforms.validators import DataRequired, Length, NumberRange, InputRequired
 from wtforms.validators import Optional
 
 class Recet_de(Form):
@@ -60,12 +60,17 @@ class Ingredient(FlaskForm):
     rct_name = StringField('Ingredient', validators=[DataRequired(),
                             Length(max=16)], 
                             render_kw={"placeholder": "e.g. Paprika"})
-    rct_cost = FloatField('Actual Cost', render_kw = {'disabled':''}, default = 0)
-    rct_cosc = FloatField('Standard Cost', render_kw = {'disabled':''}, default = 0)
-    rct_dens = FloatField('Ingredient density',validators=[DataRequired()], 
-                            render_kw={"placeholder": "Density"}, default = 1)
+    rct_cost = DecimalField('Actual Cost', render_kw = {'disabled':''}, default = 0)
+    rct_cosc = DecimalField('Standard Cost', render_kw = {'disabled':''}, default = 0)
+    rct_dens = DecimalField('Ingredient density',validators=[DataRequired(),
+                             NumberRange(min=0)], render_kw={"placeholder": "Density"},
+                            default = 1)
     rct_denu = SelectField('Density UM', validators=[DataRequired()], 
-                            choices=['g/ml','g/unit'], default ='g/ml')
+                            choices=['g/ml','g/unit','ml/unit'], default ='g/ml')
+    rct_dens_1 = DecimalField('Addl. Ingr. density',validators=[Optional(),
+                             NumberRange(min=0)])
+    rct_denu_1 = SelectField('Addl. Density UM', validators=[Optional()], 
+                            choices=[None])                       
     rct_ebld = BooleanField('Enabled')
 
 class Recet_en(FlaskForm):
@@ -118,9 +123,9 @@ class Sku(FlaskForm):
                             Length(max=16)], 
                             render_kw={"placeholder": "e.g. Heinz Tomato Soup"})
     sku_ingr = SelectField('Rel Recipe/ingr', coerce=int) 
-    sku_cont = FloatField('Label weight',validators=[NumberRange(min = 0), 
+    sku_cont = DecimalField('Label content',validators=[NumberRange(min = 0), 
                             InputRequired()], default=0)
-    sku_unit = SelectField('Unit of measure', validators=[InputRequired()], 
+    sku_unit = SelectField('Unit of measure of content', validators=[InputRequired()], 
                             coerce = int)
     sku_barc = StringField('Barcode', validators = [Length(max=16)],
                             render_kw={"placeholder": "insert barcode here"})
@@ -130,7 +135,7 @@ class Sku(FlaskForm):
                             validators=[Optional()])
     sku_itbi = DecimalField('Sales Tax',validators=[DataRequired(), 
                             NumberRange(min=0, max=0.18)], default = 0.18)
-    sku_vaci = FloatField('Empty container weight',validators=[InputRequired(), 
+    sku_vaci = DecimalField('Empty container weight',validators=[InputRequired(), 
                             NumberRange(min = 0)])
     sku_v_unit = SelectField('Unit of measure',validators=[InputRequired()],
                             coerce = int)

@@ -65,6 +65,14 @@
         {{ form.rct_denu.label(class="form-label") }}
         {{ form.rct_denu(class="form-select", value = form.rct_denu.data) }}
       </div>
+      <div class="col-sm-3 pt-3">
+        {{ form.rct_dens_1.label(class="form-label") }}
+        {{ form.rct_dens_1(class="form-control", value = form.rct_dens_1.data) }}
+      </div>
+      <div class="col-sm-3 pt-3">
+        {{ form.rct_denu_1.label(class="form-label") }}
+        {{ form.rct_denu_1(class="form-select", value = form.rct_denu_1.data) }}
+      </div>
     </div>
   </form>
 
@@ -113,8 +121,8 @@
                 <td style="text-align: center;"><i class="fa-solid fa-check"></i></td>
               {% elif key == 'rct_ebld' and not value %}<!-- display checked icon if disabled-->
                 <td style="text-align: center;"><i class="fa-solid fa-xmark"></i></td>
-              {% elif key =='rct_rece' or key =='rct_serv' or key =='rct_yiel' or key =='rct_unit' %}
-              <!-- ^ hides on recipe record flag and not wanted single ingredient yield--> 
+              {% elif key =='rct_rece' or key =='rct_serv' or key =='rct_yiel' or key =='rct_unit' or key =='addl_ebld' or key == 'rct_misd_dens' %}
+              <!-- ^ not needed in visualization--> 
                 <td hidden></td>
               {% else %}
                 <td style="text-align: center;">{{ value }}</td> 
@@ -133,12 +141,13 @@
 {% block script %}
 {{ super() }}
   <script>
-    console.log('newsub'); 
     function Newrecord() {
         console.log('newrecord'); 
         document.getElementById("rct_name").value = null;
         document.getElementById("rct_dens").value = null;
         document.getElementById("rct_denu").value = null;
+        document.getElementById("rct_dens_1").value = null;
+        document.getElementById("rct_denu_1").value = null;
         document.getElementById("rct_cost").value = null;
         document.getElementById("rct_cosc").value = null;
         document.getElementById("rct_ebld").value = "checked";
@@ -151,6 +160,8 @@
         document.getElementById("rct_cost").value = {{session['rct_cost']}};
         document.getElementById("rct_dens").value = {{session['rct_dens']}};
         document.getElementById("rct_denu").value = '{{session['rct_denu']}}';
+        document.getElementById("rct_dens_1").value = {{'null' if not session['rct_dens_1'] else session['rct_dens_1']}};
+        document.getElementById("rct_denu_1").value = '{{'' if not session['rct_denu_1'] else session['rct_denu_1']}}';
         document.getElementById("rct_ebld").value = '{{session['rct_ebld']}}';
         document.getElementById("id").value = {{session['id']}};
         document.getElementById("submit_button").value = NAV;

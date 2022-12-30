@@ -1,9 +1,11 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, SelectField, HiddenField, BooleanField 
+from flask import flash
+from wtforms import StringField, SelectField, HiddenField, BooleanField
 from wtforms import Form, FormField, IntegerField, DateField, FloatField, DecimalField
 from wtforms.validators import DataRequired, Length, NumberRange, InputRequired
-from wtforms.validators import Optional
+from wtforms.validators import Optional, ValidationError
+
 
 class Recet_de(Form):
     """wtform for recipe form details"""
@@ -62,16 +64,28 @@ class Ingredient(FlaskForm):
                             render_kw={"placeholder": "e.g. Paprika"})
     rct_cost = DecimalField('Actual Cost', render_kw = {'disabled':''}, default = 0)
     rct_cosc = DecimalField('Standard Cost', render_kw = {'disabled':''}, default = 0)
-    rct_dens = DecimalField('Ingredient density',validators=[DataRequired(),
-                             NumberRange(min=0)], render_kw={"placeholder": "Density"},
-                            default = 1)
-    rct_denu = SelectField('Density UM', validators=[DataRequired()], 
-                            choices=['g/ml','g/unit','ml/unit'], default ='g/ml')
-    rct_dens_1 = DecimalField('Addl. Ingr. density',validators=[Optional(),
-                             NumberRange(min=0)])
-    rct_denu_1 = SelectField('Addl. Density UM', validators=[Optional()], 
-                            choices=[None])                       
+    rct_dens = DecimalField('Ingredient density', validators=[Optional(),
+                             NumberRange(min=0)], render_kw={"placeholder": "Density"})
+    
+    rct_denu = SelectField('Density UM', validators=[Optional()], 
+                            choices=['','g/ml','g/unit','ml/unit'])
+    rct_dens_1 = DecimalField('Addl Ingr density',validators=[Optional(),
+                             NumberRange(min=0)], render_kw={"placeholder": "Addl Density"})
+    rct_denu_1 = SelectField('Density UM', validators=[Optional()], 
+                            choices=['','g/ml','g/unit','ml/unit'])                      
     rct_ebld = BooleanField('Enabled')
+
+    def validate_rct_dens(form, field):
+        if bool(field.data) ^ bool(form.rct_denu.data) :
+            raise ValidationError('Both Ingr Density and Density UM should be complete or blank')
+        if bool(form.rct_dens_1.data) ^ bool(form.rct_denu_1.data) :
+            raise ValidationError('Both Addl. Ingr Density and Addl. Density UM should be complete or blank')
+        if field.data < 0 or form.rct_dens_1.data < 0:
+            raise ValidationError('Ingr Density should be a positive number')
+        if field.data == form.rct_dens_1.data and not field.data == None:
+            raise ValidationError('Density values must be different')
+        if form.rct_denu.data == form.rct_denu_1.data and  not form.rct_denu.data == None:
+            raise ValidationError('Density UM values must be different')
 
 class Recet_en(FlaskForm):
     """wtform for recipe form header"""
@@ -157,3 +171,4 @@ class Rcv_en(FlaskForm):
     lox_tax = DecimalField('Total Tax',validators=[NumberRange(min = 0)], 
                             default = 0)
     subform = FormField(Rcv_de)
+

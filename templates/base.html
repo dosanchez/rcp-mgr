@@ -75,14 +75,19 @@
         </div>
       </div>
     </header>
-    <script>console.log('script de header'); </script>
     <div class="container p-5 my-5 border rounded" >
-      {% for message in get_flashed_messages() %}
-      <div class="alert alert-success alert-dismissible fade show">
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        <strong>Success! </strong> {{ message}}
-      </div>
-      {% endfor %}
+      {% with messages = get_flashed_messages(category_filter=["error"]) %}
+        {% if messages %}
+        <div class="alert-message block-message error">
+          <a class="close" href="#">×</a>
+          <ul>
+            {%- for msg in messages %}
+            <li>{{ msg }}</li>
+            {% endfor -%}
+          </ul>
+        </div>
+        {% endif %}
+      {% endwith %}
       {% block form %}
       {% endblock form %}
     </div>

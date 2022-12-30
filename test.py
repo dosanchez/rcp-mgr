@@ -13,11 +13,33 @@ conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
                                database='rct')
 db = conn.cursor(dictionary= True, buffered=True)
 
-a,b = sel.missingdens(db, sku = 43)
-print (a,b)
+a = {"g/unit": Decimal(1.02), "unit/g": Decimal(0.9803921568627451), 
+    "ml/unit": Decimal(1.09), "unit/ml": Decimal(0.9174311926605505), 
+    "g/ml": Decimal(0.9357798165137615), "ml/g": Decimal(1.0686274509803921)}
 
-# print(not a)
 
+b = sel.UMconv(db,1,'g','unit', matrix=a)
+print(b)
+# if 'd' in a.keys():
+#     print('si')
+# else:
+#     print('no')
 
-# print(sel.all(db, 'recet_en', rct_rece =0))
-# conn.close()
+# sel.chkmissingdens(conn, ingr = 64)
+
+# sql ="""WITH unit AS (
+
+#                         SELECT sku_ingr, uni_un_t
+#                         FROM sku
+#                         LEFT JOIN unitmeas
+#                         ON sku_unit = unitmeas.id)
+
+#                     SELECT DISTINCT uni_un_t AS unit, rct_dens AS dens, rct_denu AS denu, 
+#                                 rct_dens_1 AS dens1, rct_denu_1 AS denu1, rct_name, recet_en.id
+#                     FROM recet_en
+#                     LEFT JOIN unit
+#                     ON recet_en.id = sku_ingr
+#                     WHERE recet_en.id = 32"""
+# db.execute(sql)
+# a= db.fetchall()
+# print(a)

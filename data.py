@@ -45,36 +45,64 @@ class select():
     """various query select functions """
     
     #various queries
+    def UMconv(db, qty, baseUM, targetUM, sku=None, ingr= None, matrix=None):
+        """returns the value in a target unit of Measure of a qty with
+         a base unit of measure, given a sku, ingredient or a conversion matrix"""
+        
+        if sku:
+            pass
+        elif ingr:
+            pass
+        elif matrix:
+            print(targetUM, baseUM)
+            return(qty*matrix.get(targetUM + "/" + baseUM))
+        return 0
 
-    def missingdens(conn, sku= None, ingr = None):
-        """returns if a density value is missing and which one."""
+    def chkmissingdens(conn, sku= None, ingr = None):
+        """returns if a density value is missing for a ingredient and which one."""
+        
+        #checks if addl density info is needed 
         if not sku and not ingr:
-            return([None])
-
+            return
+        print(sku, ingr)
         if sku:
             sql = """WITH unit AS (
-                        SELECT sku.id, sku_ingr, sku_unit, uni_un_t
-                        FROM sku
-                        LEFT JOIN unitmeas
-                        ON sku_unit = unitmeas.id)
+                            WITH ingred AS (
+                                    SELECT sku_ingr AS input
+                                    FROM sku
+                                    WHERE sku.id = {}
+                                            ),
 
-                    SELECT uni_un_t AS unit, rct_denu AS dens1, 
-                            rct_denu_1 AS dens2, rct_name, recet_en.id
-                    FROM unit
-                    LEFT JOIN recet_en
-                    ON sku_ingr = recet_en.id
-                    WHERE unit.id = {}""".format(sku)
+                                subunit AS (
+                                    SELECT sku.id, sku_ingr, uni_un_t
+                                    FROM sku
+                                    LEFT JOIN unitmeas
+                                    ON sku_unit = unitmeas.id
+                                            )
+
+                            SELECT id as sku, sku_ingr, uni_un_t
+                            FROM ingred
+                            LEFT JOIN subunit
+                            ON input = sku_ingr
+                                    )
+                    SELECT uni_un_t AS unit, rct_dens AS dens, rct_denu AS denu, 
+                        rct_dens_1 AS dens1, rct_denu_1 AS denu1, sku, rct_name, 
+                        id
+                    FROM recet_en
+                    INNER JOIN unit
+                    ON id = sku_ingr""".format(sku)
 
         if ingr:
             sql = """WITH unit AS (
 
-                        SELECT sku_ingr, uni_un_t
+                        SELECT sku.id as sku, sku_ingr, uni_un_t
                         FROM sku
                         LEFT JOIN unitmeas
                         ON sku_unit = unitmeas.id)
 
-                    SELECT DISTINCT uni_un_t AS unit, rct_denu AS dens1, 
-                                rct_denu_1 AS dens2, rct_name, recet_en.id
+                    SELECT DISTINCT uni_un_t AS unit, rct_dens AS dens, 
+                                rct_denu AS denu, rct_dens_1 AS dens1, 
+                                rct_denu_1 AS denu1, sku, rct_name, recet_en.id
                     FROM recet_en
                     LEFT JOIN unit
                     ON recet_en.id = sku_ingr
@@ -83,39 +111,82 @@ class select():
         db = conn.cursor(dictionary= True, buffered=True)
         db.execute(sql)
         results = db.fetchall()
+        skus =[]
         set1 = set()
         set2 = set()
-
+        print('results--->', results)
         for rcd in results:
+            if not rcd.get('sku') == None
+                skus.append(rcd.get('sku'))
             set1.add(rcd.get('unit'))
-            set2.update(rcd.get('dens1').rsplit("/"))
+            if rcd.get('denu'):
+                set2.update(rcd.get('denu').rsplit("/"))
+            if rcd.get('denu1'):
+                set2.update(rcd.get('denu1').rsplit("/"))
             ingrname = rcd.get('rct_name')
             ingr = rcd.get('id')
-            if not rcd.get('dens1'):
-                set2.update(rcd.get('dens2').rsplit("/"))
 
         missing = set1.difference(set2)
-
+        print('missing-->', missing)
         if not missing:
-            missunit = missdensUM = None
+            missunit = None
         else:
             missunit = list(missing)[0]
-            missdensUM = [i for i in ['g/ml', 'g/unit', 'ml/unit'] if missunit in i]
             
-
+            
+        #updates necessary fields
         if not missunit:
-            pass
+            #since no density missing let's make a conversion matrix
+            mtrx={}
+            densinfo = results[0]
+            if not densinfo.get('dens') == None :
+                mtrx[densinfo.get('denu')] = float(densinfo.get('dens'))
+                mtrx[densinfo.get('denu').split("/")[1]+'/'+ densinfo.get('denu').split("/")[0]] = float(1 / densinfo.get('dens'))
 
-        else:
-            sql ="""UPDATE recet_en 
-                    SET addl_ebld = 1, rct_misd_dens = {}
-                    WHERE id = {}""".format(json.dumps(missdensUM) ,ingr)
+            if not densinfo.get('dens1') == None :
+                mtrx[densinfo.get('denu1')] = float(densinfo.get('dens1'))
+                mtrx[densinfo.get('denu1').split("/")[1]+'/'+ densinfo.get('denu1').split("/")[0]] = float(1 / densinfo.get('dens1'))
+            if len(mtrx) > 2:
+                if not 'g/ml' in mtrx.keys():
+                    mtrx['g/ml'] = float(mtrx.get('g/unit') * mtrx.get('unit/ml'))
+                    mtrx['ml/g'] = float(1 / mtrx.get('g/ml'))
+                
+                elif not 'g/unit' in mtrx.keys():
+                    mtrx['g/unit'] = float(mtrx.get('g/ml') * mtrx.get('ml/unit'))
+                    mtrx['unit/g'] = float(1 / mtrx.get('g/unit'))
+                else:
+                    mtrx['ml/unit'] = float(mtrx.get('ml/g') * mtrx.get('g/unit'))
+                    mtrx['unit/ml'] = float(1 / mtrx.get('ml/unit'))
+
+            sql = """UPDATE recet_en
+                    SET rct_conv_mtrx = '{}',
+                    rct_misd_dens = NULL
+                    WHERE id = {}""".format(json.dumps(mtrx), ingr)
             db.execute(sql)
             conn.commit()
-            session['denu_1_choices'] = missdensUM
-            flash ("""Due to the recent update, additional density info is needed in {} under the ingredients menu. 
-if not updated, cost calulations may be incorrect. """.format(ingrname), 'warning')
-        return missdensUM
+
+        else:
+            #we need more info, lets write down what density 
+            # we need to mke the conversion matrix
+            missdensUM = [i for i in ['g/ml', 'g/unit', 'ml/unit'] if missunit in i]
+            sql ="""UPDATE recet_en 
+                    SET rct_misd_dens = '{}'
+                    WHERE id = {}""".format(json.dumps(missdensUM) ,ingr)
+            print('missdensUM-->', missdensUM)
+            db.execute(sql)
+            conn.commit()
+
+        flash ("""Due to the recent update, additional density info is needed in {} under the ingredients menu. 
+if not updated, recipe cost and MRP calculations will no be possible. """.format(ingrname), 'warning')
+
+        #lets start with ingredient cost calculation
+        #target Unit of Measure for ingredient cost
+        costUM = list(mtrx.keys())[0].split("/")[0]
+        #cost of ingredient calc and update in recet_en
+        
+
+
+        return
 
 
     def recipesforingr(db, ingr):
@@ -223,15 +294,15 @@ if not updated, cost calulations may be incorrect. """.format(ingrname), 'warnin
             db.execute(sql)
 
         else:
-            sql = "SELECT * FROM {} WHERE ".format(table)
-            for field, value in kwargs.items():
-                if isinstance(value, str):
-                    sql += "{} = '{}' ".format(field, value)
+            sql = "SELECT {} FROM {} WHERE ".format(field, table)
+            for fld, val in kwargs.items():
+                if isinstance(val, str):
+                    sql += "{} = '{}' ".format(fld, val)
                 else:
-                    sql += "{} = {} ".format(field, value)
+                    sql += "{} = {} ".format(fld, val)
                 sql += "AND "
                 sql = sql[:-4] + " ORDER BY id ASC" #drop trailing 'AND '
-            db.execute(sql) 
+            db.execute(sql)
 
         return(db.fetchall())
 
@@ -564,9 +635,9 @@ class DataHandler():
                 sql +=value_str + ')'
                 sql = sql.replace(", )", ")") #removes trailing ,
                 db.execute(sql)
-
+                self.idadded = db.lastrowid
                 self.conn.commit()
-  
+                
         
         if counter > 1:
             flash('Records added!')

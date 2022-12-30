@@ -4,6 +4,7 @@ from data import DataHandler as dth, select as sel, dlt, update, save_file
 from nav import navigate_to
 from forms import Ingredient, Sku, Unitmeas, Almacen, Recet_en, Socio, Rcv_en
 import os
+import json
 
 #database connection
 #conn = mysql.connector.connect(user='sql5514428', password='C3b4Xn6K4Z',
@@ -213,17 +214,6 @@ def almacen():
 def ingredient():
     form = Ingredient()
     table_list = ['recet_en']
-    if not session.get('denu_1_choices'):
-        
-        form.rct_dens_1.render_kw = render_kw={"placeholder": "Addl. Density", 
-                                        "disabled" : "true"}
-        form.rct_denu_1.render_kw = {"placeholder": "Addl. Density UM", 
-                                        "disabled" : "true"}
-    else:
-        form.rct_denu_1.choices = session['denu_1_choices']
-        form.rct_dens_1.render_kw = render_kw={"placeholder": "Addl. Density"}
-        form.rct_denu_1.render_kw = {"placeholder": "Addl. Density UM"}
-
     #if request.form.get('nav') in None --> its a redirect 
     #--> its either an update, new or deleted record hence not necesarilly 
     #last record should be displayed 
@@ -231,14 +221,15 @@ def ingredient():
         nav_button =  request.form.get('nav') #saves form navigation request
     else:
         nav_button = session.get('curr_rcd_' + type(form).__name__)
-
     try:
         nav_button = int(nav_button)
     except:
         pass
     
+    print('ingredient validate on submit -->', form.validate_on_submit())
+    print ([(a, b) for a, b in form.errors.items()])
     if form.validate_on_submit():
-
+        print('validó')
         record = dth.from_dict2sql(conn, {
                                         table_list[0]:[{
                                             'id':form.id.data,
@@ -269,9 +260,7 @@ def ingredient():
                 #checks if additional density info is needed in which case
                 #determine which ones, activates addl fields in form to update,
                 #checks in table that addl info exists and warns user
-                missdensUM = sel.missingdens(conn, ingr = form.id.data)
-                
-                session['denu_1_choices'] = missdensUM
+                sel.chkmissingdens(conn, ingr = form.id.data)
 
                 return redirect(url_for('ingredient'))# clears POST data
             else:
@@ -279,14 +268,17 @@ def ingredient():
                 session['curr_rcd_' + type(form).__name__] = None 
                     # ^ so it navigates to the last record after adding
                 record.add_new(rct_rece = 0)
+                sel.chkmissingdens(conn, ingr = record.idadded)
+
                 return redirect(url_for('ingredient'))# clears POST data 
 
-
+    print ([(a, b) for a, b in form.errors.items()])
     records, relation = navigate_to(nav_button, conn, form, table_list)
+ 
 
     column_names =[['Registered Ingredients',['', 'Ingredient', 'Costo Real',
                     'Costo Std', 'Density', 'Densi UM','addl. Density', 'addl. Densi UM', 'Enabled']]]
-    
+ 
     return render_template ('ingredient.html', form = form, records = records,
                             column_names = column_names)
 
@@ -524,7 +516,7 @@ def sku():
 
                 #update existing record
                 record.update()
-
+                sel.chkmissingdens(conn, sku = form.id.data)
                 return redirect(url_for('sku'))# clears POST data
 
             else:
@@ -532,6 +524,7 @@ def sku():
                 session['curr_rcd_' + type(form).__name__] = None 
                     # ^ so it navigates to the last record after adding
                 record.add_new()
+                sel.chkmissingdens(conn, sku = record.idadded)
                 return redirect(url_for('sku'))# clears POST data 
 
 
@@ -703,8 +696,7 @@ def receive():
                                             log_sku = form.subform.log_sku.data)
                 record.update()               
                 update.cumfield(conn, 'logix_de', idstckdupd, 'log_qty',
-                                'log_bal',log_sku = form.subform.log_sku.data,
-                                log_alm = form.subform.log_alm.data)
+                                'log_bal',log_sku = form.subform.log_sku.data)
                 update.stockweightedcost(conn, 'logix_de',idstckdupd, 'log_pric',
                                          'log_cost', 'log_bal', 
                                          log_sku = form.subform.log_sku.data)
@@ -718,8 +710,7 @@ def receive():
                 idstckdupd =sel.secondfromtop(db, 'logix_de',  
                                             log_sku = form.subform.log_sku.data)
                 update.cumfield(conn, 'logix_de', idstckdupd, 'log_qty',
-                                'log_bal',log_sku =form.subform.log_sku.data,
-                                log_alm = form.subform.log_alm.data)
+                                'log_bal',log_sku =form.subform.log_sku.data)
                 
                 return redirect(url_for('receive'))# clears POST data 
         
@@ -729,8 +720,7 @@ def receive():
                                 max = session['delect_id'], log_sku = dltsku)
             dlt.id(conn, table_list[1], session['delete_id'])
             update.cumfield(conn, 'logix_de', idstckdupd, 'log_qty',
-                                'log_bal',log_sku = dltsku,
-                                log_alm = form.subform.log_alm.data)
+                                'log_bal',log_sku = dltsku)
             return redirect(url_for('receive'))# clears POST data
 
             

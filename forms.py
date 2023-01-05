@@ -80,8 +80,6 @@ class Ingredient(FlaskForm):
             raise ValidationError('Both Ingr Density and Density UM should be complete or blank')
         if bool(form.rct_dens_1.data) ^ bool(form.rct_denu_1.data) :
             raise ValidationError('Both Addl. Ingr Density and Addl. Density UM should be complete or blank')
-        if field.data < 0 or form.rct_dens_1.data < 0:
-            raise ValidationError('Ingr Density should be a positive number')
         if field.data == form.rct_dens_1.data and not field.data == None:
             raise ValidationError('Density values must be different')
         if form.rct_denu.data == form.rct_denu_1.data and  not form.rct_denu.data == None:

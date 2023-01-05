@@ -12,7 +12,7 @@ table1name should always the parent table-form, all other table names should be 
 
 Mysql or MariaDB with CTE needed
 
-All database tables must contain an autoincrement field named id as primary  key
+All database tables (except for "mtrx_conv" must contain an autoincrement field named id as primary  key
 id field value must be > 0
 
 foreign key of parent-child tables must be referentially enforced

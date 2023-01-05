@@ -711,6 +711,9 @@ def receive():
                                             log_sku = form.subform.log_sku.data)
                 update.cumfield(conn, 'logix_de', idstckdupd, 'log_qty',
                                 'log_bal',log_sku =form.subform.log_sku.data)
+                update.stockweightedcost(conn, 'logix_de',idstckdupd, 'log_pric',
+                                         'log_cost', 'log_bal', 
+                                         log_sku = form.subform.log_sku.data)
                 
                 return redirect(url_for('receive'))# clears POST data 
         

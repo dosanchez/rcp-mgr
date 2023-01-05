@@ -45,7 +45,7 @@ class select():
     """various query select functions """
     
     #various queries
-    def UMconv(db, qty, baseUM, targetUM, sku=None, ingr= None, matrix=None):
+    def UMconv(db, qty, knownbaseUM, targetbaseUM, sku=None, ingr= None, matrix=None):
         """returns the value in a target unit of Measure of a qty with
          a base unit of measure, given a sku, ingredient or a conversion matrix"""
         
@@ -54,8 +54,8 @@ class select():
         elif ingr:
             pass
         elif matrix:
-            print(targetUM, baseUM)
-            return(qty*matrix.get(targetUM + "/" + baseUM))
+            print(targetbaseUM, knownbaseUM)
+            return(qty*matrix.get(targetbaseUM + "/" + knownbaseUM))
         return 0
 
     def chkmissingdens(conn, sku= None, ingr = None):
@@ -116,7 +116,7 @@ class select():
         set2 = set()
         print('results--->', results)
         for rcd in results:
-            if not rcd.get('sku') == None
+            if not rcd.get('sku') == None:
                 skus.append(rcd.get('sku'))
             set1.add(rcd.get('unit'))
             if rcd.get('denu'):
@@ -137,12 +137,15 @@ class select():
         #updates necessary fields
         if not missunit:
             #since no density missing let's make a conversion matrix
+            sql = """INSERT INTO mtrx_conv
+                    (id, mtx_enca, mtx_tg_um, mtx_bs_um, mtx_conv)
+                    VALUES """
             mtrx={}
             densinfo = results[0]
             if not densinfo.get('dens') == None :
                 mtrx[densinfo.get('denu')] = float(densinfo.get('dens'))
                 mtrx[densinfo.get('denu').split("/")[1]+'/'+ densinfo.get('denu').split("/")[0]] = float(1 / densinfo.get('dens'))
-
+                sql += """('{}{}{}',{},'{}','{}',{}),""".format(ingr,densinfo.get('denu').split("/")[0],densinfo.get('denu').split("/")[1],ingr,densinfo.get('denu').split("/")[0],densinfo.get('denu').split("/")[1],densinfo.get('dens'))
             if not densinfo.get('dens1') == None :
                 mtrx[densinfo.get('denu1')] = float(densinfo.get('dens1'))
                 mtrx[densinfo.get('denu1').split("/")[1]+'/'+ densinfo.get('denu1').split("/")[0]] = float(1 / densinfo.get('dens1'))
@@ -158,16 +161,16 @@ class select():
                     mtrx['ml/unit'] = float(mtrx.get('ml/g') * mtrx.get('g/unit'))
                     mtrx['unit/ml'] = float(1 / mtrx.get('ml/unit'))
 
-            sql = """UPDATE recet_en
+            sql1 = """UPDATE recet_en
                     SET rct_conv_mtrx = '{}',
                     rct_misd_dens = NULL
                     WHERE id = {}""".format(json.dumps(mtrx), ingr)
-            db.execute(sql)
+            db.execute(sql1)
             conn.commit()
 
         else:
             #we need more info, lets write down what density 
-            # we need to mke the conversion matrix
+            # necessary to make the conversion matrix
             missdensUM = [i for i in ['g/ml', 'g/unit', 'ml/unit'] if missunit in i]
             sql ="""UPDATE recet_en 
                     SET rct_misd_dens = '{}'
@@ -180,9 +183,10 @@ class select():
 if not updated, recipe cost and MRP calculations will no be possible. """.format(ingrname), 'warning')
 
         #lets start with ingredient cost calculation
-        #target Unit of Measure for ingredient cost
+        #lets choose our sku common unit for cost
         costUM = list(mtrx.keys())[0].split("/")[0]
-        #cost of ingredient calc and update in recet_en
+        #now lets cost ingredients and update in recet_en
+
         
 
 

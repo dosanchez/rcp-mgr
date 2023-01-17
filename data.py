@@ -58,208 +58,7 @@ class select():
             return(qty*matrix.get(targetbaseUM + "/" + knownbaseUM))
         return 0
 
-    def chkmissingdens(conn, sku= None, ingr = None):
-        """returns if a density value is missing for a ingredient and which one."""
-        
-        #checks if addl density info is needed 
-        if not sku and not ingr:
-            return
-        print(sku, ingr)
-        if sku:
-            sql = """WITH unit AS (
-                            WITH ingred AS (
-                                    SELECT sku_ingr AS input
-                                    FROM sku
-                                    WHERE sku.id = {}
-                                            ),
-
-                                subunit AS (
-                                    SELECT sku.id, sku_ingr, uni_un_t
-                                    FROM sku
-                                    LEFT JOIN unitmeas
-                                    ON sku_unit = unitmeas.id
-                                            )
-
-                            SELECT id as sku, sku_ingr, uni_un_t
-                            FROM ingred
-                            LEFT JOIN subunit
-                            ON input = sku_ingr
-                                    )
-                    SELECT uni_un_t AS skuunit, rct_dens AS dens, rct_denu AS denu, 
-                        rct_dens_1 AS dens1, rct_denu_1 AS denu1, sku, rct_name, 
-                        id
-                    FROM recet_en
-                    INNER JOIN unit
-                    ON id = sku_ingr""".format(sku)
-
-        if ingr:
-            sql = """WITH unit AS (
-
-                        SELECT sku.id as sku, sku_ingr, uni_un_t
-                        FROM sku
-                        LEFT JOIN unitmeas
-                        ON sku_unit = unitmeas.id)
-
-                    SELECT DISTINCT uni_un_t AS skuunit, rct_dens AS dens, 
-                                rct_denu AS denu, rct_dens_1 AS dens1, 
-                                rct_denu_1 AS denu1, sku, rct_name, recet_en.id
-                    FROM recet_en
-                    LEFT JOIN unit
-                    ON recet_en.id = sku_ingr
-                    WHERE recet_en.id = {}""".format(ingr)
-
-        db = conn.cursor(dictionary= True, buffered=True)
-        db.execute(sql)
-        results = db.fetchall()
-        skus =[]
-        set1 = set()
-        set2 = set()
-        print('results--->', results)
-        for rcd in results:
-            if not rcd.get('sku') == None:
-                skus.append(rcd.get('sku'))
-                set1.add(rcd.get('unit'))
-            if rcd.get('denu'):
-                set2.update(rcd.get('denu').rsplit("/"))
-            if rcd.get('denu1'):
-                set2.update(rcd.get('denu1').rsplit("/"))
-            ingrname = rcd.get('rct_name')
-            ingr = rcd.get('id')
-
-        missing = set1.difference(set2)
-        print('missing-->', missing)
-        if not missing:
-            missunit = None
-        else:
-            missunit = list(missing)[0]
-            
-            
-        #updates necessary fields
-        if not missunit:
-            #since no density missing let's make a conversion matrix
-            sql = """INSERT INTO mtrx_conv
-                    VALUES """
-            mtrx={}
-            densinfo = results[0]
-            if not densinfo.get('dens') == None :
-                density = densinfo.get('dens')
-                baseUM = densinfo.get('denu').split("/")[1]
-                targetUM = densinfo.get('denu').split("/")[0]
-                mtxid = str(ingr) + targetUM + baseUM
-                mtrx[densinfo.get('denu')] = float(density)
-                sql += """('{}',{},'{}','{}',{}),""".format(mtxid, ingr,
-                                            targetUM, baseUM, density)
-                mtxid = str(ingr) + baseUM + targetUM
-                mtrx[baseUM +'/'+ targetUM] = float(1 / density)
-                sql += """('{}',{},'{}','{}',{}),""".format(mtxid, ingr,
-                                            baseUM,targetUM,1/density)
-
-                
-            if not densinfo.get('dens1') == None :
-                density = densinfo.get('dens1')
-                baseUM = densinfo.get('denu1').split("/")[1]
-                targetUM = densinfo.get('denu1').split("/")[0]
-                mtxid = str(ingr) + targetUM + baseUM
-                mtrx[densinfo.get('denu1')] = float(density)
-                sql += """('{}',{},'{}','{}',{}),""".format(mtxid, ingr,
-                                            targetUM, baseUM, density)
-                mtxid = str(ingr) + baseUM + targetUM
-                sql += """('{}',{},'{}','{}',{}),""".format(mtxid, ingr,
-                                            baseUM, targetUM, 1/density)
-                mtrx[baseUM+'/'+ targetUM] = float(1 / density)
-
-            if len(mtrx) > 2:
-                if not 'g/ml' in mtrx.keys():
-                    density = mtrx.get('g/unit') * mtrx.get('unit/ml')
-                    baseUM = 'ml'
-                    targetUM = 'g'
-                    mtxid = str(ingr) + targetUM + baseUM
-                    mtrx['g/ml'] = float(density)
-                    sql += """('{}',{},'{}','{}',{}),""".format(mtxid, ingr,
-                                            targetUM, baseUM, density)
-                    mtrx['ml/g'] = float(1 / mtrx.get('g/ml'))
-                    mtxid = str(ingr) + baseUM + targetUM
-                    sql += """('{}',{},'{}','{}',{}),""".format(mtxid, ingr,
-                                                baseUM, targetUM, 1/density)
-                elif not 'g/unit' in mtrx.keys():
-                    density = mtrx.get('g/ml') * mtrx.get('ml/unit')
-                    baseUM = 'unit'
-                    targetUM = 'g'
-                    mtxid = str(ingr) + targetUM + baseUM
-                    mtrx['g/unit'] = float(density)
-                    sql += """('{}',{},'{}','{}',{}),""".format(mtxid, ingr,
-                                            targetUM, baseUM, density)
-                    mtrx['unit/g'] = float(1 / mtrx.get('g/unit'))
-                    mtxid = str(ingr) + baseUM + targetUM
-                    sql += """('{}',{},'{}','{}',{}),""".format(mtxid, ingr,
-                                                baseUM, targetUM, 1/density)
-                else:
-                    density = mtrx.get('ml/g') * mtrx.get('g/unit')
-                    baseUM = 'unit'
-                    targetUM = 'ml'
-                    mtxid = str(ingr) + targetUM + baseUM
-                    mtrx['ml/unit'] = float(density)
-                    sql += """('{}',{},'{}','{}',{}),""".format(mtxid, ingr,
-                                            targetUM, baseUM, density)
-                    mtxid = str(ingr) + baseUM + targetUM
-                    sql += """('{}',{},'{}','{}',{}),""".format(mtxid, ingr,
-                                                baseUM, targetUM, 1/density)
-                    mtrx['unit/ml'] = float(1 / mtrx.get('ml/unit'))
-
-            sql += """('{0}gg',{0},'g','g',1), ('{0}mlml',{0},'ml','ml',1),
-                        ('{0}unitunit',{0},'unit','unit',1)
-                        ON DUPLICATE KEY UPDATE mtx_conv = values(mtx_conv)""".format(ingr)
-            db.execute(sql)
-            conn.commit()
-
-
-            #lets start with ingredient cost calculation
-            #lets choose our sku common unit for cost
-            costUM = results[0].get("unit")
-            #now lets cost ingredients and update in recet_en
-            sql = """WITH skulist AS (
-                        WITH skubaseunit AS(SELECT sku.id AS sku_id, sku_cont, uni_conv, uni_un_t, sku_ingr
-                                            FROM sku
-                                            LEFT JOIN unitmeas
-                                            ON sku_unit = unitmeas.id)
-
-                        SELECT log_sku, sku_cont, uni_conv, uni_un_t, log_cost, log_bal, sku_ingr
-                        FROM logix_de_norm
-                        LEFT JOIN skubaseunit
-                        ON log_sku = sku_id
-                        WHERE logix_de_norm. id IN (SELECT MAX(id)
-                                        FROM logix_de_norm
-                                        WHERE log_sku IN (44, 46, 47)
-                                        GROUP BY log_sku)
-                                    )
-                    SELECT sku_ingr, mtx_tg_um, SUM(log_bal*sku_cont*uni_conv*mtx_conv*log_cost) / SUM(log_bal) weightcost
-                    FROM skulist
-                    LEFT JOIN mtrx_conv
-                    ON sku_ingr = mtx_enca
-                    WHERE mtx_tg_um = 'unit' AND mtx_bs_um = uni_un_t
-                    GROUP BY sku_ingr, mtx_tg_um"""
-
-        else:
-            #we need more info, lets write down what density 
-            # necessary to make the conversion matrix
-            missdensUM = [i for i in ['g/ml', 'g/unit', 'ml/unit'] if missunit in i]
-            sql ="""UPDATE recet_en 
-                    SET rct_misd_dens = '{}'
-                    WHERE id = {}""".format(json.dumps(missdensUM) ,ingr)
-            print('missdensUM-->', missdensUM)
-            db.execute(sql)
-            conn.commit()
-
-        flash ("""Due to the recent update, additional density info is needed in {} under the ingredients menu. 
-if not updated, recipe cost and MRP calculations will no be possible. """.format(ingrname), 'warning')
-
-        
-        
-
-        
-
-
-        return
+    
 
 
     def recipesforingr(db, ingr):
@@ -295,25 +94,31 @@ if not updated, recipe cost and MRP calculations will no be possible. """.format
 
         return(rcptlist)
 
-    def bom(conn, recipes= None):
+    def bom(conn:'connection to database', recipes:'list with recipes numbers' = None, byrecipe:'True sum up by recipe False sum up all ingrd'=False):
         """special function to sum up all ingredient quantities needed for one, a group
         or all recipes"""
         sql = """DROP TABLE IF EXISTS bom"""
         conn.cursor().execute(sql)
         conn.commit()
 
+        if byrecipe:
+            add1 ='prnt.'
+            add2 = 'id'
+            add3 = ', '
+        else:
+            add1 = add2 = add3 = ''
+
         db = conn.cursor(dictionary= True, buffered=True)
         unit_id = select.all(db, 'unitmeas', uni_symb = 'unit')[0].get('id')
         sql ="""
-            CREATE TEMPORARY TABLE bom
             WITH RECURSIVE 
                 temp_bom AS
-                    (	SELECT  chld.rcd_ing AS 'ingr', chld.rcd_qty / chld.rcd_yiel AS bom_qty,
-                                chld.rcd_unit, prnt.id, chld.rct_rece, prnt.rct_rece AS recetas
+                    (	SELECT  chld.rcd_ing AS 'ingr', bom_qty,
+                                chld.bs_unit, chld.rct_rece{}{}{}
                         FROM recet_en AS prnt
                         LEFT JOIN chld
                         ON prnt.id = chld.rcd_enca
-                        WHERE prnt.rct_rece = 1"""
+                        WHERE prnt.rct_rece = 1""".format(add3, add1, add2)
                         
                         
         if recipes:
@@ -324,8 +129,8 @@ if not updated, recipe cost and MRP calculations will no be possible. """.format
 
         sql += """ UNION ALL
                         
-                        SELECT  chld.rcd_ing AS 'ingr', chld.rcd_qty / chld.rcd_yiel AS bom_qty,
-                                chld.rcd_unit, temp_bom.id, chld.rct_rece, temp_bom.recetas
+                        SELECT  chld.rcd_ing AS 'ingr', chld.bom_qty,
+                                chld.bs_unit, chld.rct_rece{0}{1}
                         FROM temp_bom
                         LEFT JOIN chld
                         ON ingr = chld.rcd_enca
@@ -335,26 +140,27 @@ if not updated, recipe cost and MRP calculations will no be possible. """.format
                     ),
 
                 subprnt AS 	(SELECT rcd_ing, rcd_qty * uni_conv AS rcd_qty, 
-                                CASE
-                                    WHEN rcd_unit = {} THEN 'unit'
-                                    ELSE uni_un_t
-                                END AS rcd_unit, 
-                                rcd_yiel, rcd_enca
+                                    uni_un_t AS bs_unit, rcd_yiel, rcd_enca
                             FROM recet_de
                             LEFT JOIN unitmeas
                             ON recet_de.rcd_unit = unitmeas.id),
                             
-                chld AS 	(SELECT rcd_ing, rcd_qty, rcd_unit, rcd_yiel, rcd_enca, subchld.rct_rece  
+                chld AS 	(SELECT rcd_ing , bs_unit, rcd_qty/rcd_yiel AS bom_qty, rcd_enca, subchld.rct_rece  
                             FROM  subprnt
                             LEFT JOIN recet_en AS subchld
                             ON subprnt.rcd_ing = subchld.id)
                             
-            SELECT * 
+            SELECT {1}{0}ingr, SUM(bom_qty), bs_unit 
             FROM temp_bom
             WHERE rct_rece = 0
-                    """.format(unit_id)
+            GROUP BY ingr, bs_unit{0}{1}
+                    """.format(add3, add2)
                     
         print(sql)
+        db.execute(sql)
+
+        return(db.fetchall())
+
       
         
     def sglfld(db, table, field, orderby =id, **kwargs):
@@ -620,6 +426,191 @@ class update():
                     print(sql)
                     conn.cursor(dictionary=True, buffered=True).execute(sql)
                     conn.commit()
+
+    def ingrcostupdate(conn, sku= None, ingr = None):
+        """either updates info so costs in ingrcost view are updated or update
+            field with missing density values needed to make cost calculations"""
+        
+        #checks if addl density info is needed 
+        if not sku and not ingr:
+            return
+        print(sku, ingr)
+        if sku:
+            sql = """WITH unit AS (
+                            WITH ingred AS (
+                                    SELECT sku_ingr AS input
+                                    FROM sku
+                                    WHERE sku.id = {}
+                                            ),
+
+                                subunit AS (
+                                    SELECT sku.id, sku_ingr, uni_un_t
+                                    FROM sku
+                                    LEFT JOIN unitmeas
+                                    ON sku_unit = unitmeas.id
+                                            )
+
+                            SELECT id as sku, sku_ingr, uni_un_t
+                            FROM ingred
+                            LEFT JOIN subunit
+                            ON input = sku_ingr
+                                    )
+                    SELECT uni_un_t AS skuunit, rct_dens AS dens, rct_denu AS denu, 
+                        rct_dens_1 AS dens1, rct_denu_1 AS denu1, sku, rct_name, 
+                        id
+                    FROM recet_en
+                    INNER JOIN unit
+                    ON id = sku_ingr""".format(sku)
+
+        if ingr:
+            sql = """WITH unit AS (
+
+                        SELECT sku.id as sku, sku_ingr, uni_un_t
+                        FROM sku
+                        LEFT JOIN unitmeas
+                        ON sku_unit = unitmeas.id)
+
+                    SELECT DISTINCT uni_un_t AS skuunit, rct_dens AS dens, 
+                                rct_denu AS denu, rct_dens_1 AS dens1, 
+                                rct_denu_1 AS denu1, sku, rct_name, recet_en.id
+                    FROM recet_en
+                    LEFT JOIN unit
+                    ON recet_en.id = sku_ingr
+                    WHERE recet_en.id = {}""".format(ingr)
+
+        db = conn.cursor(dictionary= True, buffered=True)
+        db.execute(sql)
+        results = db.fetchall()
+        skus =[]
+        set1 = set()
+        set2 = set()
+        print('results--->', results)
+        for rcd in results:
+            if not rcd.get('sku') == None:
+                skus.append(rcd.get('sku'))
+                set1.add(rcd.get('unit'))
+            if rcd.get('denu'):
+                set2.update(rcd.get('denu').rsplit("/"))
+            if rcd.get('denu1'):
+                set2.update(rcd.get('denu1').rsplit("/"))
+            ingrname = rcd.get('rct_name')
+            ingr = rcd.get('id')
+
+        missing = set1.difference(set2)
+        print('missing-->', missing)
+        if missing == {None}:
+            missunit = None
+        else:
+            missunit = list(missing)[0]
+            
+            
+        #updates necessary fields
+        if not missunit:
+            #since no density missing let's make a conversion matrix
+            sql = """INSERT INTO mtrx_conv
+                    VALUES """
+            mtrx={}
+            densinfo = results[0]
+            if not densinfo.get('dens') == None :
+                density = densinfo.get('dens')
+                baseUM = densinfo.get('denu').split("/")[1]
+                targetUM = densinfo.get('denu').split("/")[0]
+                mtxid = str(ingr) + targetUM + baseUM
+                mtrx[densinfo.get('denu')] = float(density)
+                sql += """('{}',{},'{}','{}',{}),""".format(mtxid, ingr,
+                                            targetUM, baseUM, density)
+                mtxid = str(ingr) + baseUM + targetUM
+                mtrx[baseUM +'/'+ targetUM] = float(1 / density)
+                sql += """('{}',{},'{}','{}',{}),""".format(mtxid, ingr,
+                                            baseUM,targetUM,1/density)
+
+                
+            if not densinfo.get('dens1') == None :
+                density = densinfo.get('dens1')
+                baseUM = densinfo.get('denu1').split("/")[1]
+                targetUM = densinfo.get('denu1').split("/")[0]
+                mtxid = str(ingr) + targetUM + baseUM
+                mtrx[densinfo.get('denu1')] = float(density)
+                sql += """('{}',{},'{}','{}',{}),""".format(mtxid, ingr,
+                                            targetUM, baseUM, density)
+                mtxid = str(ingr) + baseUM + targetUM
+                sql += """('{}',{},'{}','{}',{}),""".format(mtxid, ingr,
+                                            baseUM, targetUM, 1/density)
+                mtrx[baseUM+'/'+ targetUM] = float(1 / density)
+
+            if len(mtrx) > 2:
+                if not 'g/ml' in mtrx.keys():
+                    density = mtrx.get('g/unit') * mtrx.get('unit/ml')
+                    baseUM = 'ml'
+                    targetUM = 'g'
+                    mtxid = str(ingr) + targetUM + baseUM
+                    mtrx['g/ml'] = float(density)
+                    sql += """('{}',{},'{}','{}',{}),""".format(mtxid, ingr,
+                                            targetUM, baseUM, density)
+                    mtrx['ml/g'] = float(1 / mtrx.get('g/ml'))
+                    mtxid = str(ingr) + baseUM + targetUM
+                    sql += """('{}',{},'{}','{}',{}),""".format(mtxid, ingr,
+                                                baseUM, targetUM, 1/density)
+                elif not 'g/unit' in mtrx.keys():
+                    density = mtrx.get('g/ml') * mtrx.get('ml/unit')
+                    baseUM = 'unit'
+                    targetUM = 'g'
+                    mtxid = str(ingr) + targetUM + baseUM
+                    mtrx['g/unit'] = float(density)
+                    sql += """('{}',{},'{}','{}',{}),""".format(mtxid, ingr,
+                                            targetUM, baseUM, density)
+                    mtrx['unit/g'] = float(1 / mtrx.get('g/unit'))
+                    mtxid = str(ingr) + baseUM + targetUM
+                    sql += """('{}',{},'{}','{}',{}),""".format(mtxid, ingr,
+                                                baseUM, targetUM, 1/density)
+                else:
+                    density = mtrx.get('ml/g') * mtrx.get('g/unit')
+                    baseUM = 'unit'
+                    targetUM = 'ml'
+                    mtxid = str(ingr) + targetUM + baseUM
+                    mtrx['ml/unit'] = float(density)
+                    sql += """('{}',{},'{}','{}',{}),""".format(mtxid, ingr,
+                                            targetUM, baseUM, density)
+                    mtxid = str(ingr) + baseUM + targetUM
+                    sql += """('{}',{},'{}','{}',{}),""".format(mtxid, ingr,
+                                                baseUM, targetUM, 1/density)
+                    mtrx['unit/ml'] = float(1 / mtrx.get('ml/unit'))
+
+            sql += """('{0}gg',{0},'g','g',1), ('{0}mlml',{0},'ml','ml',1),
+                        ('{0}unitunit',{0},'unit','unit',1)
+                        ON DUPLICATE KEY UPDATE mtx_conv = values(mtx_conv)""".format(ingr)
+            print (sql)
+            db.execute(sql)
+            conn.commit()
+
+            #ingrcost view now includes cost info for this ingredient
+            #now lets calculate and update recipe costs where possible
+            
+
+            
+
+        else:
+            #we need more info, lets write down what density is
+            # necessary to make the conversion matrix
+            missdensUM = [i for i in ['g/ml', 'g/unit', 'ml/unit'] if missunit in i]
+            sql ="""UPDATE recet_en 
+                    SET rct_misd_dens = '{}'
+                    WHERE id = {}""".format(json.dumps(missdensUM) ,ingr)
+            print('missdensUM-->', missdensUM)
+            db.execute(sql)
+            conn.commit()
+
+        flash ("""Due to the recent update, additional density info is needed in {} under the ingredients menu. 
+if not updated, recipe cost and MRP calculations will no be possible. """.format(ingrname), 'warning')
+
+        
+        
+
+        
+
+
+        return
+
 
 class DataHandler():
 

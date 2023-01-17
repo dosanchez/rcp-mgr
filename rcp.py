@@ -260,7 +260,7 @@ def ingredient():
                 #checks if additional density info is needed in which case
                 #determine which ones, activates addl fields in form to update,
                 #checks in table that addl info exists and warns user
-                sel.chkmissingdens(conn, ingr = form.id.data)
+                update.ingrcostupdate(conn, ingr = form.id.data)
 
                 return redirect(url_for('ingredient'))# clears POST data
             else:
@@ -268,11 +268,10 @@ def ingredient():
                 session['curr_rcd_' + type(form).__name__] = None 
                     # ^ so it navigates to the last record after adding
                 record.add_new(rct_rece = 0)
-                sel.chkmissingdens(conn, ingr = record.idadded)
+                update.ingrcostupdate(conn, ingr = record.idadded)
 
                 return redirect(url_for('ingredient'))# clears POST data 
 
-    print ([(a, b) for a, b in form.errors.items()])
     records, relation = navigate_to(nav_button, conn, form, table_list)
  
 
@@ -451,12 +450,6 @@ def sku():
         nav_button = int(nav_button)
     except:
         pass
-    for error in form.sku_ingr.errors:
-        print('skuing',error)
-    print('validateonsubmit', form.validate_on_submit())
-
-    for error in form.sku_cont.errors:
-        print('skucont',error)
         
     if form.validate_on_submit():
         
@@ -516,7 +509,7 @@ def sku():
 
                 #update existing record
                 record.update()
-                sel.chkmissingdens(conn, sku = form.id.data)
+                update.ingrcostupdate(conn, sku = form.id.data)
                 return redirect(url_for('sku'))# clears POST data
 
             else:
@@ -524,7 +517,7 @@ def sku():
                 session['curr_rcd_' + type(form).__name__] = None 
                     # ^ so it navigates to the last record after adding
                 record.add_new()
-                sel.chkmissingdens(conn, sku = record.idadded)
+                update.ingrcostupdate(conn, sku = record.idadded)
                 return redirect(url_for('sku'))# clears POST data 
 
 
@@ -700,6 +693,7 @@ def receive():
                 update.stockweightedcost(conn, 'logix_de',idstckdupd, 'log_pric',
                                          'log_cost', 'log_bal', 
                                          log_sku = form.subform.log_sku.data)
+                update.ingrcostupdate(conn, sku = form.subform.log_sku.data )
                 return redirect(url_for('receive'))# clears POST data 
                 
 
@@ -714,16 +708,21 @@ def receive():
                 update.stockweightedcost(conn, 'logix_de',idstckdupd, 'log_pric',
                                          'log_cost', 'log_bal', 
                                          log_sku = form.subform.log_sku.data)
+                update.ingrcostupdate(conn, sku = form.subform.log_sku.data )                         
                 
                 return redirect(url_for('receive'))# clears POST data 
         
         if session['delete_id']:
-            dltsku = sel.all(db, 'logix_de', session['delete_id'])[0].get['log_sku']
+            dltsku = sel.all(db, 'logix_de', 'id', id = session['delete_id'])[0].get('log_sku')
             idstckdupd = sel.secondfromtop(db, 'logix_de', 
-                                max = session['delect_id'], log_sku = dltsku)
+                                max = session['delete_id'], log_sku = dltsku)
             dlt.id(conn, table_list[1], session['delete_id'])
             update.cumfield(conn, 'logix_de', idstckdupd, 'log_qty',
                                 'log_bal',log_sku = dltsku)
+            update.stockweightedcost(conn, 'logix_de',idstckdupd, 'log_pric',
+                                         'log_cost', 'log_bal', 
+                                         log_sku = form.subform.log_sku.data)
+            update.ingrcostupdate(conn, sku = form.subform.log_sku.data )
             return redirect(url_for('receive'))# clears POST data
 
             

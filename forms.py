@@ -132,7 +132,7 @@ class Socio(FlaskForm):
 class Sku(FlaskForm):
     id = HiddenField()
     sku_name = StringField('SKU Name', validators=[DataRequired(),
-                            Length(max=16)], 
+                            Length(max=32)], 
                             render_kw={"placeholder": "e.g. Heinz Tomato Soup"})
     sku_ingr = SelectField('Rel Recipe/ingr', coerce=int) 
     sku_cont = DecimalField('Label content',validators=[NumberRange(min = 0), 
@@ -145,8 +145,8 @@ class Sku(FlaskForm):
                             validators = [FileAllowed(['jpg', 'png', 'jpeg'])])
     sku_pref = SelectField('Preferred Vendor', default = 0, coerce=int, 
                             validators=[Optional()])
-    sku_itbi = DecimalField('Sales Tax',validators=[DataRequired(), 
-                            NumberRange(min=0, max=0.18)], default = 0.18)
+    sku_itbi = DecimalField('Sales Tax',validators=[InputRequired(), 
+                            NumberRange(min=0, max=0.180001)])
     sku_vaci = DecimalField('Empty container weight',validators=[InputRequired(), 
                             NumberRange(min = 0)])
     sku_v_unit = SelectField('Unit of measure',validators=[InputRequired()],
@@ -159,7 +159,7 @@ class Rcv_en(FlaskForm):
     lox_date = DateField('Reception Date', validators=[DataRequired()])
     lox_doc_no = StringField('Vendor Receipt No.', validators=[Optional(),Length(max=16)],
                             render_kw={"placeholder": "if other than rcpt tax No."})
-    lox_datd = DateField('Reception Doc Date', validators=[DataRequired()])
+    lox_datd = DateField('Document Date', validators=[DataRequired()])
     lox_nifn = StringField('receipt tax number',validators = [Optional(), 
                             Length(max=16)], render_kw={"placeholder": "optional"})
     lox_sub = DecimalField('Sub Total', default = 0,

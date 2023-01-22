@@ -435,27 +435,15 @@ class update():
         if not sku and not ingr and not recipe:
             return
         db = conn.cursor(dictionary= True, buffered=True)
-        print('costupdate1')
-        print('recipe', recipe)
-        sql ="""SELECT *
-                    FROM recipecost"""
-        db.execute(sql)
-        print('todo recipe cost',db.fetchall())
 
-        sql ="""SELECT *
-                    FROM recipecost
-                    WHERE recipeid = {}""".format(recipe)
-        db.execute(sql)
-        print('recipecost solo receta', db.fetchall())            
         if recipe:
             #Recipe details changed lets update cost of recipes in table recet_en
-            #update cost if recipecost includes our recipe
-            #if not recipe cost updated to 0 and message flashed 
+            #lets update cost if recipecost includes our recipe
+            #if not, recipe cost updated to 0 and message flashed 
             sql ="""SELECT *
                     FROM recipecost
                     WHERE recipeid = {}""".format(recipe)
             db.execute(sql)
-            print('dbrowcount', db.rowcount)
             if db.rowcount > 0:
                 sql = """UPDATE recet_en
                         INNER JOIN recipecost
@@ -467,9 +455,10 @@ class update():
                         SET rct_cosc = 0
                         WHERE id = {}""".format(recipe)
                 flash ("""Unable to cost recipe either because at least one 
-                            recipe ingredient not received in stock or missing 
-                            recipe ingredient density info. MRP calculations 
-                            may no be possible.""", 'alert alert-warning')       
+                            recipe ingredient have not been received in stock 
+                            or there's missing recipe ingredient density info.
+                            MRP calculations may no be possible.""",
+                             'alert alert-warning')       
             db.execute(sql)
             conn.commit()
             return
@@ -495,11 +484,12 @@ class update():
                             ON input = sku_ingr
                                     )
                     SELECT uni_un_t AS skuunit, rct_dens AS dens, rct_denu AS denu, 
-                        rct_dens_1 AS dens1, rct_denu_1 AS denu1, sku, rct_name, 
+                        rct_dens_1 AS dens1, rct_denu_1 AS denu1, sku, 
                         id
                     FROM recet_en
                     INNER JOIN unit
-                    ON id = sku_ingr""".format(sku)
+                    ON id = sku_ingr
+                    WHERE rct_rece = 0""".format(sku)
 
         if ingr:
             sql = """WITH unit AS (
@@ -511,15 +501,20 @@ class update():
 
                     SELECT DISTINCT uni_un_t AS skuunit, rct_dens AS dens, 
                                 rct_denu AS denu, rct_dens_1 AS dens1, 
-                                rct_denu_1 AS denu1, sku, rct_name, recet_en.id
+                                rct_denu_1 AS denu1, sku, recet_en.id
                     FROM recet_en
                     LEFT JOIN unit
                     ON recet_en.id = sku_ingr
-                    WHERE recet_en.id = {}""".format(ingr)
+                    WHERE recet_en.id = {} AND rct_rece = 0""".format(ingr)
 
-
-
+        #stops execution if no output from previous sql statements
+        #this should only happen when a recipe related sku is added or changed
         db.execute(sql)
+        print (db.rowcount)
+        if db.rowcount < 1:
+            flash("""Info: SKU is a recipe substitute""", 'alert alert-info')
+            return
+
         results = db.fetchall()
         skus =[]
         set1 = set()
@@ -629,28 +624,34 @@ class update():
             rcps = select.recipesforingr(db, ingr)
             
             #lastly lets update cost of recipes in table recet_en
-            #update cost if recipecost includes our recipe
+            #lets update cost if recipecost includes our recipe
+            #and if any recipe contains the ingredient in question
             #if not recipe cost updated to 0 and message flashed 
-            sql ="""SELECT *
-                    FROM recipecost
-                    WHERE recipeid = {}""".format(recipe)
-            db.execute(sql)
-            if db.with_rows:
-                sql = """UPDATE recet_en
-                        INNER JOIN recipecost
-                        ON id = recipeid
-                        SET rct_cosc = cost
-                        WHERE id = {}""".format(recipe)
-            else:
-                sql = """UPDATE recet_en
-                        SET rct_cosc = 0
-                        WHERE id = {}""".format(recipe)
-                flash ("""Unable to cost recipe either because some or no recipe 
-                            ingredient have been received priced on stock """,
-                             'alert alert-warning')       
-            db.execute(sql)
-            conn.commit() 
+            if not rcps == ():
 
+                sql ="""SELECT *
+                        FROM recipecost
+                        WHERE recipeid IN {}""".format(rcps)
+                db.execute(sql)
+                if db.rowcount > 0:
+                    sql = """UPDATE recet_en
+                            INNER JOIN recipecost
+                            ON id = recipeid
+                            SET rct_cosc = cost
+                            WHERE id IN {}""".format(rcps)
+                else:
+                    sql = """UPDATE recet_en
+                            SET rct_cosc = 0
+                            WHERE id IN {}""".format(rcps)
+                    flash ("""Unable to cost recipe(s) either because some or no recipe(s) 
+                                ingredient(s) have been received into stock """,
+                                'alert alert-warning')       
+                db.execute(sql)
+                conn.commit() 
+            else:
+                flash ("""Info: SKU is either a recipe substitute or it's
+                            related ingredient is not used by any recipe""",
+                                'alert alert-info') 
         else:
             #since we need more info for costing, lets write down the necessary
             #density for a complete conversion matrix

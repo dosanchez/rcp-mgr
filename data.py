@@ -38,7 +38,7 @@ class dlt():
         sql = "DELETE FROM {} WHERE id = {}".format(tbl, id)
         db.execute(sql)
         conn.commit()
-        flash('record deleted')
+        flash('record deleted', 'alert alert-warning')
 
 
 class select():
@@ -62,7 +62,7 @@ class select():
 
 
     def recipesforingr(db, ingr):
-        """returns a list with all recipes containing a specific ingredient"""
+        """returns a tuple with all recipes containing a specific ingredient"""
         sql ="""WITH RECURSIVE 
                     bom AS (SELECT  prnt.id, chld.rcd_ing AS 'ingr', chld.rct_rece
                             FROM recet_en AS prnt
@@ -90,7 +90,7 @@ class select():
             FROM bom
             WHERE rct_rece = 0 AND ingr = {}""".format(ingr)
         db.execute(sql)
-        rcptlist = [rcd.get('id') for rcd in db.fetchall()]
+        rcptlist = tuple(rcd.get('id') for rcd in db.fetchall())
 
         return(rcptlist)
 
@@ -427,14 +427,53 @@ class update():
                     conn.cursor(dictionary=True, buffered=True).execute(sql)
                     conn.commit()
 
-    def ingrcostupdate(conn, sku= None, ingr = None):
-        """either updates info so costs in ingrcost view are updated or update
+    def costupdate(conn, sku= None, ingr = None, recipe = None):
+        """either updates cost info of ingredients and recipes or updates
             field with missing density values needed to make cost calculations"""
         
-        #checks if addl density info is needed 
-        if not sku and not ingr:
+        #first lets check if addl density info is needed 
+        if not sku and not ingr and not recipe:
             return
-        print(sku, ingr)
+        db = conn.cursor(dictionary= True, buffered=True)
+        print('costupdate1')
+        print('recipe', recipe)
+        sql ="""SELECT *
+                    FROM recipecost"""
+        db.execute(sql)
+        print('todo recipe cost',db.fetchall())
+
+        sql ="""SELECT *
+                    FROM recipecost
+                    WHERE recipeid = {}""".format(recipe)
+        db.execute(sql)
+        print('recipecost solo receta', db.fetchall())            
+        if recipe:
+            #Recipe details changed lets update cost of recipes in table recet_en
+            #update cost if recipecost includes our recipe
+            #if not recipe cost updated to 0 and message flashed 
+            sql ="""SELECT *
+                    FROM recipecost
+                    WHERE recipeid = {}""".format(recipe)
+            db.execute(sql)
+            print('dbrowcount', db.rowcount)
+            if db.rowcount > 0:
+                sql = """UPDATE recet_en
+                        INNER JOIN recipecost
+                        ON id = recipeid
+                        SET rct_cosc = cost
+                        WHERE id = {}""".format(recipe)
+            else:
+                sql = """UPDATE recet_en
+                        SET rct_cosc = 0
+                        WHERE id = {}""".format(recipe)
+                flash ("""Unable to cost recipe either because at least one 
+                            recipe ingredient not received in stock or missing 
+                            recipe ingredient density info. MRP calculations 
+                            may no be possible.""", 'alert alert-warning')       
+            db.execute(sql)
+            conn.commit()
+            return
+
         if sku:
             sql = """WITH unit AS (
                             WITH ingred AS (
@@ -478,7 +517,8 @@ class update():
                     ON recet_en.id = sku_ingr
                     WHERE recet_en.id = {}""".format(ingr)
 
-        db = conn.cursor(dictionary= True, buffered=True)
+
+
         db.execute(sql)
         results = db.fetchall()
         skus =[]
@@ -488,7 +528,7 @@ class update():
         for rcd in results:
             if not rcd.get('sku') == None:
                 skus.append(rcd.get('sku'))
-                set1.add(rcd.get('unit'))
+                set1.add(rcd.get('skuunit'))
             if rcd.get('denu'):
                 set2.update(rcd.get('denu').rsplit("/"))
             if rcd.get('denu1'):
@@ -497,8 +537,7 @@ class update():
             ingr = rcd.get('id')
 
         missing = set1.difference(set2)
-        print('missing-->', missing)
-        if missing == {None}:
+        if missing == set():
             missunit = None
         else:
             missunit = list(missing)[0]
@@ -506,7 +545,7 @@ class update():
             
         #updates necessary fields
         if not missunit:
-            #since no density missing let's make a conversion matrix
+            #in this case no density is missing let's make a conversion matrix
             sql = """INSERT INTO mtrx_conv
                     VALUES """
             mtrx={}
@@ -578,36 +617,54 @@ class update():
 
             sql += """('{0}gg',{0},'g','g',1), ('{0}mlml',{0},'ml','ml',1),
                         ('{0}unitunit',{0},'unit','unit',1)
-                        ON DUPLICATE KEY UPDATE mtx_conv = values(mtx_conv)""".format(ingr)
-            print (sql)
+                        ON DUPLICATE KEY UPDATE mtx_conv = values(mtx_conv)
+                        """.format(ingr)
             db.execute(sql)
             conn.commit()
 
-            #ingrcost view now includes cost info for this ingredient
-            #now lets calculate and update recipe costs where possible
+            #ingrcost view now includes cost info for ingredients
+            #also recipe cost view now includes cost info for recipes
+            #now lets calculate and update recipe costs
+            #for that lets find out recipes involved
+            rcps = select.recipesforingr(db, ingr)
             
-
-            
+            #lastly lets update cost of recipes in table recet_en
+            #update cost if recipecost includes our recipe
+            #if not recipe cost updated to 0 and message flashed 
+            sql ="""SELECT *
+                    FROM recipecost
+                    WHERE recipeid = {}""".format(recipe)
+            db.execute(sql)
+            if db.with_rows:
+                sql = """UPDATE recet_en
+                        INNER JOIN recipecost
+                        ON id = recipeid
+                        SET rct_cosc = cost
+                        WHERE id = {}""".format(recipe)
+            else:
+                sql = """UPDATE recet_en
+                        SET rct_cosc = 0
+                        WHERE id = {}""".format(recipe)
+                flash ("""Unable to cost recipe either because some or no recipe 
+                            ingredient have been received priced on stock """,
+                             'alert alert-warning')       
+            db.execute(sql)
+            conn.commit() 
 
         else:
-            #we need more info, lets write down what density is
-            # necessary to make the conversion matrix
+            #since we need more info for costing, lets write down the necessary
+            #density for a complete conversion matrix
             missdensUM = [i for i in ['g/ml', 'g/unit', 'ml/unit'] if missunit in i]
             sql ="""UPDATE recet_en 
                     SET rct_misd_dens = '{}'
                     WHERE id = {}""".format(json.dumps(missdensUM) ,ingr)
-            print('missdensUM-->', missdensUM)
             db.execute(sql)
             conn.commit()
 
-        flash ("""Due to the recent update, additional density info is needed in {} under the ingredients menu. 
-if not updated, recipe cost and MRP calculations will no be possible. """.format(ingrname), 'warning')
-
-        
-        
-
-        
-
+            flash ("""Due to the recent update, additional density info is 
+                        needed in {} under the ingredients menu. if not updated, 
+                        recipe cost and MRP calculations will no be possible.
+                         """.format(ingrname), 'alert alert-warning')
 
         return
 
@@ -663,7 +720,7 @@ class DataHandler():
                 self.conn.cursor(dictionary=True, buffered=True).execute(sql)
                 self.conn.commit()
 
-            flash('Record updated!')
+            flash('Record updated!', 'alert alert-success')
 
 
     def add_new(self, **kwargs):
@@ -704,9 +761,9 @@ class DataHandler():
                 
         
         if counter > 1:
-            flash('Records added!')
+            flash('Records added!', 'alert alert-success')
         elif counter == 1:
-            flash('Record added!')
+            flash('Record added!', 'alert alert-success')
         else:
             pass
 

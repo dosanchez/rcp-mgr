@@ -260,7 +260,7 @@ def ingredient():
                 #checks if additional density info is needed in which case
                 #determine which ones, activates addl fields in form to update,
                 #checks in table that addl info exists and warns user
-                update.ingrcostupdate(conn, ingr = form.id.data)
+                update.costupdate(conn, ingr = form.id.data)
 
                 return redirect(url_for('ingredient'))# clears POST data
             else:
@@ -268,7 +268,7 @@ def ingredient():
                 session['curr_rcd_' + type(form).__name__] = None 
                     # ^ so it navigates to the last record after adding
                 record.add_new(rct_rece = 0)
-                update.ingrcostupdate(conn, ingr = record.idadded)
+                update.costupdate(conn, ingr = record.idadded)
 
                 return redirect(url_for('ingredient'))# clears POST data 
 
@@ -366,6 +366,7 @@ def recipe():
             if  existe.chk_sgl_fld():   #chk if record exists   
                 #update existing record
                 record.update()
+                update.costupdate(conn, recipe = form.id.data)
                 return redirect(url_for('recipe'))# clears POST data
 
             else:
@@ -373,6 +374,7 @@ def recipe():
                 session['curr_rcd_' + type(form).__name__] = None 
                     # ^ so it navigates to the last record after adding
                 record.add_new(rct_rece = 1)
+                update.costupdate(conn, recipe = form.id.data)
                 return redirect(url_for('recipe'))# clears POST data 
 
         if nav_button == "submit1": #not a nav post
@@ -388,15 +390,19 @@ def recipe():
             if  existe.chk_sgl_fld():   #chk if record exists   
                 #update existing record
                 record.update()
+                update.costupdate(conn, recipe = form.id.data)
                 return redirect(url_for('recipe'))# clears POST data
 
             else:
                 #adds new record
                 record.add_new()
+                print('new record added')
+                update.costupdate(conn, recipe = form.id.data)
                 return redirect(url_for('recipe'))# clears POST data
         
         if session['delete_id']:
             dlt.id(conn, table_list[1], session['delete_id'])
+            update.costupdate(conn, recipe = form.id.data)
             return redirect(url_for('recipe'))# clears POST data
            
 
@@ -509,7 +515,7 @@ def sku():
 
                 #update existing record
                 record.update()
-                update.ingrcostupdate(conn, sku = form.id.data)
+                update.costupdate(conn, sku = form.id.data)
                 return redirect(url_for('sku'))# clears POST data
 
             else:
@@ -517,7 +523,7 @@ def sku():
                 session['curr_rcd_' + type(form).__name__] = None 
                     # ^ so it navigates to the last record after adding
                 record.add_new()
-                update.ingrcostupdate(conn, sku = record.idadded)
+                update.costupdate(conn, sku = record.idadded)
                 return redirect(url_for('sku'))# clears POST data 
 
 
@@ -693,7 +699,7 @@ def receive():
                 update.stockweightedcost(conn, 'logix_de',idstckdupd, 'log_pric',
                                          'log_cost', 'log_bal', 
                                          log_sku = form.subform.log_sku.data)
-                update.ingrcostupdate(conn, sku = form.subform.log_sku.data )
+                update.costupdate(conn, sku = form.subform.log_sku.data )
                 return redirect(url_for('receive'))# clears POST data 
                 
 
@@ -708,7 +714,7 @@ def receive():
                 update.stockweightedcost(conn, 'logix_de',idstckdupd, 'log_pric',
                                          'log_cost', 'log_bal', 
                                          log_sku = form.subform.log_sku.data)
-                update.ingrcostupdate(conn, sku = form.subform.log_sku.data )                         
+                update.costupdate(conn, sku = form.subform.log_sku.data )                         
                 
                 return redirect(url_for('receive'))# clears POST data 
         
@@ -722,7 +728,7 @@ def receive():
             update.stockweightedcost(conn, 'logix_de',idstckdupd, 'log_pric',
                                          'log_cost', 'log_bal', 
                                          log_sku = form.subform.log_sku.data)
-            update.ingrcostupdate(conn, sku = form.subform.log_sku.data )
+            update.costupdate(conn, sku = form.subform.log_sku.data )
             return redirect(url_for('receive'))# clears POST data
 
             

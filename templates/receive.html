@@ -189,44 +189,45 @@
               {% for counter in range(rcd_len) %}
                 {% for row in records[counter] %}
                   {% if row['id'] == form.subform.idx.data %}
-                  <tr class="table-active">
+                    <tr class="table-active">
                   {% else %}
-                  <tr>
-                    {% endif %}  
-                    {% for key, value in row.items() %}
-                      {% if key == 'id' %}
-                        <td style="text-align: center;" class="pt-2">
-                          <button type = "submit" value = {{ value }} form ="nav_form" formmethod ="post" class="btn btn-sm btn-primary" name ="subnav" id ="subnav">
-                            <small>edit</small>
-                          </button>
-                        </td>
-                        <td style="text-align: center;" class="pt-2">
-                          <button type = "submit" value = {{ value }} form ="nav_form" formmethod ="post" class="btn btn-sm btn-danger" name ="delete" id ="delete">
-                            <small>drop</small>
-                          </button>
-                        </td>
-                      {% elif key == relation[counter][0].get('child_tbl_fld') %} <!-- hides parent-child value-->
-                        <td hidden></td>
-                      {% elif key == 'log_sku' %} <!-- loops for sku names -->
-                        {% for choice in log_sku_choices %}
-                          {% if choice[0] == value %}
-                            <td style="text-align: center;">{{ choice[1] }}</td>
-                          {% endif %}
-                        {% endfor %}                        
-                      {% elif key == 'log_alm' %}<!-- loops for warehouse name-->
-                          {% for choice in rcd_unit_choices %}
-                            {% if choice[0] == value %}
-                              <td style="text-align: center;">{{ choice[1] }}</td>
-                            {% endif %}
-                          {% endfor %}
-                        {% elif key == 'log_wtax' and value %}<!-- display check icon if true-->
-                          <td style="text-align: center;"><i class="fa-solid fa-check"></i></td>
-                        {% elif key == 'log_wtax' and not value %}<!-- display check icon if false-->
-                          <td style="text-align: center;"><i class="fa-solid fa-xmark"></i></td>
-                      {% else %}
-                        <td style="text-align: center;">{{ value }}</td>
-                      {% endif %}    
-                    {% endfor %}
+                    <tr>
+                  {% endif %}  
+                  {% for key, value in row.items() %}
+                    {% if key == 'id' %}
+                      <td style="text-align: center;" class="pt-2">
+                        <button type = "submit" value = {{ value }} form ="nav_form" formmethod ="post" class="btn btn-sm btn-primary" name ="subnav" id ="subnav">
+                          <small>edit</small>
+                        </button>
+                      </td>
+                      <td style="text-align: center;" class="pt-2">
+                        <button type = "submit" value = {{ value }} form ="nav_form" formmethod ="post" class="btn btn-sm btn-danger" name ="delete" id ="delete">
+                          <small>drop</small>
+                        </button>
+                      </td>
+                    {% elif key == relation[counter][0].get('child_tbl_fld') %} <!-- hides parent-child value-->
+                      <td hidden></td>
+                    {% elif key in ['log_enca', 'log_rtrn', 'log_bal', 'log_cost', 'log_mod_doc', 'log_note'] %}
+                      <td hidden></td>
+                    {% elif key == 'log_sku' %} <!-- loops for sku names -->
+                      {% for choice in log_sku_choices %}
+                        {% if choice[0] == value %}
+                          <td style="text-align: center;">{{ choice[1] }}</td>
+                        {% endif %}
+                      {% endfor %}                        
+   
+                    {% elif key == 'log_wtax' and value %}<!-- display check icon if true-->
+                      <td style="text-align: center;"><i class="fa-solid fa-check"></i></td>
+                    {% elif key == 'log_wtax' and not value %}<!-- display check icon if false-->
+                      <td style="text-align: center;"><i class="fa-solid fa-xmark"></i></td>
+                    {% elif key == 'log_alm' %}<!-- loops for warehouse name-->
+                      {% for choice in log_alm_choices %}
+                        {% if choice[0] == value %}
+                          <td style="text-align: center;">{{ choice[1] }}</td>
+                        {% endif %}
+                      {% endfor %}  
+                    {% endif %}    
+                  {% endfor %}
                   </tr>
                 {% endfor %}
               {% endfor %}

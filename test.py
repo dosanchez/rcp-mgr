@@ -13,13 +13,9 @@ conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
                                database='rct')
 db = conn.cursor(dictionary= True, buffered=True)
 
-sql ="""SELECT *
-                    FROM recipecost
-                    WHERE recipeid = 27"""
+c =['a', 'b', 'c', 'd']
 
-db.execute(sql)
-print(db.fetchall())
-a = db.rowcount
-print('primer -->', a)
-
+if 'a' in c:
+    print ('si')
+    
 conn.close()

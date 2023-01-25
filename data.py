@@ -252,14 +252,23 @@ class select():
         return db.fetchall()     
 
     #Queries for active (ebld) choices
-    def ebld_choices(db, table, field, truefield, blank = False):
+    def ebld_choices(db, table, field, truefield, blank = False, **kwargs):
         """returns a set of (id, <<field>>) tuples for 
             selectfield choices Where a <<truefield>> is True"""
 
         sql = """SELECT id, {} 
                     FROM {}
-                    WHERE {} = True""". format(field, table, truefield)
-        db.execute(sql)
+                    WHERE {} = True AND""". format(field, table, truefield)
+        for fld, value in kwargs.items():
+            if fld == 'injection':
+                sql += value
+            elif isinstance(value, str):
+                sql += "{} = '{}' ".format(fld, value)
+            else:
+                sql += "{} = {} ".format(fld, value)
+            sql += "AND "
+        
+        db.execute(sql[:-4]) #drops trailing AND
         
         if blank:
             choice = [(0,'---')] 
@@ -272,7 +281,7 @@ class select():
 
 
     #Queries for all choices
-    def all_choices(db, table, field, blank = False):
+    def all_choices(db, table, field, blank = False, **kwargs):
         """returns a set of all (id, <<field>>) tuples for 
             selectfield choices"""
 

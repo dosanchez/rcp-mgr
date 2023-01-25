@@ -738,6 +738,232 @@ def receive():
     records.pop(0) #form header records not needed nav populates header
 
     column_names =[['Receipt items',['', '', 'SKU', 'Qty', 'Total Price',
+                     'Total Tax', 'Price has tax incld', 'Warehouse']]]
+    rcd_len = len(records)
+
+    #checks if line items price includes tax for current vendor displayed
+    #unique for this form
+    session['flexSwitch'] = 1
+    if form.lox_vend.data:
+        sql = "SELECT soc_wtax FROM socio WHERE id = {}".format(form.lox_vend.data)
+        db.execute(sql)
+        session['flexSwitch'] = db.fetchall()[0].get('soc_wtax')
+
+    #updates aggregate fields in form
+    #unique for this form
+    aggrfields = sel.sumfields(db,'logix_de_norm','log_pric','log_tax',log_enca=form.id.data)[0]
+    if aggrfields.get('sumoflog_pric'):
+        form.lox_sub.data = aggrfields.get('sumoflog_pric')
+    else:    
+        form.lox_sub.data = 0
+        
+    if aggrfields.get('sumoflog_tax'):   
+        form.lox_tax.data = aggrfields.get('sumoflog_tax')
+    else:
+        form.lox_tax.data = 0
+
+    if not form.lox_disc.data:
+        form.lox_disc.data = 0
+
+    session['Sub-total'] = form.lox_sub.data - form.lox_disc.data
+    session['Total'] = session['Sub-total'] + form.lox_tax.data
+    
+    print(records)
+    print(log_alm_choices)
+    return render_template ('receive.html', form = form, records = records,
+                            column_names = column_names, 
+                            lox_vend_choices = lox_vend_choices,
+                            log_alm_choices = log_alm_choices,
+                            log_sku_choices = log_sku_choices,
+                            relation = relation,
+                            rcd_len = rcd_len)
+
+def returns():
+    form = Rcv_en()
+    table_list = ['logix_en', 'logix_de']
+    
+    #Queries for Selectfields active choices
+    form.lox_vend.choices = sel.ebld_choices(db, 'socio', 'soc_name', 'soc_ebld')
+    form.subform.log_alm.choices = sel.ebld_choices(db, 'almacen', 'alm_name', 'alm_ebld')
+    form.subform.log_sku.choices = sel.ebld_choices(db, 'sku', 'sku_name', 'sku_ebld')
+
+    #Queries for all Selectfields choices
+    lox_vend_choices = sel.all_choices(db, 'socio', 'soc_name') 
+    log_alm_choices = sel.all_choices(db, 'almacen', 'alm_name')
+    log_sku_choices = sel.all_choices(db, 'sku', 'sku_name')
+
+    #if request.form.get('nav') is None --> its a redirect 
+    #--> its either an update, new or deleted record hence not necesarilly 
+    #last record should be displayed 
+    if request.form.get('nav'):
+        nav_button =  request.form.get('nav') #saves form navigation request
+    else:
+        nav_button = session.get('curr_rcd_' + type(form).__name__)
+
+    session['sub_nav_button'] = request.form.get('subnav') #saves subform navigation request
+    session['delete_id'] = request.form.get('delete')
+
+    try:
+        nav_button = int(nav_button)
+    except:
+        pass
+    
+    try:
+        session['sub_nav_button'] = int(session['sub_nav_button'])
+    except:
+        pass
+
+    try:
+        session['delete_id'] = int(session['delete_id'])
+    except:
+        pass    
+
+    print('formvalidate', form.validate_on_submit())
+
+    if form.validate_on_submit():
+
+        listsql = listsql2 = {
+                                table_list[0]:[{
+                                    'id':form.id.data,
+                                    'lox_date':form.lox_date.data,
+                                    'lox_datd':form.lox_datd.data,
+                                    'lox_vend':form.lox_vend.data,
+                                    'lox_nifn':form.lox_nifn.data,
+                                    'lox_doc_no':form.lox_doc_no.data,
+                                    'lox_disc':form.lox_disc.data,
+                                    'lox_sub':form.lox_sub.data,
+                                    'lox_tax':form.lox_tax.data
+                                            }],
+                                table_list[1]:[{
+                                    'id':form.subform.idx.data,
+                                    'log_enca':form.subform.log_enca.data,
+                                    'log_sku':form.subform.log_sku.data,
+                                    'log_qty':form.subform.log_qty.data,
+                                    'log_pric':form.subform.log_pric.data,
+                                    'log_tax':form.subform.log_tax.data,  
+                                    'log_alm':form.subform.log_alm.data,
+                                    'log_wtax':form.subform.log_wtax.data 
+                                            }]
+                                
+                            }
+        listsql1 ={list(listsql.keys())[0]: list(listsql.values())[0]}
+
+        del listsql2 [list(listsql.keys())[0]]
+        if not form.id.data: #gives form.id.data some value on very first entry
+            form.id.data = 0
+
+        if nav_button == "submit": #not a nav post
+            #creates instance to chk if record exist
+            record = dth.from_dict2sql(conn, listsql1)
+            existe = dth.from_dict2sql(conn, {
+                                        table_list[0]:[{
+                                            'id':form.id.data
+                                                    }]
+                                        }
+            ) 
+
+            if  existe.chk_sgl_fld():   #chk if record exists   
+                #update existing record
+                record.update()
+                return redirect(url_for('receive'))# clears POST data
+
+            else:
+                #adds new record
+                session['curr_rcd_' + type(form).__name__] = None 
+                    # ^ so it navigates to the last record after adding
+                record.add_new(lox_rece = 1)
+                return redirect(url_for('receive'))# clears POST data 
+
+        if nav_button == "submit1": #not a nav post
+            
+            #completes missing receipt item price or tax  info when left blank
+            #unique for this form
+
+            sql = "SELECT sku_itbi FROM sku WHERE id = {}".format(form.subform.log_sku.data)
+            db.execute(sql)
+            dbtax = db.fetchall()[0].get('sku_itbi')
+            if not form.subform.log_qty.data:
+                listsql2.get(table_list[1])[0]['log_qty'] = 0
+            if bool(form.subform.log_pric.data == None) ^ bool(form.subform.log_tax.data == None):
+                if not form.subform.log_pric.data:
+                    if form.subform.log_wtax.data:
+                        listsql2.get(table_list[1])[0]['log_pric'] = form.subform.log_tax.data * (1 + dbtax) / dbtax
+                    else:
+                        listsql2.get(table_list[1])[0]['log_pric'] = form.subform.log_tax.data / dbtax
+                else:
+                    if form.subform.log_wtax.data:
+                        listsql2.get(table_list[1])[0]['log_tax'] = listsql2.get(table_list[1])[0].get('log_pric') * dbtax / (1 + dbtax)
+                    else:
+                        listsql2.get(table_list[1])[0]['log_tax'] = listsql2.get(table_list[1])[0].get('log_pric') * dbtax
+            else:
+                    if form.subform.log_wtax.data:
+                        listsql2.get(table_list[1])[0]['log_tax'] = listsql2.get(table_list[1])[0].get('log_tax') or 0
+                        listsql2.get(table_list[1])[0]['log_pric'] = (listsql2.get(table_list[1])[0].get('log_pric') or 0 ) - (listsql2.get(table_list[1])[0].get('log_tax') or 0)
+                    else:
+                        listsql2.get(table_list[1])[0]['log_tax'] = listsql2.get(table_list[1])[0].get('log_tax') or 0
+                        listsql2.get(table_list[1])[0]['log_pric'] = listsql2.get(table_list[1])[0].get('log_pric') or 0
+
+            
+            #creates instance to chk if record exist
+            record = dth.from_dict2sql(conn, listsql2)
+            existe = dth.from_dict2sql(conn, {
+                                        table_list[1]:[{
+                                            'id':form.subform.idx.data
+                                                    }]
+                                        }
+            )   
+
+            if  existe.chk_sgl_fld():   #chk if record exists   
+                #update existing record and from previous record updates stock qty balance 
+                # from updated record on
+                idstckdupd =sel.secondfromtop(db, 'logix_de', 
+                                            max = form.subform.idx.data, 
+                                            log_sku = form.subform.log_sku.data)
+                record.update()               
+                update.cumfield(conn, 'logix_de', idstckdupd, 'log_qty',
+                                'log_bal',log_sku = form.subform.log_sku.data)
+                update.stockweightedcost(conn, 'logix_de',idstckdupd, 'log_pric',
+                                         'log_cost', 'log_bal', 
+                                         log_sku = form.subform.log_sku.data)
+                update.costupdate(conn, sku = form.subform.log_sku.data )
+                return redirect(url_for('receive'))# clears POST data 
+                
+
+            else:
+                #adds new record
+                record.add_new()
+                #from previous record updates stock qty balance in new record
+                idstckdupd =sel.secondfromtop(db, 'logix_de',  
+                                            log_sku = form.subform.log_sku.data)
+                update.cumfield(conn, 'logix_de', idstckdupd, 'log_qty',
+                                'log_bal',log_sku =form.subform.log_sku.data)
+                update.stockweightedcost(conn, 'logix_de',idstckdupd, 'log_pric',
+                                         'log_cost', 'log_bal', 
+                                         log_sku = form.subform.log_sku.data)
+                update.costupdate(conn, sku = form.subform.log_sku.data )                         
+                
+                return redirect(url_for('receive'))# clears POST data 
+        
+        if session['delete_id']:
+            dltsku = sel.all(db, 'logix_de', 'id', id = session['delete_id'])[0].get('log_sku')
+            idstckdupd = sel.secondfromtop(db, 'logix_de', 
+                                max = session['delete_id'], log_sku = dltsku)
+            dlt.id(conn, table_list[1], session['delete_id'])
+            update.cumfield(conn, 'logix_de', idstckdupd, 'log_qty',
+                                'log_bal',log_sku = dltsku)
+            update.stockweightedcost(conn, 'logix_de',idstckdupd, 'log_pric',
+                                         'log_cost', 'log_bal', 
+                                         log_sku = form.subform.log_sku.data)
+            update.costupdate(conn, sku = form.subform.log_sku.data )
+            return redirect(url_for('receive'))# clears POST data
+
+            
+    records, relation = navigate_to(nav_button, conn, form, table_list)
+    session['relation'] = relation
+
+    records.pop(0) #form header records not needed nav populates header
+
+    column_names =[['Receipt items',['', '', 'SKU', 'Qty', 'Total Price',
                      'Total Tax', 'Price has tax incld']]]
     rcd_len = len(records)
 
@@ -768,7 +994,7 @@ def receive():
     session['Sub-total'] = form.lox_sub.data - form.lox_disc.data
     session['Total'] = session['Sub-total'] + form.lox_tax.data
     
-
+    print(records)
     return render_template ('receive.html', form = form, records = records,
                             column_names = column_names, 
                             lox_vend_choices = lox_vend_choices,
@@ -776,7 +1002,6 @@ def receive():
                             log_sku_choices = log_sku_choices,
                             relation = relation,
                             rcd_len = rcd_len)
-
 
 if __name__ == '__main__':
     app.run(debug=True)

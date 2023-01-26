@@ -13,9 +13,8 @@ conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
                                database='rct')
 db = conn.cursor(dictionary= True, buffered=True)
 
-c =['a', 'b', 'c', 'd']
+c ={'a':1, 'b':2, 'c':3, 'd':4}
 
-if 'a' in c:
-    print ('si')
+print(c.a)
     
 conn.close()

@@ -169,3 +169,14 @@ class Rcv_en(FlaskForm):
                             default = 0)
     subform = FormField(Rcv_de)
 
+class Retur_en(FlaskForm):
+    id = HiddenField()
+    rtn_enca = SelectField('Vendor',validators=[InputRequired()],coerce= int)
+    rtn_date = DateField('Return Date', validators=[DataRequired()])
+    rtn_sub = DecimalField('Sub Total', default = 0,
+                            validators=[NumberRange(min = 0)])
+    rtn_disc = DecimalField('Discount',validators=[NumberRange(min = 0)], 
+                            default = 0)
+    rtn_tax = DecimalField('Total Tax',validators=[NumberRange(min = 0)], 
+                            default = 0)
+    subform = FormField(Rcv_de)

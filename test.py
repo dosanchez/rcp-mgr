@@ -9,17 +9,18 @@ from data import select as sel
 #                               host='sql5.freesqldatabase.com',
 #                               database='sql5514428')
 conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
-                               host='192.168.100.254',
+                               host='10.0.2.5',
                                database='rct')
 db = conn.cursor(dictionary= True, buffered=True)
 
-a = {"g/unit": Decimal(1.02), "unit/g": Decimal(0.9803921568627451), 
-    "ml/unit": Decimal(1.09), "unit/ml": Decimal(0.9174311926605505), 
-    "g/ml": Decimal(0.9357798165137615), "ml/g": Decimal(1.0686274509803921)}
+# a = {"g/unit": Decimal(1.02), "unit/g": Decimal(0.9803921568627451), 
+#     "ml/unit": Decimal(1.09), "unit/ml": Decimal(0.9174311926605505), 
+#     "g/ml": Decimal(0.9357798165137615), "ml/g": Decimal(1.0686274509803921)}
 
 
-b = sel.UMconv(db,1,'g','unit', matrix=a)
-print(b)
+# b = sel.UMconv(db,1,'g','unit', matrix=a)
+print('hola')
+conn.close()
 # if 'd' in a.keys():
 #     print('si')
 # else:

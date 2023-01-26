@@ -3,6 +3,7 @@ from flask import Flask, render_template, session, request, redirect, url_for
 from data import DataHandler as dth, select as sel, dlt, update, save_file
 from nav import navigate_to
 from forms import Ingredient, Sku, Unitmeas, Almacen, Recet_en, Socio, Rcv_en
+from forms import Retur_en
 import os
 import json
 
@@ -263,7 +264,7 @@ def ingredient():
                 #checks if additional density info is needed in which case
                 #determine which ones, activates addl fields in form to update,
                 #checks in table that addl info exists and warns user
-                sel.chkmissingdens(conn, ingr = form.id.data)
+                update.costupdate(conn, ingr = form.id.data)
 
                 return redirect(url_for('ingredient'))# clears POST data
             else:
@@ -271,11 +272,10 @@ def ingredient():
                 session['curr_rcd_' + type(form).__name__] = None 
                     # ^ so it navigates to the last record after adding
                 record.add_new(rct_rece = 0)
-                sel.chkmissingdens(conn, ingr = record.idadded)
+                update.costupdate(conn, ingr = record.idadded)
 
                 return redirect(url_for('ingredient'))# clears POST data 
 
-    print ([(a, b) for a, b in form.errors.items()])
     records, relation = navigate_to(nav_button, conn, form, table_list)
  
 
@@ -370,6 +370,7 @@ def recipe():
             if  existe.chk_sgl_fld():   #chk if record exists   
                 #update existing record
                 record.update()
+                update.costupdate(conn, recipe = form.id.data)
                 return redirect(url_for('recipe'))# clears POST data
 
             else:
@@ -377,6 +378,7 @@ def recipe():
                 session['curr_rcd_' + type(form).__name__] = None 
                     # ^ so it navigates to the last record after adding
                 record.add_new(rct_rece = 1)
+                update.costupdate(conn, recipe = form.id.data)
                 return redirect(url_for('recipe'))# clears POST data 
 
         if nav_button == "submit1": #not a nav post
@@ -392,15 +394,19 @@ def recipe():
             if  existe.chk_sgl_fld():   #chk if record exists   
                 #update existing record
                 record.update()
+                update.costupdate(conn, recipe = form.id.data)
                 return redirect(url_for('recipe'))# clears POST data
 
             else:
                 #adds new record
                 record.add_new()
+                print('new record added')
+                update.costupdate(conn, recipe = form.id.data)
                 return redirect(url_for('recipe'))# clears POST data
         
         if session['delete_id']:
             dlt.id(conn, table_list[1], session['delete_id'])
+            update.costupdate(conn, recipe = form.id.data)
             return redirect(url_for('recipe'))# clears POST data
            
 
@@ -454,12 +460,6 @@ def sku():
         nav_button = int(nav_button)
     except:
         pass
-    for error in form.sku_ingr.errors:
-        print('skuing',error)
-    print('validateonsubmit', form.validate_on_submit())
-
-    for error in form.sku_cont.errors:
-        print('skucont',error)
         
     if form.validate_on_submit():
         
@@ -519,7 +519,7 @@ def sku():
 
                 #update existing record
                 record.update()
-                sel.chkmissingdens(conn, sku = form.id.data)
+                update.costupdate(conn, sku = form.id.data)
                 return redirect(url_for('sku'))# clears POST data
 
             else:
@@ -527,7 +527,7 @@ def sku():
                 session['curr_rcd_' + type(form).__name__] = None 
                     # ^ so it navigates to the last record after adding
                 record.add_new()
-                sel.chkmissingdens(conn, sku = record.idadded)
+                update.costupdate(conn, sku = record.idadded)
                 return redirect(url_for('sku'))# clears POST data 
 
 
@@ -649,6 +649,7 @@ def receive():
                 #adds new record
                 session['curr_rcd_' + type(form).__name__] = None 
                     # ^ so it navigates to the last record after adding
+                    
                 record.add_new(lox_rece = 1)
                 return redirect(url_for('receive'))# clears POST data 
 
@@ -703,6 +704,7 @@ def receive():
                 update.stockweightedcost(conn, 'logix_de',idstckdupd, 'log_pric',
                                          'log_cost', 'log_bal', 
                                          log_sku = form.subform.log_sku.data)
+                update.costupdate(conn, sku = form.subform.log_sku.data )
                 return redirect(url_for('receive'))# clears POST data 
                 
 
@@ -717,16 +719,31 @@ def receive():
                 update.stockweightedcost(conn, 'logix_de',idstckdupd, 'log_pric',
                                          'log_cost', 'log_bal', 
                                          log_sku = form.subform.log_sku.data)
+                update.costupdate(conn, sku = form.subform.log_sku.data )                         
                 
                 return redirect(url_for('receive'))# clears POST data 
         
+        if nav_button == "newrecord": #clears form for a new record
+
+            for field in form:
+                print(field.name, type(field.data))
+                if isinstance(field.data,str):
+                    field.data = ""
+                elif isinstance(field.data,int):
+                    field.data =""
+                
+
         if session['delete_id']:
-            dltsku = sel.all(db, 'logix_de', session['delete_id'])[0].get['log_sku']
+            dltsku = sel.all(db, 'logix_de', 'id', id = session['delete_id'])[0].get('log_sku')
             idstckdupd = sel.secondfromtop(db, 'logix_de', 
-                                max = session['delect_id'], log_sku = dltsku)
+                                max = session['delete_id'], log_sku = dltsku)
             dlt.id(conn, table_list[1], session['delete_id'])
             update.cumfield(conn, 'logix_de', idstckdupd, 'log_qty',
                                 'log_bal',log_sku = dltsku)
+            update.stockweightedcost(conn, 'logix_de',idstckdupd, 'log_pric',
+                                         'log_cost', 'log_bal', 
+                                         log_sku = form.subform.log_sku.data)
+            update.costupdate(conn, sku = form.subform.log_sku.data )
             return redirect(url_for('receive'))# clears POST data
 
             
@@ -736,7 +753,7 @@ def receive():
     records.pop(0) #form header records not needed nav populates header
 
     column_names =[['Receipt items',['', '', 'SKU', 'Qty', 'Total Price',
-                     'Total Tax', 'Price has tax incld']]]
+                     'Total Tax', 'Price has tax incld', 'Warehouse']]]
     rcd_len = len(records)
 
     #checks if line items price includes tax for current vendor displayed
@@ -766,7 +783,8 @@ def receive():
     session['Sub-total'] = form.lox_sub.data - form.lox_disc.data
     session['Total'] = session['Sub-total'] + form.lox_tax.data
     
-
+    print(records)
+    print(log_alm_choices)
     return render_template ('receive.html', form = form, records = records,
                             column_names = column_names, 
                             lox_vend_choices = lox_vend_choices,

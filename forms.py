@@ -1,6 +1,5 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from flask import flash
 from wtforms import StringField, SelectField, HiddenField, BooleanField
 from wtforms import Form, FormField, IntegerField, DateField, FloatField, DecimalField
 from wtforms.validators import DataRequired, Length, NumberRange, InputRequired
@@ -132,7 +131,7 @@ class Socio(FlaskForm):
 class Sku(FlaskForm):
     id = HiddenField()
     sku_name = StringField('SKU Name', validators=[DataRequired(),
-                            Length(max=16)], 
+                            Length(max=32)], 
                             render_kw={"placeholder": "e.g. Heinz Tomato Soup"})
     sku_ingr = SelectField('Rel Recipe/ingr', coerce=int) 
     sku_cont = DecimalField('Label content',validators=[NumberRange(min = 0), 
@@ -145,8 +144,8 @@ class Sku(FlaskForm):
                             validators = [FileAllowed(['jpg', 'png', 'jpeg'])])
     sku_pref = SelectField('Preferred Vendor', default = 0, coerce=int, 
                             validators=[Optional()])
-    sku_itbi = DecimalField('Sales Tax',validators=[DataRequired(), 
-                            NumberRange(min=0, max=0.18)], default = 0.18)
+    sku_itbi = DecimalField('Sales Tax',validators=[InputRequired(), 
+                            NumberRange(min=0, max=0.180001)])
     sku_vaci = DecimalField('Empty container weight',validators=[InputRequired(), 
                             NumberRange(min = 0)])
     sku_v_unit = SelectField('Unit of measure',validators=[InputRequired()],
@@ -159,7 +158,7 @@ class Rcv_en(FlaskForm):
     lox_date = DateField('Reception Date', validators=[DataRequired()])
     lox_doc_no = StringField('Vendor Receipt No.', validators=[Optional(),Length(max=16)],
                             render_kw={"placeholder": "if other than rcpt tax No."})
-    lox_datd = DateField('Reception Doc Date', validators=[DataRequired()])
+    lox_datd = DateField('Document Date', validators=[DataRequired()])
     lox_nifn = StringField('receipt tax number',validators = [Optional(), 
                             Length(max=16)], render_kw={"placeholder": "optional"})
     lox_sub = DecimalField('Sub Total', default = 0,
@@ -170,3 +169,14 @@ class Rcv_en(FlaskForm):
                             default = 0)
     subform = FormField(Rcv_de)
 
+class Retur_en(FlaskForm):
+    id = HiddenField()
+    rtn_enca = SelectField('Vendor',validators=[InputRequired()],coerce= int)
+    rtn_date = DateField('Return Date', validators=[DataRequired()])
+    rtn_sub = DecimalField('Sub Total', default = 0,
+                            validators=[NumberRange(min = 0)])
+    rtn_disc = DecimalField('Discount',validators=[NumberRange(min = 0)], 
+                            default = 0)
+    rtn_tax = DecimalField('Total Tax',validators=[NumberRange(min = 0)], 
+                            default = 0)
+    subform = FormField(Rcv_de)

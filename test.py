@@ -3,7 +3,7 @@ from decimal import Decimal
 import mysql.connector
 from nav import navigate_to, nav_pos
 from forms import Almacen
-from data import select as sel
+from data import select as sel, update as upd
 
 #conn = mysql.connector.connect(user='sql5514428', password='C3b4Xn6K4Z',
 #                               host='sql5.freesqldatabase.com',
@@ -13,6 +13,7 @@ conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
                                database='rct')
 db = conn.cursor(dictionary= True, buffered=True)
 
+<<<<<<< HEAD
 # a = {"g/unit": Decimal(1.02), "unit/g": Decimal(0.9803921568627451), 
 #     "ml/unit": Decimal(1.09), "unit/ml": Decimal(0.9174311926605505), 
 #     "g/ml": Decimal(0.9357798165137615), "ml/g": Decimal(1.0686274509803921)}
@@ -44,3 +45,10 @@ conn.close()
 # db.execute(sql)
 # a= db.fetchall()
 # print(a)
+=======
+c ={'a':1, 'b':2, 'c':3, 'd':4}
+
+print(c.a)
+    
+conn.close()
+>>>>>>> b1edf2fb7ef90ba295bcd55854e413f71296cdc9

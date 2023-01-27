@@ -261,13 +261,16 @@
       document.getElementById("lox_doc_no").value = null;
       document.getElementById("lox_datd").value = null;
       document.getElementById("lox_nifn").value = null;
-      document.getElementById("lox_disc").value = 0;
-      document.getElementById("lox_sub").value = 0;
-      document.getElementById("lox_tax").value = 0;
+      document.getElementById("lox_disc").value = null;
+      document.getElementById("lox_sub").value = null;
+      document.getElementById("lox_tax").value = null;
       document.getElementById("subform-log_qty").value = null;
       document.getElementById("subform-log_pric").value = null;
       document.getElementById("subform-log_tax").value = null;
       document.getElementById("subform-log_sku").value = null;
+      document.getElementById("subform-log_alm").value = null;
+      document.getElementById("updaddbtn").disabled = true;
+      document.getElementById("sub").disabled = true;
       while( skus.rows.length > 1) skus.rows[1].remove();
       }
 
@@ -286,6 +289,7 @@
       document.getElementById("subform-log_pric").value = 1;
       document.getElementById("subform-log_tax").value = 1;
       document.getElementById("subform-log_sku").value = document.getElementById("subform-log_sku").options[1].value ;
+      document.getElementById("subform-log_alm").value = document.getElementById("subform-log_alm").options[1].value ;
       document.getElementById("submit_button").click();
       }
       function Newsub() { 

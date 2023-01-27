@@ -22,9 +22,9 @@ class Rcv_de(Form):
     idx = HiddenField()
     log_enca = HiddenField()
     log_sku = SelectField('Sku', validators=[DataRequired()], coerce= int)
-    log_qty = DecimalField('Receipt item qty', default = 0, 
+    log_qty = DecimalField('Item qty', default = 0, 
                             validators=[NumberRange(min = 0), Optional()])
-    log_pric = DecimalField('Receipt item total price', default = 0,
+    log_pric = DecimalField('Item total price', default = 0,
                             validators=[NumberRange(min = 0), Optional()])
     log_tax = DecimalField('Tax amount', default = 0,
                             validators=[NumberRange(min = 0), Optional()])

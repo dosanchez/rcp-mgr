@@ -269,8 +269,14 @@
       document.getElementById("subform-log_tax").value = null;
       document.getElementById("subform-log_sku").value = null;
       document.getElementById("subform-log_alm").value = null;
+      document.getElementById("subform-log_qty").disabled = true;
+      document.getElementById("subform-log_pric").disabled = true;
+      document.getElementById("subform-log_tax").disabled = true;
+      document.getElementById("subform-log_sku").disabled = true;
+      document.getElementById("subform-log_alm").disabled = true;
       document.getElementById("updaddbtn").disabled = true;
       document.getElementById("sub").disabled = true;
+      document.getElementById("subform-log_wtax").disabled = true;  
       while( skus.rows.length > 1) skus.rows[1].remove();
       }
 

@@ -5,7 +5,7 @@ from nav import navigate_to
 from forms import Ingredient, Sku, Unitmeas, Almacen, Recet_en, Socio, Rcv_en
 from forms import Retur_en
 import os
-import json
+from decimal import Decimal
 
 #database connection
 #conn = mysql.connector.connect(user='sql5514428', password='C3b4Xn6K4Z',
@@ -725,12 +725,29 @@ def receive():
         
         if nav_button == "newrecord": #clears form for a new record
 
-            for field in form:
-                print(field.name, type(field.data))
-                if isinstance(field.data,str):
-                    field.data = ""
-                elif isinstance(field.data,int):
-                    field.data =""
+            form.id.data = ""
+            form.lox_vend.data = ""
+            form.lox_date.data = ""
+            # document.getElementById("lox_doc_no").value = null;
+            # document.getElementById("lox_datd").value = null;
+            # document.getElementById("lox_nifn").value = null;
+            # document.getElementById("lox_disc").value = 0;
+            # document.getElementById("lox_sub").value = 0;
+            # document.getElementById("lox_tax").value = 0;
+            # document.getElementById("subform-log_qty").value = null;
+            # document.getElementById("subform-log_pric").value = null;
+            # document.getElementById("subform-log_tax").value = null;
+
+
+            column_names =[['Receipt items',['', '', 'SKU', 'Qty', 'Total Price',
+                     'Total Tax', 'Price has tax incld', 'Warehouse']]]
+            
+            return render_template ('receive.html', form = form, records = [{}],
+                            column_names = column_names, 
+                            lox_vend_choices = lox_vend_choices,
+                            log_alm_choices = log_alm_choices,
+                            log_sku_choices = log_sku_choices,
+                            rcd_len = 0)
                 
 
         if session['delete_id']:
@@ -782,9 +799,7 @@ def receive():
 
     session['Sub-total'] = form.lox_sub.data - form.lox_disc.data
     session['Total'] = session['Sub-total'] + form.lox_tax.data
-    
-    print(records)
-    print(log_alm_choices)
+
     return render_template ('receive.html', form = form, records = records,
                             column_names = column_names, 
                             lox_vend_choices = lox_vend_choices,

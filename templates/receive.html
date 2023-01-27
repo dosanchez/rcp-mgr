@@ -29,8 +29,8 @@
         <button type = "button" class="btn" onclick="Navrecord('last')">
           <i class="fa-solid fa-angles-right"></i>
         </button>
-        <!--button type = "button" value = "new" class="btn" name ="nav" onclick="Newrecord()"-->
-        <button type = "submit" value = "newrecord" form ="nav_form" formmethod ="post" class="btn" name ="nav" id="newrecord">
+        <button type = "button" value = "new" class="btn" name ="nav" onclick="Newrecord()">
+        <!--button type = "submit" value = "newrecord" form ="nav_form" formmethod ="post" class="btn" name ="nav" id="newrecord"-->
           <i class="fa-solid fa-square-plus"></i>
         </button>
       </div>  
@@ -173,7 +173,7 @@
       {% for sub in column_names %}
         <label>{{ sub[0] }}</label>
         <section style="height:445px; overflow:auto;">
-          <table class="table table-hover">
+          <table id = "skus" class="table table-hover">
             <thead class = "bg-light" style="position: sticky;top: 0">
               <tr>
                 {% for header in sub[1] %}
@@ -255,7 +255,20 @@
     }
 
     function Newrecord() {
-      document.getElementById("nav_form").reset();
+      document.getElementById("id").value = null;
+      document.getElementById("lox_vend").value = null;
+      document.getElementById("lox_date").value = null;
+      document.getElementById("lox_doc_no").value = null;
+      document.getElementById("lox_datd").value = null;
+      document.getElementById("lox_nifn").value = null;
+      document.getElementById("lox_disc").value = 0;
+      document.getElementById("lox_sub").value = 0;
+      document.getElementById("lox_tax").value = 0;
+      document.getElementById("subform-log_qty").value = null;
+      document.getElementById("subform-log_pric").value = null;
+      document.getElementById("subform-log_tax").value = null;
+      document.getElementById("subform-log_sku").value = null;
+      while( skus.rows.length > 1) skus.rows[1].remove();
       }
 
       function Navrecord(NAV) {
@@ -272,6 +285,7 @@
       document.getElementById("subform-log_qty").value = 1;
       document.getElementById("subform-log_pric").value = 1;
       document.getElementById("subform-log_tax").value = 1;
+      document.getElementById("subform-log_sku").value = document.getElementById("subform-log_sku").options[1].value ;
       document.getElementById("submit_button").click();
       }
       function Newsub() { 

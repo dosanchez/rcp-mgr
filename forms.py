@@ -21,7 +21,7 @@ class Rcv_de(Form):
     """wtform for receive form details"""
     idx = HiddenField()
     log_enca = HiddenField()
-    log_sku = SelectField('Sku', validators=[DataRequired()], coerce= int)
+    log_sku = SelectField('Sku', validators=[InputRequired(), Optional()], coerce= int)
     log_qty = DecimalField('Item qty', default = 0, 
                             validators=[NumberRange(min = 0), Optional()])
     log_pric = DecimalField('Item total price', default = 0,

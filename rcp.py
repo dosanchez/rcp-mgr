@@ -596,8 +596,6 @@ def receive():
     except:
         pass    
 
-    print('formvalidate', form.validate_on_submit())
-
     if form.validate_on_submit():
 
         listsql = listsql2 = {
@@ -722,21 +720,6 @@ def receive():
                 update.costupdate(conn, sku = form.subform.log_sku.data )                         
                 
                 return redirect(url_for('receive'))# clears POST data 
-        
-        if nav_button == "newrecord": #clears form for a new record
-
-            # form.id.data = ""
-            # form.lox_vend.data = ""
-            # form.lox_date.data = ""
-            # document.getElementById("lox_doc_no").value = null;
-            # document.getElementById("lox_datd").value = null;
-            # document.getElementById("lox_nifn").value = null;
-            # document.getElementById("lox_disc").value = 0;
-            # document.getElementById("lox_sub").value = 0;
-            # document.getElementById("lox_tax").value = 0;
-            # document.getElementById("subform-log_qty").value = null;
-            # document.getElementById("subform-log_pric").value = null;
-            # document.getElementById("subform-log_tax").value = null;
 
 
             column_names =[['Receipt items',['', '', 'SKU', 'Qty', 'Total Price',

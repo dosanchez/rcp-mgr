@@ -30,7 +30,6 @@
           <i class="fa-solid fa-angles-right"></i>
         </button>
         <button type = "button" value = "new" class="btn" name ="nav" onclick="Newrecord()">
-        <!--button type = "submit" value = "newrecord" form ="nav_form" formmethod ="post" class="btn" name ="nav" id="newrecord"-->
           <i class="fa-solid fa-square-plus"></i>
         </button>
       </div>  
@@ -93,10 +92,10 @@
             <div class="col-sm-8 border border-secondary"></div>
             <div class="w-100"></div>
             <div class="col-sm-4">
-              <p class="fw-semibold">Sub-total</p>
+              <p class="fw-semibold">Net-total</p>
             </div>
             <div class="col-sm-8">
-              <input class="form-control form-control-sm" id="Sub-total" min="0" name="Sub-total" step="any" type="number" value="None">
+              <input class="form-control form-control-sm" id="Sub-total" min="0" name="Sub-total" step="any" type="number" value="None" readonly>
             </div>
             <div class="w-100"></div>
             <div class="col-sm-4">
@@ -113,7 +112,7 @@
               <p class="fw-semibold">Total</p>
             </div>
             <div class="col-sm-8">
-              <input class="form-control form-control-sm" id="Total" min="0" name="Total" step="any" type="number" value="None">
+              <input class="form-control form-control-sm" id="Total" min="0" name="Total" step="any" type="number" value="None" readonly>
             </div>
           </div>
         </fieldset>
@@ -164,11 +163,6 @@
   </form>
       <div class="row justify-content-center my-3">
         <div class="col-11 border border-dark border-top-1" style="--bs-border-opacity: .4;"></div>
-      </div>
-        <div>
-      {% if form.errors %}
-        {{ form.errors }}
-      {% endif %}
       </div>
       {% for sub in column_names %}
         <label>{{ sub[0] }}</label>
@@ -263,7 +257,9 @@
       document.getElementById("lox_nifn").value = null;
       document.getElementById("lox_disc").value = null;
       document.getElementById("lox_sub").value = null;
+      document.getElementById("Sub-total").value = null;
       document.getElementById("lox_tax").value = null;
+      document.getElementById("Total").value = null;
       document.getElementById("subform-log_qty").value = null;
       document.getElementById("subform-log_pric").value = null;
       document.getElementById("subform-log_tax").value = null;
@@ -288,14 +284,16 @@
       document.getElementById("lox_nifn").value = {{'null' if not session['lox_nifn'] else session['lox_nifn']}};
       document.getElementById("lox_disc").value = {{session['lox_disc']}};
       document.getElementById("lox_sub").value = {{session['lox_sub']}};
+      document.getElementById("Sub-total").value = {{session['lox_sub'] - session['lox_disc']}};
       document.getElementById("lox_tax").value = {{session['lox_tax']}};
+      document.getElementById("Total").value = {{session['lox_sub'] - session['lox_disc'] + session['lox_tax']}};
       document.getElementById("id").value = {{session['id']}};
       document.getElementById("submit_button").value = NAV;
       document.getElementById("subform-log_qty").value = 1;
       document.getElementById("subform-log_pric").value = 1;
       document.getElementById("subform-log_tax").value = 1;
-      document.getElementById("subform-log_sku").value = document.getElementById("subform-log_sku").options[1].value ;
-      document.getElementById("subform-log_alm").value = document.getElementById("subform-log_alm").options[1].value ;
+      document.getElementById("subform-log_sku").value = {{session['log_sku']}};
+      document.getElementById("subform-log_alm").value = {{session['log_alm']}};;
       document.getElementById("submit_button").click();
       }
       function Newsub() { 

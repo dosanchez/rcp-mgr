@@ -163,7 +163,7 @@ class select():
 
       
         
-    def sglfld(db, table, field, orderby =id, **kwargs):
+    def sglfld(db, table, field, orderby = 'id', **kwargs):
         """returns a list of dictionaries (records) of a single table given a 
         criteria, order ascending by a certain field"""
 
@@ -254,15 +254,14 @@ class select():
     #Queries for active (ebld) choices
     def ebld_choices(db, table, field, truefield, blank = False, **kwargs):
         """returns a set of (id, <<field>>) tuples for 
-            selectfield choices Where a <<truefield>> is True"""
+            selectfield choices Where a <<truefield>> is True 
+            and any field equal to a given value"""
 
         sql = """SELECT id, {} 
                     FROM {}
                     WHERE {} = True AND""". format(field, table, truefield)
         for fld, value in kwargs.items():
-            if fld == 'injection':
-                sql += value
-            elif isinstance(value, str):
+            if isinstance(value, str):
                 sql += "{} = '{}' ".format(fld, value)
             else:
                 sql += "{} = {} ".format(fld, value)
@@ -286,8 +285,17 @@ class select():
             selectfield choices"""
 
         sql = """SELECT id, {} 
-                    FROM {}""". format(field, table)
-        db.execute(sql)
+                    FROM {}    """. format(field, table)
+        if not kwargs == {}:
+            sql += "WHERE "
+            for fld, value in kwargs.items():
+                if isinstance(value, str):
+                    sql += "{} = '{}' ".format(fld, value)
+                else:
+                    sql += "{} = {} ".format(fld, value)
+                sql += "AND "
+
+        db.execute(sql[:-4]) #drops trailing AND
         
         if blank:
             choice = [(0,'---')]   

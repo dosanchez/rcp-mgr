@@ -8,7 +8,7 @@
     <div class="row mb-3" >
       <div class="col-sm-8">
         <h2>Reception from vendor</h2>
-        <small>receive SKUs</small>
+        <p>receive SKUs</p><button type = "button" class=" btn btn-link btn-sm" onclick="Navrecord('return')"><small>Click here for returns on this reception</small></button>
       </div>
       <div class="col-sm-4" style ="float:right;">
         <button type = "button" class="btn" onclick="Navrecord('out')">
@@ -20,7 +20,7 @@
         <button type = "button" class="btn" onclick="Navrecord('back')">
           <i class="fa-solid fa-circle-chevron-left"></i>
         </button>
-        <button type ="button" class="btn btn-outline-dark" id = "id" locked>
+        <button type ="button" class="btn btn-outline-dark" id = "displayedid" locked>
           {{ form.id.data }}
         </button>
         <button type = "button" class="btn" onclick="Navrecord('next')">

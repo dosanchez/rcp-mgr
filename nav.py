@@ -26,11 +26,12 @@ def nav_pos(rcds, id, nav_button):
     elif nav_button == "next" and regd_id.index(int(id)) == last_index:
         return -1, regd_id
     elif nav_button == "out":
-        return render_template ('index.html')
+        render_template ('index.html')
+        return 0, regd_id
     else:
         return -1, regd_id    
 
-def navigate_to(nav_button, conn, form, table_list):
+def navigate_to(nav_button, conn, form, table_list, **kwargs):
     """visualize registered U.M and moves form to nav target"""
     rcds =[]
     relation=[]
@@ -39,18 +40,15 @@ def navigate_to(nav_button, conn, form, table_list):
     while counter < len(table_list):
         if counter == 0:
 
-            #Ingredient and recipe forms share the same SQL Table == recet_en, hence need to discriminate
-            if type(form).__name__ == 'Ingredient':
-
-                rcds.append(sel.all(db, table_list[counter], rct_rece = 0))
-                res = sel.max_id(db, table_list[counter], rct_rece = 0)
-
-            elif type(form).__name__ == 'Recet_en':
-                rcds.append(sel.all(db, table_list[counter], rct_rece = 1))
-                res = sel.max_id(db, table_list[counter], rct_rece = 1) 
-            else:
+            if not kwargs:
                 rcds.append(sel.all(db, table_list[counter]))
                 res = sel.max_id(db, table_list[counter])
+            #the kwargs part is used for only displaying certain records in the header
+            # Ingredient and recipe forms share the same SQL Table == recet_en, hence need to discriminate
+            #for returns only returns related to a certain reception are displayed
+            else: 
+                rcds.append(sel.all(db, table_list[counter], **kwargs))
+                res = sel.max_id(db, table_list[counter], **kwargs)
             
             session['parent_last_row_id'] = res[0].get('parent_last_row_id')
             id = form.id.data

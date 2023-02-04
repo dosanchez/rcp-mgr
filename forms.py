@@ -171,6 +171,17 @@ class Rcv_en(FlaskForm):
 
 class Retur_en(FlaskForm):
     id = HiddenField()
+    #dummy form just to keep page format
+    lox_vend = SelectField('Vendor',render_kw={'disabled':''},coerce= int)
+    lox_date = DateField('Reception Date', render_kw={'disabled':''})
+    lox_doc_no = StringField('Vendor Receipt No.', 
+                        render_kw={"placeholder": "if other than rcpt tax No.",
+                         'disabled':''})
+    lox_datd = DateField('Document Date', render_kw={'disabled':''})
+    lox_nifn = StringField('receipt tax number', 
+                            render_kw={"placeholder": "optional", 
+                            'disabled':''})
+    #working form                        
     rtn_enca = SelectField('Vendor',validators=[InputRequired()],coerce= int)
     rtn_date = DateField('Return Date', validators=[DataRequired()])
     rtn_sub = DecimalField('Sub Total', default = 0,

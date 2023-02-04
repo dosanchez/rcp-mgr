@@ -7,8 +7,8 @@
     {{ form.hidden_tag() }}
     <div class="row mb-3" >
       <div class="col-sm-8">
-        <h2>Reception from vendor</h2>
-        <small>receive SKUs</small>
+        <h2>Return form</h2>
+        <small>whole or partially returns items from reception</small>
       </div>
       <div class="col-sm-4" style ="float:right;">
         <button type = "button" class="btn" onclick="Navrecord('out')">
@@ -37,6 +37,9 @@
     <div hidden>
       {{ form.id() }}
     </div>
+    <div hidden>
+      {{ form.rtn_enca() }}
+    </div>
     <div class="row mb-4">
       <div class="col-sm-4 pl-2">
         {{ form.lox_vend.label(class="form-label") }}
@@ -47,8 +50,8 @@
         {{ form.lox_date(class="form-control", value = form.lox_date.data) }}
       </div>
       <div class="col-sm-3">
-        {{ form.rtn_enca.label(class="form-label") }}
-        {{ form.rtn_enca(class="form-control", value = form.rtn_enca.data) }}
+        {{ form.rtn_date.label(class="form-label") }}
+        {{ form.rtn_date(class="form-control", value = form.rtn_date.data) }}
       </div>
       <div class="col-sm-2 pt-3 text-center">
         <input type="submit" id ="submit_button" class="btn btn-primary" formmethod="POST" value="submit" name = "nav">
@@ -79,17 +82,17 @@
           <legend class="fs-5">Receipt summary</legend>
           <div class="row g-1 px-3"> 
             <div class="col-sm-4">
-              {{ form.lox_sub.label(class="form-label form-label-sm") }}
+              {{ form.rtn_sub.label(class="form-label form-label-sm") }}
             </div>
             <div class="col-sm-8">
-              {{ form.lox_sub(class ="form-control form-control-sm", value = form.lox_sub.data) }}
+              {{ form.rtn_sub(class ="form-control form-control-sm", value = form.rtn_sub.data) }}
             </div>
             <div class="w-100"></div>
             <div class="col-sm-4">
-              {{ form.lox_disc.label(class="form-label form-label-sm") }}
+              {{ form.rtn_disc.label(class="form-label form-label-sm") }}
             </div>
             <div class="col-sm-8">
-              {{ form.lox_disc(class ="form-control form-control-sm", value = form.lox_disc.data) }}
+              {{ form.rtn_disc(class ="form-control form-control-sm", value = form.rtn_disc.data) }}
             </div>
             <div class="w-100"></div>
             <div class="col-sm-4"></div>
@@ -103,10 +106,10 @@
             </div>
             <div class="w-100"></div>
             <div class="col-sm-4">
-              {{ form.lox_tax.label(class="form-label") }}
+              {{ form.rtn_tax.label(class="form-label") }}
             </div>
             <div class="col-sm-8">
-              {{ form.lox_tax(class="form-control", value = form.lox_tax.data) }}
+              {{ form.rtn_tax(class="form-control", value = form.rtn_tax.data) }}
             </div>
             <div class="w-100"></div>
             <div class="col-sm-4"></div>
@@ -244,6 +247,7 @@
 {% block script %}
   {{ super() }}
   <script>
+
 
     document.getElementById("subform-log_wtax").checked = Boolean({{session['flexSwitch']}});
     document.getElementById("Sub-total").value = {{session['Sub-total']}};

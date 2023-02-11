@@ -7,6 +7,9 @@ def nav_pos(rcds, id, nav_button):
 
     regd_id =[row.get('id') for row in rcds] #making a list of registered ids
     last_index = len(regd_id) -1 #calc id list length
+    print('id-->', id)
+    print('nav_button-->', nav_button)
+    print('regd_id -->', regd_id)
     if not len(regd_id):
         return None, []
     elif isinstance(nav_button,(int)):
@@ -26,7 +29,7 @@ def nav_pos(rcds, id, nav_button):
     elif nav_button == "next" and regd_id.index(int(id)) == last_index:
         return -1, regd_id
     elif nav_button == "out":
-        render_template ('index.html')
+        redirect(url_for('index'))
         return 0, regd_id
     else:
         return -1, regd_id    

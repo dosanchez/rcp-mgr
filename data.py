@@ -206,6 +206,7 @@ class select():
                     sql += "{} = {} ".format(field, value)
                 sql += "AND "
                 sql = sql[:-4] + " ORDER BY id ASC" #drop trailing 'AND '
+            print('sql', sql)    
             db.execute(sql) 
  
         return(db.fetchall())

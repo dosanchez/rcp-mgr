@@ -567,26 +567,8 @@ def receive():
         nav_button =  request.form.get('nav') #saves form navigation request
         print('navbutton--->', nav_button)
         if nav_button == 'return':
-            lox_vend_choices = sel.all_choices(db, 'socio', 'soc_name', id= form.lox_vend.data) 
-            log_alm_choices = sel.ebld_choices(db, 'almacen', 'alm_name', 'alm_ebld')
-            log_sku_choices = sel.all_choices(db, 'sku', 'sku_name')
-            records, relation = navigate_to(None, conn, 
-                                            form = Retur_en(), 
-                                            table_list = ['retur_en', 'logix_de'])
-            session['relation'] = relation
-            records.pop(0) #form header records not needed nav populates header
-            column_names =[['Receipt items',['', '', 'SKU', 'Qty', 'Total Price',
-                     'Total Tax', 'Price has tax incld', 'Warehouse']]]
-            rcd_len = len(records)
-
-            return render_template ('returns.html', form = Retur_en(),
-                            records = records,
-                            column_names = column_names, 
-                            lox_vend_choices = lox_vend_choices,
-                            log_alm_choices = log_alm_choices,
-                            log_sku_choices = log_sku_choices,
-                            relation = relation,
-                            rcd_len = rcd_len)
+            session['rtnhead'] = form.id.data
+            return redirect(url_for('returns'))# clears POST data
     else:
         nav_button = session.get('curr_rcd_' + type(form).__name__)
 
@@ -821,7 +803,9 @@ def receive():
 def returns():
     form = Retur_en()
 
-    print('session-->', session)
+    print('returns session-->', session)
+
+
     #locks fields in subform so only qty can be changed
     Rcv_de().log_sku.render_kw={'disabled':''}
     form.subform.log_pric.render_kw={'disabled':''}
@@ -830,7 +814,7 @@ def returns():
     form.subform.log_wtax.render_kw={'disabled':''}
 
     #makes sure you dont return more qty than received
-    form.subform.log_sku.validators = [NumberRange(max = "insert expresion of max value here"), Optional()]
+    #form.subform.log_sku.validators = [NumberRange(max = "insert expresion of max value here"), Optional()]
     
     table_list = ['retur_en', 'logix_de']
 
@@ -855,6 +839,7 @@ def returns():
         
     else:
         nav_button = session.get('curr_rcd_' + type(form).__name__)
+        print ('nav_button curr_rcd-->', nav_button)
 
     session['sub_nav_button'] = request.form.get('subnav') #saves subform navigation request
     session['delete_id'] = request.form.get('delete')
@@ -873,7 +858,7 @@ def returns():
         session['delete_id'] = int(session['delete_id'])
     except:
         pass    
-
+    print('validate on submit', form.validate_on_submit())
     if form.validate_on_submit():
 
         listsql = listsql2 = {
@@ -1021,10 +1006,7 @@ def returns():
             update.costupdate(conn, sku = form.subform.log_sku.data )
             return redirect(url_for('receive'))# clears POST data
 
-    if nav_button == 'return':        
-        records, relation = navigate_to(nav_button, conn, form, table_list, rtn_enca = request.form.get('id'))
-    else:
-        records, relation = navigate_to(nav_button, conn, form, table_list, rtn_enca = form.id.data)
+    records, relation = navigate_to(nav_button, conn, form, table_list, rtn_enca = int(session.get('rtnhead')))
 
     session['relation'] = relation
     print('relation -->', relation)

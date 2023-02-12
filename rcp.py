@@ -820,14 +820,16 @@ def returns():
 
     #Queries for Selectfields active choices
     #form.lox_vend.choices = sel.ebld_choices(db, 'socio', 'soc_name', 'soc_ebld')
-    form.rtn_enca.choices = sel.ebld_choices(db, 'socio', 'soc_name', 'soc_ebld')
-    # form.subform.log_alm.choices = sel.ebld_choices(db, 'almacen', 'alm_name', 'alm_ebld')
+    #form.rtn_enca.choices = sel.ebld_choices(db, 'socio', 'soc_name', 'soc_ebld')
+    #form.subform.log_alm.choices = sel.ebld_choices(db, 'almacen', 'alm_name', 'alm_ebld')
     # form.subform.log_sku.choices = sel.ebld_choices(db, 'sku', 'sku_name', 'sku_ebld')
 
     #Queries for all Selectfields choices
-    lox_vend_choices = sel.all_choices(db, 'socio', 'soc_name') 
-    log_alm_choices = sel.all_choices(db, 'almacen', 'alm_name')
-    log_sku_choices = sel.all_choices(db, 'sku', 'sku_name')
+    #lox_vend_choices = sel.all_choices(db, 'socio', 'soc_name') 
+    log_alm_choices = sel.all_choices(db, 'wrh4returns', 'alm_name',
+                                       log_enca = form.rtn_enca.data)
+    log_sku_choices = sel.all_choices(db, 'sku4returns', 'sku_name',
+                                        log_enca = form.rtn_enca.data)
 
     #if request.form.get('nav') is None --> its a redirect 
     #--> its either an update, new or deleted record hence not necesarilly 
@@ -1027,26 +1029,33 @@ def returns():
 
     #updates aggregate fields in form
     #unique for this form
-    aggrfields = sel.sumfields(db,'logix_de_norm','log_pric','log_tax',log_enca=form.id.data)[0]
-    if aggrfields.get('sumoflog_pric'):
-        form.lox_sub.data = aggrfields.get('sumoflog_pric')
-    else:    
-        form.lox_sub.data = 0
-        
-    if aggrfields.get('sumoflog_tax'):   
-        form.lox_tax.data = aggrfields.get('sumoflog_tax')
-    else:
-        form.lox_tax.data = 0
+    if not form.id.data: #first time entry to form has no id hence
+        form.rtn_sub.data = 0
+        form.rtn_tax.data = 0
+        form.rtn_disc.data = 0
 
-    if not form.lox_disc.data:
-        form.lox_disc.data = 0
+    else: 
+        aggrfields = sel.sumfields(db,'logix_de_norm','log_pric','log_tax',
+                                    log_rtrn=form.id.data)[0]
+        if aggrfields.get('sumoflog_pric'):
+            form.rtn_sub.data = aggrfields.get('sumoflog_pric')
+        else:    
+            form.rtn_sub.data = 0
+            
+        if aggrfields.get('sumoflog_tax'):   
+            form.rtn_tax.data = aggrfields.get('sumoflog_tax')
+        else:
+            form.rtn_tax.data = 0
 
-    session['Sub-total'] = form.lox_sub.data - form.lox_disc.data
-    session['Total'] = session['Sub-total'] + form.lox_tax.data
+        if not form.rtn_disc.data:
+            form.rtn_disc.data = 0
 
-    return render_template ('receive.html', form = form, records = records,
+    session['Sub-total'] = form.rtn_sub.data - form.rtn_disc.data
+    session['Total'] = session['Sub-total'] + form.rtn_tax.data
+
+    return render_template ('returns.html', form = form, records = records,
                             column_names = column_names, 
-                            lox_vend_choices = lox_vend_choices,
+                            #lox_vend_choices = lox_vend_choices,
                             log_alm_choices = log_alm_choices,
                             log_sku_choices = log_sku_choices,
                             relation = relation,

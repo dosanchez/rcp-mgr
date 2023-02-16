@@ -42,8 +42,8 @@
     </div>
     <div class="row mb-4">
       <div class="col-sm-4 pl-2">
-        {{ form.lox_vend.label(class="form-label") }}
-        {{ form.lox_vend(class="form-select", value = form.lox_vend.data, onchange="Locksubform()") }}
+         <label class="form-label" for="lox_vend">Vendor</label>
+        <select class="form-select" id="lox_vend" name="lox_vend" onchange="Locksubform()" required value="5"><option selected value="5">La Sirena</option><option value="2">National Supermarkets</option><option value="1">Pricesmart</option><option value="3">Valerio Supermarket</option></select>
       </div>
       <div class="col-sm-3">
         {{ form.lox_date.label(class="form-label") }}

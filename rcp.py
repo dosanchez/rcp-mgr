@@ -11,13 +11,13 @@ from decimal import Decimal
 #conn = mysql.connector.connect(user='sql5514428', password='C3b4Xn6K4Z',
 #                             host='sql5.freesqldatabase.com',
 #                             database='sql5514428')
-# conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
-#                                host='10.0.2.5',
-#                                port = 3306,
-#                                database='rct')
 conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
-                               host='192.168.100.254',
+                               host='10.0.2.5',
+                               port = 3306,
                                database='rct')
+# conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
+#                                host='192.168.100.254',
+#                                database='rct')
 db = conn.cursor(dictionary=True, buffered=True)
 
 
@@ -808,15 +808,11 @@ def returns():
 
     #locks fields in subform so only qty can be changed
     Rcv_de().log_sku.render_kw={'disabled':''}
-    form.subform.log_pric.render_kw={'disabled':''}
-    form.subform.log_tax.render_kw={'disabled':''}
-    form.subform.log_alm.render_kw={'disabled':''}
-    form.subform.log_wtax.render_kw={'disabled':''}
 
     #makes sure you dont return more qty than received
     #form.subform.log_sku.validators = [NumberRange(max = "insert expresion of max value here"), Optional()]
     
-    table_list = ['retur_en', 'logix_de']
+    table_list = ['return_header', 'logix_de']
 
     #Queries for Selectfields active choices
     #form.lox_vend.choices = sel.ebld_choices(db, 'socio', 'soc_name', 'soc_ebld')
@@ -825,23 +821,34 @@ def returns():
     # form.subform.log_sku.choices = sel.ebld_choices(db, 'sku', 'sku_name', 'sku_ebld')
 
     #Queries for all Selectfields choices
-    #lox_vend_choices = sel.all_choices(db, 'socio', 'soc_name') 
-    log_alm_choices = sel.all_choices(db, 'wrh4returns', 'alm_name',
-                                       log_enca = form.rtn_enca.data)
-    log_sku_choices = sel.all_choices(db, 'sku4returns', 'sku_name',
+    lox_vend_choices = sel.all_choices(db, 'socio', 'soc_name')
+
+
+    if not form.rtn_enca.data: #first time entry, no return records
+        form.lox_vend.render_kw={'disabled':''}
+        form.subform.log_sku.render_kw={'disabled':''}
+        form.subform.log_qty.render_kw={'disabled':''}
+        form.subform.log_pric.render_kw={'disabled':''}
+        form.subform.log_tax.render_kw={'disabled':''}
+        form.subform.log_alm.render_kw={'disabled':''}
+        form.subform.log_wtax.render_kw={'disabled':''}    
+        log_alm_choices = (0,"")
+        log_sku_choices = (0,"")
+
+    else:
+        log_alm_choices = sel.all_choices(db, 'wrh4returns', 'alm_name',
                                         log_enca = form.rtn_enca.data)
+        log_sku_choices = sel.all_choices(db, 'sku4returns', 'sku_name',
+                                            log_enca = form.rtn_enca.data)
 
     #if request.form.get('nav') is None --> its a redirect 
     #--> its either an update, new or deleted record hence not necesarilly 
     #last record should be displayed 
     if request.form.get('nav'):
         nav_button =  request.form.get('nav') #saves form navigation request
-        print ('nav_button-->', nav_button)
-        print('request.form.getid-->', request.form.get('id'))
         
     else:
         nav_button = session.get('curr_rcd_' + type(form).__name__)
-        print ('nav_button curr_rcd-->', nav_button)
 
     session['sub_nav_button'] = request.form.get('subnav') #saves subform navigation request
     session['delete_id'] = request.form.get('delete')

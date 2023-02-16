@@ -171,7 +171,7 @@ class Rcv_en(FlaskForm):
 
 class Retur_en(FlaskForm):
     id = HiddenField()
-    #dummy form just to keep page format
+    #dummy form just to keep page format and related receipt info
     lox_vend = SelectField('Vendor',coerce= int)
     lox_date = DateField('Reception Date', render_kw={'disabled':''})
     lox_doc_no = StringField('Vendor Receipt No.', 

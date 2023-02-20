@@ -803,8 +803,6 @@ def receive():
 def returns():
     form = Retur_en()
 
-    print('returns session-->', session)
-
 
     #locks fields in subform so only qty can be changed
     Rcv_de().log_sku.render_kw={'disabled':''}
@@ -1015,7 +1013,7 @@ def returns():
             update.costupdate(conn, sku = form.subform.log_sku.data )
             return redirect(url_for('receive'))# clears POST data
 
-    records, relation = navigate_to(nav_button, conn, form, table_list, rtn_enca = int(session.get('rtnhead')))
+    records, relation = navigate_to(nav_button, conn, form, table_list, lox_id = int(session.get('rtnhead')))
 
     session['relation'] = relation
     print('relation -->', relation)

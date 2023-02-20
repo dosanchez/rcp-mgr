@@ -46,9 +46,10 @@ def navigate_to(nav_button, conn, form, table_list, **kwargs):
             if not kwargs:
                 rcds.append(sel.all(db, table_list[counter]))
                 res = sel.max_id(db, table_list[counter])
-            #the kwargs part is used for only displaying certain records in the header
-            # Ingredient and recipe forms share the same SQL Table == recet_en, hence need to discriminate
-            #for returns only returns related to a certain reception are displayed
+            #the kwargs part is used for considering only a subset of records
+            #in the header.  Ingredient and recipe forms share the same 
+            #SQL Table == recet_en, hence need to discriminatefor returns only
+            # returns related to a certain reception are displayed
             else: 
                 rcds.append(sel.all(db, table_list[counter], **kwargs))
                 res = sel.max_id(db, table_list[counter], **kwargs)

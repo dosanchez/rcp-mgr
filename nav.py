@@ -68,18 +68,32 @@ def navigate_to(nav_button, conn, form, table_list, **kwargs):
 
             tgt_record = rcds[0][pos]
             session['curr_rcd_' + type(form).__name__] = tgt_record.get('id')
+            
+            #exception for return form
+            if table_list[0] == 'return_header':
+                ref_tbl = 'retur_en'
+            else:
+                ref_tbl = table_list[0]
+
+
             for i in form:
                 if not i.id == 'csrf_token':
                     if i.id == "qty_um" and table_list[0] == 'unitmeas':#exception for unitmeas form
                         i.data = 1
                     elif i.id == "qty_base" and table_list[0] == 'unitmeas':#exception for unitmeas form
                         i.data = session['uni_conv'] = tgt_record.get('uni_conv')
+                    
+                    
                     elif type(i).__name__ == 'FormField':
 
-                        relation.append(sel.foreign_tbl(conn, table_list[0],
+                        relation.append(sel.foreign_tbl(conn, ref_tbl,
                                                         table_list[counter]))
+                        
+                        #turns inexistent first record id into '' for sql
+                        if not tgt_record.get('id'):
+                            tgt_record['id'] = "\'\'"
 
-                        subform_rcds = sel.chld_vals(db, table_list[0], table_list[counter],
+                        subform_rcds = sel.chld_vals(db, ref_tbl, table_list[counter],
                                 relation[counter-1][0].get('child_tbl_fld'),
                                 tgt_record.get('id'))
 

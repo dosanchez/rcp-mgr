@@ -1014,9 +1014,7 @@ def returns():
             return redirect(url_for('receive'))# clears POST data
 
     records, relation = navigate_to(nav_button, conn, form, table_list, lox_id = int(session.get('rtnhead')))
-
     session['relation'] = relation
-    print('relation -->', relation)
     
     records.pop(0) #form header records not needed nav populates header
 

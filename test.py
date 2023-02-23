@@ -13,9 +13,11 @@ conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
                                database='rct')
 db = conn.cursor(dictionary= True, buffered=True)
 
-c ={'a':1, 'b':2, 'c':3, 'd':4}
-
-for i in range(0):
-    print(i)
-    
+sql = """SELECT b.* FROM retur_en AS h INNER JOIN logix_de AS b
+                ON h.id = b.log_rtrn
+                WHERE h.id = '' """
+db.execute(sql)
+a = db.fetchall()
+b = "\'\'"
+print (b, type(b))
 conn.close()

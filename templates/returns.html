@@ -43,7 +43,7 @@
     <div class="row mb-4">
       <div class="col-sm-4 pl-2">
         {{ form.lox_vend.label(class="form-label") }}
-        {{ form.lox_vend(class="form-select", value = form.lox_vend.data, onchange="Locksubform()") }}
+        {{ form.lox_vend(class="form-select", value = form.lox_vend.data) }}
       </div>
       <div class="col-sm-3">
         {{ form.lox_date.label(class="form-label") }}
@@ -312,21 +312,7 @@
         document.getElementById("subform-log_alm").value = {{0 if not session['log_alm'] else session['log_alm']}};
           }      
         } 
-      
-      function Locksubform() {
-        if (document.getElementById("lox_vend").value != {{session['lox_vend']}}){   
-          document.getElementById("updaddbtn").disabled = true;
-          document.getElementById("subnav").disabled = true;
-          document.getElementById("sub").disabled = true;
-          document.getElementById("delete").disabled = true;
-        }
-        else{
-          document.getElementById("updaddbtn").disabled = false;
-          document.getElementById("subnav").disabled = false;
-          document.getElementById("sub").disabled = false;
-          document.getElementById("delete").disabled = false;
-        }
-      }  
+        
 
   </script>
 {% endblock script%}

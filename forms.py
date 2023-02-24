@@ -162,25 +162,27 @@ class Rcv_en(FlaskForm):
     lox_nifn = StringField('receipt tax number',validators = [Optional(), 
                             Length(max=16)], render_kw={"placeholder": "optional"})
     lox_sub = DecimalField('Sub Total', default = 0,
-                            validators=[NumberRange(min = 0)])
+                            validators=[NumberRange(min = 0)], 
+                            render_kw={'readonly': True, "style":"background-color:transparent"})
     lox_disc = DecimalField('Discount',validators=[NumberRange(min = 0)], 
                             default = 0)
     lox_tax = DecimalField('Total Tax',validators=[NumberRange(min = 0)], 
-                            default = 0)
+                            default = 0, render_kw={'readonly': True,
+                            "style":"background-color:transparent"})
     subform = FormField(Rcv_de)
 
 class Retur_en(FlaskForm):
     id = HiddenField()
     #dummy form just to keep page format and related receipt info
-    lox_vend = SelectField('Vendor',coerce= int)
-    lox_date = DateField('Reception Date', render_kw={'disabled':''})
+    lox_vend = SelectField('Vendor',coerce= int, render_kw={'disabled': True})
+    lox_date = DateField('Reception Date', render_kw={'disabled':True})
     lox_doc_no = StringField('Vendor Receipt No.', 
                         render_kw={"placeholder": "if other than rcpt tax No.",
-                         'disabled':''})
-    lox_datd = DateField('Document Date', render_kw={'disabled':''})
+                         'disabled':True})
+    lox_datd = DateField('Document Date', render_kw={'disabled':True})
     lox_nifn = StringField('receipt tax number', 
                             render_kw={"placeholder": "optional", 
-                            'disabled':''})
+                            'disabled':True})
     #working form                        
     rtn_enca = SelectField('Vendor',validators=[InputRequired()],coerce= int)
     rtn_date = DateField('Return Date', validators=[DataRequired()])

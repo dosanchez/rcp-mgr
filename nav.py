@@ -7,9 +7,6 @@ def nav_pos(rcds, id, nav_button):
 
     regd_id =[row.get('id') for row in rcds] #making a list of registered ids
     last_index = len(regd_id) -1 #calc id list length
-    print('id-->', id)
-    print('nav_button-->', nav_button)
-    print('regd_id -->', regd_id)
     if not len(regd_id):
         return None, []
     elif isinstance(nav_button,(int)):

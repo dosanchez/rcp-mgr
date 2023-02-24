@@ -102,9 +102,10 @@
               <p class="fw-semibold">Sub-total</p>
             </div>
             <div class="col-sm-8">
-              <input class="form-control form-control-sm" id="Sub-total" min="0" name="Sub-total" step="any" type="number" value="None">
+              <input class="form-control form-control-sm" id="Sub-total" min="0" name="Sub-total" 
+              step="any" type="number" value="None" readonly style="background-color:WhiteSmoke">
             </div>
-            <div class="w-100"></div>
+            <div class="w-100"></div> 
             <div class="col-sm-4">
               {{ form.rtn_tax.label(class="form-label") }}
             </div>
@@ -119,7 +120,8 @@
               <p class="fw-semibold">Total</p>
             </div>
             <div class="col-sm-8">
-              <input class="form-control form-control-sm" id="Total" min="0" name="Total" step="any" type="number" value="None">
+              <input class="form-control form-control-sm" id="Total" min="0" name="Total"
+                step="any" type="number" value="None" readonly style="background-color:WhiteSmoke">
             </div>
           </div>
         </fieldset>
@@ -261,17 +263,24 @@
 
     function Newrecord() {
       document.getElementById("id").value = null;
-      document.getElementById("lox_vend").value = null;
-      document.getElementById("lox_date").value = null;
-      document.getElementById("lox_doc_no").value = null;
-      document.getElementById("lox_datd").value = null;
-      document.getElementById("lox_nifn").value = null;
-      document.getElementById("lox_disc").value = 0;
-      document.getElementById("lox_sub").value = 0;
-      document.getElementById("lox_tax").value = 0;
+      document.getElementById("rtn_date").value = null;
+      document.getElementById("rtn_disc").value = 0;
+      document.getElementById("rtn_sub").value = 0;
+      document.getElementById("rtn_tax").value = 0;
       document.getElementById("subform-log_qty").value = null;
       document.getElementById("subform-log_pric").value = null;
       document.getElementById("subform-log_tax").value = null;
+      document.getElementById("subform-log_sku").value = null;
+      document.getElementById("subform-log_alm").value = null;
+      document.getElementById("subform-log_qty").disabled = true;
+      document.getElementById("subform-log_pric").disabled = true;
+      document.getElementById("subform-log_tax").disabled = true;
+      document.getElementById("subform-log_sku").disabled = true;
+      document.getElementById("subform-log_alm").disabled = true;
+      document.getElementById("updaddbtn").disabled = true;
+      document.getElementById("sub").disabled = true;
+      document.getElementById("subform-log_wtax").disabled = true;  
+      while( skus.rows.length > 1) skus.rows[1].remove();
       }
 
       function Navrecord(NAV) {

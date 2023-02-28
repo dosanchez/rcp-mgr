@@ -54,7 +54,6 @@ class select():
         elif ingr:
             pass
         elif matrix:
-            print(targetbaseUM, knownbaseUM)
             return(qty*matrix.get(targetbaseUM + "/" + knownbaseUM))
         return 0
 
@@ -155,8 +154,7 @@ class select():
             WHERE rct_rece = 0
             GROUP BY ingr, bs_unit{0}{1}
                     """.format(add3, add2)
-                    
-        print(sql)
+                  
         db.execute(sql)
 
         return(db.fetchall())
@@ -205,8 +203,7 @@ class select():
                 else:
                     sql += "{} = {} ".format(field, value)
                 sql += "AND "
-                sql = sql[:-4] + " ORDER BY id ASC" #drop trailing 'AND '
-            print('sql', sql)    
+                sql = sql[:-4] + " ORDER BY id ASC" #drop trailing 'AND '  
             db.execute(sql) 
  
         return(db.fetchall())
@@ -385,7 +382,6 @@ class update():
                     sql += "{} = {} ".format(filter, arg)
                 sql += "AND "
             sql = sql[:-4] #drop trailing 'AND '
-        print(sql)
         conn.cursor().execute(sql)
         conn.commit()
 
@@ -441,7 +437,6 @@ class update():
                                                     runningbal, 
                                                     dict.get('id'))
                     
-                    print(sql)
                     conn.cursor(dictionary=True, buffered=True).execute(sql)
                     conn.commit()
 
@@ -528,7 +523,6 @@ class update():
         #stops execution if no output from previous sql statements
         #this should only happen when a recipe related sku is added or changed
         db.execute(sql)
-        print (db.rowcount)
         if db.rowcount < 1:
             flash("""Info: SKU is a recipe substitute""", 'alert alert-info')
             return
@@ -537,7 +531,6 @@ class update():
         skus =[]
         set1 = set()
         set2 = set()
-        print('results--->', results)
         for rcd in results:
             if not rcd.get('sku') == None:
                 skus.append(rcd.get('sku'))

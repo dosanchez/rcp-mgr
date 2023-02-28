@@ -11,13 +11,13 @@ from decimal import Decimal
 #conn = mysql.connector.connect(user='sql5514428', password='C3b4Xn6K4Z',
 #                             host='sql5.freesqldatabase.com',
 #                             database='sql5514428')
-conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
-                               host='10.0.2.5',
-                               port = 3306,
-                               database='rct')
 # conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
-#                                host='192.168.100.254',
+#                                host='10.0.2.5',
+#                                port = 3306,
 #                                database='rct')
+conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
+                               host='192.168.100.254',
+                               database='rct')
 db = conn.cursor(dictionary=True, buffered=True)
 
 
@@ -231,9 +231,7 @@ def ingredient():
         pass
     
     print('ingredient validate on submit -->', form.validate_on_submit())
-    print ([(a, b) for a, b in form.errors.items()])
     if form.validate_on_submit():
-        print('validó')
         record = dth.from_dict2sql(conn, {
                                         table_list[0]:[{
                                             'id':form.id.data,
@@ -400,7 +398,6 @@ def recipe():
             else:
                 #adds new record
                 record.add_new()
-                print('new record added')
                 update.costupdate(conn, recipe = form.id.data)
                 return redirect(url_for('recipe'))# clears POST data
         
@@ -565,7 +562,6 @@ def receive():
     #last record should be displayed 
     if request.form.get('nav'):
         nav_button =  request.form.get('nav') #saves form navigation request
-        print('navbutton--->', nav_button)
         if nav_button == 'return':
             session['rtnhead'] = form.id.data
             return redirect(url_for('returns'))# clears POST data
@@ -811,28 +807,30 @@ def returns():
     #form.subform.log_sku.validators = [NumberRange(max = "insert expresion of max value here"), Optional()]
     
     #rtn_enca has a fixed value equal to linked reception
+    #form.rtn_enca.choices = (int(session.get('rtnhead')),"")
     form.rtn_enca.data = int(session.get('rtnhead'))
+
 
 
     #Queries for Selectfields active choices
     form.lox_vend.choices = sel.all_choices(db, 'socio', 'soc_name')
-    #form.rtn_enca.choices = sel.ebld_choices(db, 'socio', 'soc_name', 'soc_ebld')
-    #form.subform.log_alm.choices = sel.ebld_choices(db, 'almacen', 'alm_name', 'alm_ebld')
-    # form.subform.log_sku.choices = sel.ebld_choices(db, 'sku', 'sku_name', 'sku_ebld')
+    form.subform.log_alm.choices = sel.ebld_choices(db, 'almacen', 'alm_name', 'alm_ebld')
+    form.subform.log_sku.choices = sel.ebld_choices(db, 'sku', 'sku_name', 'sku_ebld')
 
     #Queries for all Selectfields choices
-    lox_vend_choices = sel.all_choices(db, 'socio', 'soc_name')
+    lox_vend_choices = sel.all_choices(db, 'socio', 'soc_name') 
+    log_alm_choices = sel.all_choices(db, 'almacen', 'alm_name')
+    log_sku_choices = sel.all_choices(db, 'sku', 'sku_name')
 
 
     if not form.id.data: #first time entry, no return records
-        form.subform.log_sku.render_kw={'disabled':''}
-        form.subform.log_qty.render_kw={'disabled':''}
-        form.subform.log_pric.render_kw={'disabled':''}
-        form.subform.log_tax.render_kw={'disabled':''}
-        form.subform.log_alm.render_kw={'disabled':''}
-        form.subform.log_wtax.render_kw={'disabled':''}    
-        log_alm_choices = (0,"")
-        log_sku_choices = (0,"")
+        form.subform.log_sku.render_kw={'disabled':True}
+        form.subform.log_qty.render_kw={'disabled':True}
+        form.subform.log_pric.render_kw={'disabled':True}
+        form.subform.log_tax.render_kw={'disabled':True}
+        form.subform.log_alm.render_kw={'disabled':True}
+        form.subform.log_wtax.render_kw={'disabled':True}    
+
 
     else:
         #makes sure that only wrehouses and skus present in linked reception
@@ -845,7 +843,7 @@ def returns():
     #if request.form.get('nav') is None --> its a redirect 
     #--> its either an update, new or deleted record hence not necesarilly 
     #last record should be displayed 
-
+    
     if request.form.get('nav'):
         nav_button =  request.form.get('nav') #saves form navigation request
         
@@ -1017,7 +1015,6 @@ def returns():
             update.costupdate(conn, sku = form.subform.log_sku.data )
             return redirect(url_for('receive'))# clears POST data
 
-    print('nav button', nav_button)
     records, relation = navigate_to(nav_button, conn, form, table_list, lox_id = int(session.get('rtnhead')))
     session['relation'] = relation
     
@@ -1060,7 +1057,8 @@ def returns():
 
     session['Sub-total'] = form.rtn_sub.data - form.rtn_disc.data
     session['Total'] = session['Sub-total'] + form.rtn_tax.data
-    print('form.lox_vend.data',form.lox_vend.data)
+
+    print('form.lox_vend.choices',form.lox_vend.choices)
     return render_template ('returns.html', form = form, records = records,
                             column_names = column_names, 
                             lox_vend_choices = lox_vend_choices,

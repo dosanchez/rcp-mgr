@@ -188,7 +188,7 @@ class Retur_en(FlaskForm):
                             render_kw={"placeholder": "optional", 
                             'disabled':True, "style":"background-color:WhiteSmoke"})
     #working form                        
-    rtn_enca = SelectField('Vendor',validators=[InputRequired()],coerce= int)
+    rtn_enca = DecimalField('Vendor')
     rtn_date = DateField('Return Date', validators=[DataRequired()])
     rtn_sub = DecimalField('Sub Total', default = 0,
                             validators=[NumberRange(min = 0)],

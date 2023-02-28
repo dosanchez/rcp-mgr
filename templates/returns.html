@@ -38,7 +38,7 @@
       {{ form.id() }}
     </div>
     <div hidden>
-      {{ form.rtn_enca() }}
+      {{ form.rtn_enca(value = form.rtn_enca.data) }}
     </div>
     <div class="row mb-4">
       <div class="col-sm-4 pl-2">
@@ -60,7 +60,7 @@
     <div class="d-sm-flex">  
       <div class="d-flex align-items-stretch" style="flex: 75%;">
         <fieldset class="row rounded border border-dark border-1 mx-1 pb-1" style="--bs-border-opacity: .4;">  
-          <legend class="fs-5">Vendor receipt info</legend>
+          <legend class="fs-5">Related receipt info</legend>
           <div class="col-sm">
             {{ form.lox_doc_no.label(class="form-label") }}
             {{ form.lox_doc_no(class="form-control", value = form.lox_doc_no.data) }}
@@ -79,7 +79,7 @@
       </div>
       <div class="d-flex align-items-stretch" style="flex: 25%;">
         <fieldset class="row rounded border border-dark border-1 mx-1" style="--bs-border-opacity: .4;">
-          <legend class="fs-5">Receipt summary</legend>
+          <legend class="fs-5">Return summary</legend>
           <div class="row g-1 px-3"> 
             <div class="col-sm-4">
               {{ form.rtn_sub.label(class="form-label form-label-sm") }}
@@ -103,9 +103,9 @@
             </div>
             <div class="col-sm-8">
               <input class="form-control form-control-sm" id="Sub-total" min="0" name="Sub-total" 
-              step="any" type="number" value="None" readonly style="background-color:WhiteSmoke">
+              step="any" type="number" value="None" style="background-color:transparent" readonly>
             </div>
-            <div class="w-100"></div> 
+            <div class="w-100"></div>
             <div class="col-sm-4">
               {{ form.rtn_tax.label(class="form-label") }}
             </div>
@@ -120,15 +120,15 @@
               <p class="fw-semibold">Total</p>
             </div>
             <div class="col-sm-8">
-              <input class="form-control form-control-sm" id="Total" min="0" name="Total"
-                step="any" type="number" value="None" readonly style="background-color:WhiteSmoke">
+              <input class="form-control form-control-sm" id="Total" min="0" name="Total" 
+                step="any" type="number" value="None" style="background-color:transparent" readonly>
             </div>
           </div>
         </fieldset>
       </div>
     </div>
     <fieldset class="row rounded border border-dark border-1 mx-1 mt-4" style="--bs-border-opacity: .4;">
-      <legend class="fs-5">Vendor receipt details</legend>
+      <legend class="fs-5">Return details</legend>
       <div>
         {{ form.subform.idx }}
         {{ form.subform.log_enca }}
@@ -155,7 +155,8 @@
       </div>
       <div class="col-sm-12 pt-3 d-grid gap-5 d-sm-flex justify-content-md-center" >
         <div>
-            <button type = "submit" value = "submit1" form ="nav_form" formmethod ="post" class="btn btn-md btn-primary" name ="nav" id="updaddbtn">
+            <button type = "submit" value = "submit1" form ="nav_form" formmethod ="post" 
+              class="btn btn-md btn-primary" name ="nav" id="updaddbtn">
               <strong id = "lbl_but_sub">update </strong><i class="fa-solid fa-circle-arrow-down"></i>
             </button>
         </div>
@@ -168,7 +169,7 @@
           {{ form.subform.log_wtax(class="form-check-input") }}
           {{ form.subform.log_wtax.label(class="form-check-label") }}
         </div>
-      </div>   
+      </div>
   </form>
       <div class="row justify-content-center my-3">
         <div class="col-11 border border-dark border-top-1" style="--bs-border-opacity: .4;"></div>
@@ -181,7 +182,7 @@
       {% for sub in column_names %}
         <label>{{ sub[0] }}</label>
         <section style="height:445px; overflow:auto;">
-          <table class="table table-hover">
+          <table id = "skus" class="table table-hover">
             <thead class = "bg-light" style="position: sticky;top: 0">
               <tr>
                 {% for header in sub[1] %}
@@ -245,6 +246,7 @@
         </section> 
       {% endfor %}
     </fieldset>  
+  </div>
 {% endblock form %}
 {% block script %}
   {{ super() }}
@@ -255,26 +257,14 @@
     document.getElementById("Sub-total").value = {{session['Sub-total']}};
     document.getElementById("Total").value = {{session['Total']}};
 
-    if (document.getElementById("lox_vend").value != {{session['lox_vend']}}){
-      document.getElementById("updaddbtn").disabled = true;
-      document.getElementById("subnav").disabled = true;
-      document.getElementById("delete").disabled = true;
-    }
-
     function Newrecord() {
       document.getElementById("id").value = null;
-      document.getElementById("rtn_date").value = null;
       document.getElementById("rtn_disc").value = 0;
       document.getElementById("rtn_sub").value = 0;
       document.getElementById("rtn_tax").value = 0;
       document.getElementById("subform-log_qty").value = null;
       document.getElementById("subform-log_pric").value = null;
       document.getElementById("subform-log_tax").value = null;
-      document.getElementById("subform-log_sku").value = null;
-      document.getElementById("subform-log_alm").value = null;
-      document.getElementById("subform-log_qty").disabled = true;
-      document.getElementById("subform-log_pric").disabled = true;
-      document.getElementById("subform-log_tax").disabled = true;
       document.getElementById("subform-log_sku").disabled = true;
       document.getElementById("subform-log_alm").disabled = true;
       document.getElementById("updaddbtn").disabled = true;
@@ -284,15 +274,10 @@
       }
 
       function Navrecord(NAV) {
-      document.getElementById("lox_vend").value = {{session['lox_vend']}};
-      document.getElementById("lox_date").value = '{{session['lox_date']}}';
-      document.getElementById("lox_doc_no").value = {{'null' if not session['lox_doc_no'] else session['lox_doc_no']}};
-      document.getElementById("lox_datd").value = '{{session['lox_datd']}}';
-      document.getElementById("lox_nifn").value = {{'null' if not session['lox_nifn'] else session['lox_nifn']}};
-      document.getElementById("lox_disc").value = {{session['lox_disc']}};
-      document.getElementById("lox_sub").value = {{session['lox_sub']}};
-      document.getElementById("lox_tax").value = {{session['lox_tax']}};
-      document.getElementById("id").value = {{session['id']}};
+      document.getElementById("rtn_disc").value = {{0 if not session['rtn_disc'] else session['rtn_disc']}};
+      document.getElementById("rtn_sub").value = {{0 if not session['rtn_sub'] else session['rtn_sub']}};
+      document.getElementById("rtn_tax").value = {{0 if not session['rtn_tax'] else session['rtn_tax']}};
+      document.getElementById("id").value = {{0 if not session['id'] else session['id']}};
       document.getElementById("submit_button").value = NAV;
       document.getElementById("subform-log_qty").value = 1;
       document.getElementById("subform-log_pric").value = 1;

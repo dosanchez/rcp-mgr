@@ -1,5 +1,5 @@
 from flask import session
-from flask import render_template
+from flask import redirect  
 from data import select as sel
 
 def nav_pos(rcds, id, nav_button):

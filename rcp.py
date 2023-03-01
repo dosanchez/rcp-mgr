@@ -563,7 +563,8 @@ def receive():
     if request.form.get('nav'):
         nav_button =  request.form.get('nav') #saves form navigation request
         if nav_button == 'return':
-            session['rtnhead'] = form.id.data
+            session['rtnhead'] = int(form.id.data)
+            
             return redirect(url_for('returns'))# clears POST data
     else:
         nav_button = session.get('curr_rcd_' + type(form).__name__)
@@ -799,7 +800,7 @@ def receive():
 def returns():
     form = Retur_en()
     table_list = ['return_header', 'logix_de']
-
+    print('session.get(rtnhead)', session.get('rtnhead'), type(session.get('rtnhead')))
     #locks fields in subform so only qty can be changed
     Rcv_de().log_sku.render_kw={'disabled':''}
 
@@ -808,8 +809,8 @@ def returns():
     
     #rtn_enca has a fixed value equal to linked reception
     #form.rtn_enca.choices = (int(session.get('rtnhead')),"")
-    form.rtn_enca.data = int(session.get('rtnhead'))
-
+    form.rtn_enca.data = session.get('rtnhead')
+    print('rtn_enca', form.rtn_enca.data)
 
 
     #Queries for Selectfields active choices
@@ -839,7 +840,7 @@ def returns():
                                         log_enca = form.rtn_enca.data)
         log_sku_choices = sel.all_choices(db, 'sku4returns', 'sku_name',
                                             log_enca = form.rtn_enca.data)
-
+    print('rtn_enca', form.rtn_enca.data)
     #if request.form.get('nav') is None --> its a redirect 
     #--> its either an update, new or deleted record hence not necesarilly 
     #last record should be displayed 
@@ -1015,7 +1016,7 @@ def returns():
             update.costupdate(conn, sku = form.subform.log_sku.data )
             return redirect(url_for('receive'))# clears POST data
 
-    records, relation = navigate_to(nav_button, conn, form, table_list, lox_id = int(session.get('rtnhead')))
+    records, relation = navigate_to(nav_button, conn, form, table_list, lox_id = session.get('rtnhead'))
     session['relation'] = relation
     
     records.pop(0) #form header records not needed nav populates header
@@ -1023,7 +1024,7 @@ def returns():
     column_names =[['Receipt items',['', '', 'SKU', 'Qty', 'Total Price',
                      'Total Tax', 'Price has tax incld', 'Warehouse']]]
     rcd_len = len(records)
-
+    print('rtn_enca', form.rtn_enca.data)
     #checks if line items price includes tax for current vendor displayed
     #unique for this form
     session['flexSwitch'] = 1
@@ -1059,6 +1060,7 @@ def returns():
     session['Total'] = session['Sub-total'] + form.rtn_tax.data
 
     print('form.lox_vend.choices',form.lox_vend.choices)
+    print('rtn_enca', form.rtn_enca.data)
     return render_template ('returns.html', form = form, records = records,
                             column_names = column_names, 
                             lox_vend_choices = lox_vend_choices,

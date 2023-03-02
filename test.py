@@ -13,7 +13,7 @@ from data import select as sel, update as upd
 #                                database='rct')
 # db = conn.cursor(dictionary= True, buffered=True)
 
-a={'a':1,'b':2}
+
  
 b = [(i, j) for i,j in a.items()]
 

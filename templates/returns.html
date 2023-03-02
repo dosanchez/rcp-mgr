@@ -175,6 +175,8 @@
         <div class="col-11 border border-dark border-top-1" style="--bs-border-opacity: .4;"></div>
       </div>
         <div>
+      {{form.lox_vend.choices}}
+      {{form.lox_vend.data}}
       {% if form.errors %}
         {{ form.errors }}
       {% endif %}

@@ -448,6 +448,8 @@ def sku():
     #if request.form.get('nav') in None --> its a redirect 
     #--> its either an update, new or deleted record hence not necesarilly 
     #last record should be displayed 
+    print('sesion', [(i,j) for i,j in session.items()])
+
     if request.form.get('nav'):
         nav_button =  request.form.get('nav') #saves form navigation request
     else:
@@ -563,8 +565,8 @@ def receive():
     if request.form.get('nav'):
         nav_button =  request.form.get('nav') #saves form navigation request
         if nav_button == 'return':
-            session['rtnhead'] = int(form.id.data)
-            
+            session['linkedhead'] = form.data
+            print('linkedhead', session['linkedhead'])
             return redirect(url_for('returns'))# clears POST data
     else:
         nav_button = session.get('curr_rcd_' + type(form).__name__)
@@ -807,9 +809,15 @@ def returns():
     #makes sure you dont return more qty than received
     #form.subform.log_sku.validators = [NumberRange(max = "insert expresion of max value here"), Optional()]
     
-    #rtn_enca has a fixed value equal to linked reception
-    #form.rtn_enca.choices = (int(session.get('rtnhead')),"")
-    form.rtn_enca.data = session.get('rtnhead')
+    #initializing return form with values of linked reception
+    form.rtn_enca.data = int(session.get('linkedhead').get('id'))
+    form.lox_vend.data = session.get('linkedhead').get('lox_vend')
+    form.lox_date.data = session.get('linkedhead').get('lox_date')
+    print('lox_date', session.get('linkedhead').get('lox_date'))
+    form.lox_doc_no.data = session.get('linkedhead').get('lox_doc_no')
+    form.lox_datd.data = session.get('linkedhead').get('lox_datd')
+    print('lox_datd', session.get('linkedhead').get('lox_datd'))   
+    form.lox_nifn.data = session.get('linkedhead').get('lox_nifn')
 
     #Queries for Selectfields active choices
     form.lox_vend.choices = sel.all_choices(db, 'socio', 'soc_name')
@@ -842,7 +850,6 @@ def returns():
     #if request.form.get('nav') is None --> its a redirect 
     #--> its either an update, new or deleted record hence not necesarilly 
     #last record should be displayed 
-    
     if request.form.get('nav'):
         nav_button =  request.form.get('nav') #saves form navigation request
         

@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 from decimal import Decimal
 import mysql.connector
 from nav import navigate_to, nav_pos
@@ -15,7 +15,8 @@ from data import select as sel, update as upd
 
 
  
-b = [(i, j) for i,j in a.items()]
+b = "Tue, 03 Jan 2023 00:00:00 GMT"
 
-print(b)
+a = datetime.strptime(b, "%a, %d %b %Y %H:%M:%S %Z").strftime("%Y-%m-%d")
+print (a, type(a))
 # conn.close()

@@ -5,19 +5,19 @@ from nav import navigate_to
 from forms import Ingredient, Sku, Unitmeas, Almacen, Recet_en, Socio, Rcv_en
 from forms import Retur_en, Rcv_de
 import os
-from decimal import Decimal
+from datetime import datetime
 
 #database connection
 #conn = mysql.connector.connect(user='sql5514428', password='C3b4Xn6K4Z',
 #                             host='sql5.freesqldatabase.com',
 #                             database='sql5514428')
-# conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
-#                                host='10.0.2.5',
-#                                port = 3306,
-#                                database='rct')
 conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
-                               host='192.168.100.254',
+                               host='10.0.2.5',
+                               port = 3306,
                                database='rct')
+# conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
+#                                host='192.168.100.254',
+#                                database='rct')
 db = conn.cursor(dictionary=True, buffered=True)
 
 
@@ -812,11 +812,11 @@ def returns():
     #initializing return form with values of linked reception
     form.rtn_enca.data = int(session.get('linkedhead').get('id'))
     form.lox_vend.data = session.get('linkedhead').get('lox_vend')
-    form.lox_date.data = session.get('linkedhead').get('lox_date')
-    print('lox_date', session.get('linkedhead').get('lox_date'))
+    form.lox_date.data = datetime.strptime(session.get('linkedhead').get('lox_date'),
+                                           "%a, %d %b %Y %H:%M:%S %Z").strftime("%Y-%m-%d")
     form.lox_doc_no.data = session.get('linkedhead').get('lox_doc_no')
-    form.lox_datd.data = session.get('linkedhead').get('lox_datd')
-    print('lox_datd', session.get('linkedhead').get('lox_datd'))   
+    form.lox_datd.data = datetime.strptime(session.get('linkedhead').get('lox_datd'),
+                                           "%a, %d %b %Y %H:%M:%S %Z").strftime("%Y-%m-%d")
     form.lox_nifn.data = session.get('linkedhead').get('lox_nifn')
 
     #Queries for Selectfields active choices

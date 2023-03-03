@@ -2,7 +2,7 @@ from datetime import datetime
 from decimal import Decimal
 import mysql.connector
 from nav import navigate_to, nav_pos
-from forms import Almacen
+from forms import Almacen, Return_en
 from data import select as sel, update as upd
 
 #conn = mysql.connector.connect(user='sql5514428', password='C3b4Xn6K4Z',

@@ -6,18 +6,19 @@ from forms import Ingredient, Sku, Unitmeas, Almacen, Recet_en, Socio, Rcv_en
 from forms import Retur_en, Rcv_de
 import os
 from datetime import datetime
+from wtforms.validators import DataRequired, Length, NumberRange, InputRequired
 
 #database connection
 #conn = mysql.connector.connect(user='sql5514428', password='C3b4Xn6K4Z',
 #                             host='sql5.freesqldatabase.com',
 #                             database='sql5514428')
-conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
-                               host='10.0.2.5',
-                               port = 3306,
-                               database='rct')
 # conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
-#                                host='192.168.100.254',
+#                                host='10.0.2.5',
+#                                port = 3306,
 #                                database='rct')
+conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
+                               host='192.168.100.254',
+                               database='rct')
 db = conn.cursor(dictionary=True, buffered=True)
 
 
@@ -802,12 +803,12 @@ def receive():
 def returns():
     form = Retur_en()
     table_list = ['return_header', 'logix_de']
+    form.subform.log_sku.validate
+    print(form.subform.log_sku.validate)
 
-    #locks fields in subform so only qty can be changed
-    Rcv_de().log_sku.render_kw={'disabled':''}
+    #setting up validators if subform is submitted
+    #to keep off errors in database
 
-    #makes sure you dont return more qty than received
-    #form.subform.log_sku.validators = [NumberRange(max = "insert expresion of max value here"), Optional()]
     
     #initializing return form with values of linked reception
     form.rtn_enca.data = int(session.get('linkedhead').get('id'))
@@ -849,7 +850,8 @@ def returns():
 
     #if request.form.get('nav') is None --> its a redirect 
     #--> its either an update, new or deleted record hence not necesarilly 
-    #last record should be displayed 
+    #last record should be displayed.
+
     if request.form.get('nav'):
         nav_button =  request.form.get('nav') #saves form navigation request
         

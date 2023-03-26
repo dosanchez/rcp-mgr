@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, SelectField, HiddenField, BooleanField
+from wtforms import StringField, SelectField, HiddenField, BooleanField, SubmitField
 from wtforms import Form, FormField, IntegerField, DateField, FloatField, DecimalField
 from wtforms.validators import DataRequired, Length, NumberRange, InputRequired
 from wtforms.validators import Optional, ValidationError
@@ -21,14 +21,14 @@ class Rcv_de(Form):
     """wtform for receive form details"""
     idx = HiddenField()
     log_enca = HiddenField()
-    log_sku = SelectField('Sku', coerce= int)
+    log_sku = SelectField('Sku', validators =[InputRequired()], coerce= int)
     log_qty = DecimalField('Item qty', default = 0, 
                             validators=[NumberRange(min = 0), Optional()])
     log_pric = DecimalField('Item total price', default = 0,
                             validators=[NumberRange(min = 0), Optional()])
     log_tax = DecimalField('Tax amount', default = 0,
                             validators=[NumberRange(min = 0), Optional()])
-    log_alm = SelectField('Receiving warehouse', validators=[DataRequired()], 
+    log_alm = SelectField('Receiving warehouse', validators = [InputRequired()],
                             coerce= int)
     log_wtax = BooleanField('Price includes tax')
 
@@ -174,7 +174,7 @@ class Rcv_en(FlaskForm):
 
 class Retur_en(FlaskForm):
     id = HiddenField()
-    #dummy form just to keep page format and related receipt info
+    #oly info form part just to keep page format and related receipt info
     lox_vend = SelectField('Vendor',coerce= int, render_kw={'disabled': True,
                             "style":"background-color:WhiteSmoke"})
     lox_date = DateField('Reception Date', render_kw={'disabled':True,

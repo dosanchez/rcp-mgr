@@ -54,7 +54,8 @@
         {{ form.rtn_date(class="form-control", value = form.rtn_date.data) }}
       </div>
       <div class="col-sm-2 pt-3 text-center">
-        <input type="submit" id ="submit_button" class="btn btn-primary" formmethod="POST" value="submit" name = "nav">
+        <input type="submit" id ="submit_button" class="btn btn-primary" formmethod="POST" 
+          value="submit" name = "nav">
       </div>
     </div>
     <div class="d-sm-flex">  
@@ -175,10 +176,11 @@
         <div class="col-11 border border-dark border-top-1" style="--bs-border-opacity: .4;"></div>
       </div>
         <div>
-      {{form.lox_vend.choices}}
-      {{form.lox_vend.data}}
+      {{form.subform.log_sku.choices}}
+      {{form.subform.log_sku.data}}
       {% if form.errors %}
         {{ form.errors }}
+        {{form.subform.log_sku.validators}}
       {% endif %}
       </div>
       {% for sub in column_names %}
@@ -267,12 +269,13 @@
       document.getElementById("subform-log_qty").value = null;
       document.getElementById("subform-log_pric").value = null;
       document.getElementById("subform-log_tax").value = null;
-      document.getElementById("subform-log_sku").disabled = true;
-      document.getElementById("subform-log_alm").disabled = true;
+      document.getElementById("subform-log_sku").disabled = 0;
+      document.getElementById("subform-log_alm").disabled = 0;
       document.getElementById("updaddbtn").disabled = true;
       document.getElementById("sub").disabled = true;
-      document.getElementById("subform-log_wtax").disabled = true;  
-      while( skus.rows.length > 1) skus.rows[1].remove();
+      document.getElementById("subform-log_wtax").disabled = true;
+      console.log(skus.rows.length);  
+      while(skus.rows.length > 2) skus.rows[1].remove();
       }
 
       function Navrecord(NAV) {

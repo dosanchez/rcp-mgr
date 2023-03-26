@@ -9,7 +9,7 @@ def nav_pos(rcds, id, nav_button):
     last_index = len(regd_id) -1 #calc id list length
 
     if not len(regd_id) or regd_id == [None]:
-        return None, []
+        return 0, []
     elif isinstance(nav_button,(int)):
         return regd_id.index(nav_button), regd_id
     elif id == None:
@@ -51,7 +51,7 @@ def navigate_to(nav_button, conn, form, table_list, **kwargs):
             else: 
                 rcds.append(sel.all(db, table_list[counter], **kwargs))
                 res = sel.max_id(db, table_list[counter], **kwargs)
-
+            
             session['parent_last_row_id'] = res[0].get('parent_last_row_id')
             id = form.id.data
 
@@ -61,7 +61,7 @@ def navigate_to(nav_button, conn, form, table_list, **kwargs):
         #visualize the target record on main form (if any rcd)
         if not len(regd_id):
             counter += 1
-            pass
+
         else:
 
             tgt_record = rcds[0][pos]
@@ -80,8 +80,6 @@ def navigate_to(nav_button, conn, form, table_list, **kwargs):
                         i.data = 1
                     elif i.id == "qty_base" and table_list[0] == 'unitmeas':#exception for unitmeas form
                         i.data = session['uni_conv'] = tgt_record.get('uni_conv')
-                    
-                    
                     elif type(i).__name__ == 'FormField':
 
                         relation.append(sel.foreign_tbl(conn, ref_tbl,
@@ -131,6 +129,5 @@ def navigate_to(nav_button, conn, form, table_list, **kwargs):
                             if not i.data:
                                 i.data = ''
                         else:
-                            i.data = session[i.id]
-                            
+                            i.data = session[i.id]                      
     return rcds, relation

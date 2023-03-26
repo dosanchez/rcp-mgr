@@ -6,19 +6,19 @@ from forms import Ingredient, Sku, Unitmeas, Almacen, Recet_en, Socio, Rcv_en
 from forms import Retur_en, Rcv_de
 import os
 from datetime import datetime
-from wtforms.validators import DataRequired, Length, NumberRange, InputRequired
+from wtforms.validators import DataRequired, Length, NumberRange, Optional
 
 #database connection
 #conn = mysql.connector.connect(user='sql5514428', password='C3b4Xn6K4Z',
 #                             host='sql5.freesqldatabase.com',
 #                             database='sql5514428')
-# conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
-#                                host='10.0.2.5',
-#                                port = 3306,
-#                                database='rct')
 conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
-                               host='192.168.100.254',
+                               host='10.0.2.5',
+                               port = 3306,
                                database='rct')
+# conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
+#                                host='192.168.100.254',
+#                                database='rct')
 db = conn.cursor(dictionary=True, buffered=True)
 
 
@@ -567,7 +567,7 @@ def receive():
         nav_button =  request.form.get('nav') #saves form navigation request
         if nav_button == 'return':
             session['linkedhead'] = form.data
-            print('linkedhead', session['linkedhead'])
+
             return redirect(url_for('returns'))# clears POST data
     else:
         nav_button = session.get('curr_rcd_' + type(form).__name__)
@@ -620,11 +620,12 @@ def receive():
                                     'id':form.subform.idx.data,
                                     'log_enca':form.subform.log_enca.data,
                                     'log_sku':form.subform.log_sku.data,
-                                    'log_qty':form.subform.log_qty.data,
+                                    'log_qty':form.subform.log_qty.data * -1,
                                     'log_pric':form.subform.log_pric.data,
                                     'log_tax':form.subform.log_tax.data,  
                                     'log_alm':form.subform.log_alm.data,
-                                    'log_wtax':form.subform.log_wtax.data 
+                                    'log_wtax':form.subform.log_wtax.data,
+                                    'log_rtrn':form.id.data
                                             }]
                                 
                             }
@@ -773,7 +774,8 @@ def receive():
 
     #updates aggregate fields in form
     #unique for this form
-    aggrfields = sel.sumfields(db,'logix_de_norm','log_pric','log_tax',log_enca=form.id.data)[0]
+    aggrfields = sel.sumfields(db,'logix_de_norm','log_pric','log_tax',
+                               log_enca=form.id.data)[0]
     if aggrfields.get('sumoflog_pric'):
         form.lox_sub.data = aggrfields.get('sumoflog_pric')
     else:    
@@ -800,18 +802,14 @@ def receive():
 
 
 @app.route('/templates/returns.html', methods=['GET','POST'])
-def returns():
+def     returns():
+
     form = Retur_en()
-    table_list = ['return_header', 'logix_de']
-    form.subform.log_sku.validate
-    print(form.subform.log_sku.validate)
-
-    #setting up validators if subform is submitted
-    #to keep off errors in database
-
+    table_list = ['retur_en', 'logix_de']
+    print('session linkehead link id', session.get('linkedhead').get('id'))
     
-    #initializing return form with values of linked reception
-    form.rtn_enca.data = int(session.get('linkedhead').get('id'))
+    #completing return form with values of linked reception
+    form.lox_vend.choices = sel.all_choices(db, 'socio', 'soc_name')  
     form.lox_vend.data = session.get('linkedhead').get('lox_vend')
     form.lox_date.data = datetime.strptime(session.get('linkedhead').get('lox_date'),
                                            "%a, %d %b %Y %H:%M:%S %Z").strftime("%Y-%m-%d")
@@ -820,34 +818,50 @@ def returns():
                                            "%a, %d %b %Y %H:%M:%S %Z").strftime("%Y-%m-%d")
     form.lox_nifn.data = session.get('linkedhead').get('lox_nifn')
 
-    #Queries for Selectfields active choices
-    form.lox_vend.choices = sel.all_choices(db, 'socio', 'soc_name')
-    form.subform.log_alm.choices = sel.ebld_choices(db, 'almacen', 'alm_name', 'alm_ebld')
-    form.subform.log_sku.choices = sel.ebld_choices(db, 'sku', 'sku_name', 'sku_ebld')
+
+    #inserts related reception number into 
+    form.rtn_enca.data = int(session.get('linkedhead').get('id'))
+    
+    
+    #checks if any return record exists
+    #also makes sure that only wrehouses and skus present in linked reception
+    #can be selected. Also takes necessary measures if first return record
+    
+    rtnrcdexists = dth.from_dict2sql(conn, {table_list[0]:[{'rtn_enca':form.rtn_enca.data}]}).chk_sgl_fld()
+    
+    print('rtnrcdexists', rtnrcdexists)
+    if rtnrcdexists:
+        form.subform.log_alm.choices = sel.all_choices(db, 'wrh4returns', 'alm_name',
+                                            log_enca = form.rtn_enca.data)
+        form.subform.log_sku.choices = sel.all_choices(db, 'sku4returns', 'sku_name',
+                                            log_enca = form.rtn_enca.data)
+    else: #actions if no previous return records
+        #disable everything in first time return form and subforms except for date
+        #and internal fields
+        for i in form:
+            if not (type(i).__name__ in ('CSRFTokenField', 'HiddenField')):
+                i.render_kw={'disabled':True}
+                if type(i).__name__ == 'FormField':
+                    for ii in i:
+                        ii.render_kw={'disabled':True}
+        form.rtn_date.render_kw={'disabled':False}
+
+        #makes possible header return record with no items
+        form.subform.log_alm.choices = sel.all_choices(db, 'wrh4returns', 'alm_name',
+                                    log_enca = form.rtn_enca.data, blank = True)
+        form.subform.log_sku.choices = sel.all_choices(db, 'sku4returns', 'sku_name',
+                                        log_enca = form.rtn_enca.data, blank = True)
+        form.subform.log_sku.validators = []
+        form.subform.log_alm.validators = []
+        form.subform.log_sku.data = 0
+        form.subform.log_alm.data = 0
 
     #Queries for all Selectfields choices
     lox_vend_choices = sel.all_choices(db, 'socio', 'soc_name') 
     log_alm_choices = sel.all_choices(db, 'almacen', 'alm_name')
     log_sku_choices = sel.all_choices(db, 'sku', 'sku_name')
 
-
-    if not form.id.data: #first time entry, no return records
-        form.subform.log_sku.render_kw={'disabled':True}
-        form.subform.log_qty.render_kw={'disabled':True}
-        form.subform.log_pric.render_kw={'disabled':True}
-        form.subform.log_tax.render_kw={'disabled':True}
-        form.subform.log_alm.render_kw={'disabled':True}
-        form.subform.log_wtax.render_kw={'disabled':True}    
-
-
-    else:
-        #makes sure that only wrehouses and skus present in linked reception
-        #can be selected
-        log_alm_choices = sel.all_choices(db, 'wrh4returns', 'alm_name',
-                                        log_enca = form.rtn_enca.data)
-        log_sku_choices = sel.all_choices(db, 'sku4returns', 'sku_name',
-                                            log_enca = form.rtn_enca.data)
-
+        
     #if request.form.get('nav') is None --> its a redirect 
     #--> its either an update, new or deleted record hence not necesarilly 
     #last record should be displayed.
@@ -874,8 +888,9 @@ def returns():
     try:
         session['delete_id'] = int(session['delete_id'])
     except:
-        pass    
-    print('validate on submit', form.validate_on_submit())
+        pass
+
+    print('form.validate_on_submit()',form.validate_on_submit())
     if form.validate_on_submit():
 
         listsql = listsql2 = {
@@ -918,15 +933,15 @@ def returns():
             if  existe.chk_sgl_fld():   #chk if record exists   
                 #update existing record
                 record.update()
-                return redirect(url_for('receive'))# clears POST data
+                return redirect(url_for('returns'))# clears POST data
 
             else:
                 #adds new record
                 session['curr_rcd_' + type(form).__name__] = None 
                     # ^ so it navigates to the last record after adding
                     
-                record.add_new(lox_rece = 1)
-                return redirect(url_for('receive'))# clears POST data 
+                record.add_new()
+                return redirect(url_for('returns'))# clears POST data 
 
         if nav_button == "submit1": #not a nav post
             
@@ -980,7 +995,7 @@ def returns():
                                          'log_cost', 'log_bal', 
                                          log_sku = form.subform.log_sku.data)
                 update.costupdate(conn, sku = form.subform.log_sku.data )
-                return redirect(url_for('receive'))# clears POST data 
+                return redirect(url_for('returns'))# clears POST data 
                 
 
             else:
@@ -996,18 +1011,8 @@ def returns():
                                          log_sku = form.subform.log_sku.data)
                 update.costupdate(conn, sku = form.subform.log_sku.data )                         
                 
-                return redirect(url_for('receive'))# clears POST data 
+                return redirect(url_for('returns'))# clears POST data 
 
-
-            column_names =[['Receipt items',['', '', 'SKU', 'Qty', 'Total Price',
-                     'Total Tax', 'Price has tax incld', 'Warehouse']]]
-            
-            return render_template ('receive.html', form = form, records = [{}],
-                            column_names = column_names, 
-                            lox_vend_choices = lox_vend_choices,
-                            log_alm_choices = log_alm_choices,
-                            log_sku_choices = log_sku_choices,
-                            rcd_len = 0)
                 
 
         if session['delete_id']:
@@ -1021,9 +1026,9 @@ def returns():
                                          'log_cost', 'log_bal', 
                                          log_sku = form.subform.log_sku.data)
             update.costupdate(conn, sku = form.subform.log_sku.data )
-            return redirect(url_for('receive'))# clears POST data
+            return redirect(url_for('returns'))# clears POST data
 
-    records, relation = navigate_to(nav_button, conn, form, table_list, lox_id = form.rtn_enca.data)
+    records, relation = navigate_to(nav_button, conn, form, table_list)
     session['relation'] = relation
     
     records.pop(0) #form header records not needed nav populates header
@@ -1040,14 +1045,12 @@ def returns():
         db.execute(sql)
         session['flexSwitch'] = db.fetchall()[0].get('soc_wtax')
 
-    #updates aggregate fields in form
-    #unique for this form
-    if not form.id.data: #first time entry to form has no id hence
-        form.rtn_sub.data = 0
-        form.rtn_tax.data = 0
-        form.rtn_disc.data = 0
 
-    else: 
+
+    if rtnrcdexists: #actions if previous return records are present
+
+        #updates aggregate fields in form
+        #unique for this form and receive form
         aggrfields = sel.sumfields(db,'logix_de_norm','log_pric','log_tax',
                                     log_rtrn=form.id.data)[0]
         if aggrfields.get('sumoflog_pric'):
@@ -1063,10 +1066,21 @@ def returns():
         if not form.rtn_disc.data:
             form.rtn_disc.data = 0
 
-    session['Sub-total'] = form.rtn_sub.data - form.rtn_disc.data
-    session['Total'] = session['Sub-total'] + form.rtn_tax.data
+        session['Sub-total'] = form.rtn_sub.data - form.rtn_disc.data
+        session['Total'] = session['Sub-total'] + form.rtn_tax.data
 
-    print('form.data', form.data)
+    print('form.data 2', form.data)
+    #completing return form again with values of linked reception
+    #because navigate to fucntion erases non database related form fields
+    form.lox_vend.choices = sel.all_choices(db, 'socio', 'soc_name')  
+    form.lox_vend.data = session.get('linkedhead').get('lox_vend')
+    form.lox_date.data = datetime.strptime(session.get('linkedhead').get('lox_date'),
+                                           "%a, %d %b %Y %H:%M:%S %Z").strftime("%Y-%m-%d")
+    form.lox_doc_no.data = session.get('linkedhead').get('lox_doc_no')
+    form.lox_datd.data = datetime.strptime(session.get('linkedhead').get('lox_datd'),
+                                           "%a, %d %b %Y %H:%M:%S %Z").strftime("%Y-%m-%d")
+    form.lox_nifn.data = session.get('linkedhead').get('lox_nifn')
+    
     return render_template ('returns.html', form = form, records = records,
                             column_names = column_names, 
                             lox_vend_choices = lox_vend_choices,

@@ -21,6 +21,7 @@ class Rcv_de(Form):
     """wtform for receive form details"""
     idx = HiddenField()
     log_enca = HiddenField()
+    log_rtrn = HiddenField()
     log_sku = SelectField('Sku', validators =[InputRequired()], coerce= int)
     log_qty = DecimalField('Item qty', default = 0, 
                             validators=[NumberRange(min = 0), Optional()])
@@ -188,7 +189,7 @@ class Retur_en(FlaskForm):
                             render_kw={"placeholder": "optional", 
                             'disabled':True, "style":"background-color:WhiteSmoke"})
     #working form                        
-    rtn_enca = DecimalField('Vendor')
+    rtn_enca = DecimalField()
     rtn_date = DateField('Return Date', validators=[DataRequired()])
     rtn_sub = DecimalField('Sub Total', default = 0,
                             validators=[NumberRange(min = 0)],

@@ -203,9 +203,10 @@ class select():
                 else:
                     sql += "{} = {} ".format(field, value)
                 sql += "AND "
-                sql = sql[:-4] + " ORDER BY id ASC" #drop trailing 'AND '  
+            sql = sql[:-4] + " ORDER BY id ASC" #drop trailing 'AND '  
+
             db.execute(sql) 
- 
+
         return(db.fetchall())
 
 
@@ -318,6 +319,7 @@ class select():
                 else:
                     sql += "{} = {} ".format(field, value)
                 sql += "AND " 
+        print('sql in sumfields', sql)
         db.execute(sql[:-4]) #drops trailing AND
         return(db.fetchall())
     
@@ -702,7 +704,7 @@ class DataHandler():
             
             sql = """SELECT EXISTS (SELECT * FROM %s WHERE %s = %s) 
                         AS existe""" %(table, field, value)
-            
+            print('sql in chcsgl', sql)
             db = self.conn.cursor(dictionary=True, buffered=True)
             db.execute(sql)
             record = db.fetchall()

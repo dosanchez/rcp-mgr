@@ -133,6 +133,7 @@
       <div>
         {{ form.subform.idx }}
         {{ form.subform.log_enca }}
+        {{ form.subform.log_rtrn }}
       </div>
       <div class="col-sm-3 form-floating">
         {{ form.subform.log_sku(class="form-select", value = form.subform.log_sku.data) }}
@@ -159,7 +160,7 @@
             <button type = "submit" value = "submit1" form ="nav_form" formmethod ="post" 
               class="btn btn-md btn-primary" name ="nav" id="updaddbtn">
               <strong id = "lbl_but_sub">update </strong><i class="fa-solid fa-circle-arrow-down"></i>
-            </button>
+        </button>
         </div>
         <div>
           <button type="button" class="btn btn-md btn-primary" id = "sub"  value = "update" onclick="Newsub()">
@@ -234,12 +235,16 @@
                       <td style="text-align: center;"><i class="fa-solid fa-check"></i></td>
                     {% elif key == 'log_wtax' and not value %}<!-- display check icon if false-->
                       <td style="text-align: center;"><i class="fa-solid fa-xmark"></i></td>
-                    {% elif key == 'log_alm' %}<!-- loops for warehouse name-->
-                      {% for choice in log_alm_choices %}
+                    {% elif key == 'log_alm' %}
+                      {% for choice in log_alm_choices %} <!-- loops for warehouse name-->
                         {% if choice[0] == value %}
                           <td style="text-align: center;">{{ choice[1] }}</td>
                         {% endif %}
-                      {% endfor %}  
+                      {% endfor %}
+                    {% elif key == 'log_qty' or 'log_pric' or 'log_tax'%}
+                      <td style="text-align: center;">{{ value | abs}}</td> <!--displays positive numbers-->
+                    {% else %}
+                      <td style="text-align: center;">{{ value }}</td>
                     {% endif %}    
                   {% endfor %}
                   </tr>
@@ -260,12 +265,21 @@
     document.getElementById("subform-log_wtax").checked = Boolean({{session['flexSwitch']}});
     document.getElementById("Sub-total").value = {{session['Sub-total']}};
     document.getElementById("Total").value = {{session['Total']}};
+    if (document.getElementById("subform-log_sku").value == 0){
+        Newsub();
+        document.getElementById("sub").disabled = true;
+      }
 
+    function Clicksubmit() {
+      document.getElementById("submit_button").click();
+    }
+    
     function Newrecord() {
       document.getElementById("id").value = null;
       document.getElementById("rtn_disc").value = 0;
       document.getElementById("rtn_sub").value = 0;
       document.getElementById("rtn_tax").value = 0;
+      document.getElementById("rtn_date").value = null;
       document.getElementById("subform-log_qty").value = null;
       document.getElementById("subform-log_pric").value = null;
       document.getElementById("subform-log_tax").value = null;
@@ -279,14 +293,17 @@
       }
 
       function Navrecord(NAV) {
-      document.getElementById("rtn_disc").value = {{0 if not session['rtn_disc'] else session['rtn_disc']}};
-      document.getElementById("rtn_sub").value = {{0 if not session['rtn_sub'] else session['rtn_sub']}};
-      document.getElementById("rtn_tax").value = {{0 if not session['rtn_tax'] else session['rtn_tax']}};
+      document.getElementById("rtn_disc").value = {{session['rtn_disc'] or 0}};
+      document.getElementById("rtn_sub").value = {{session['rtn_sub'] or 0}};
+      document.getElementById("rtn_tax").value = {{session['rtn_tax'] or 0}};
+      document.getElementById("rtn_date").value = '{{session['rtn_date']}}';
       document.getElementById("id").value = {{0 if not session['id'] else session['id']}};
       document.getElementById("submit_button").value = NAV;
       document.getElementById("subform-log_qty").value = 1;
       document.getElementById("subform-log_pric").value = 1;
       document.getElementById("subform-log_tax").value = 1;
+      document.getElementById("subform-log_sku").value = 0;
+      document.getElementById("subform-log_alm").value = 0;
       document.getElementById("submit_button").click();
       }
       function Newsub() { 

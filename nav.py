@@ -1,6 +1,7 @@
 from flask import session
 from flask import redirect  
 from data import select as sel
+import decimal
 
 def nav_pos(rcds, id, nav_button):
 #resolve list index value of navigation target record (if any rcd)
@@ -46,15 +47,15 @@ def navigate_to(nav_button, conn, form, table_list, **kwargs):
                 res = sel.max_id(db, table_list[counter])
             #the kwargs part is used for considering only a subset of records
             #in the header.  Ingredient and recipe forms share the same 
-            #SQL Table == recet_en, hence need to discriminatefor returns only
+            #SQL Table == recet_en, hence need to discriminate for returns only
             # returns related to a certain reception are displayed
             else: 
                 rcds.append(sel.all(db, table_list[counter], **kwargs))
                 res = sel.max_id(db, table_list[counter], **kwargs)
-            
+
             session['parent_last_row_id'] = res[0].get('parent_last_row_id')
             id = form.id.data
-
+            
             pos, regd_id = nav_pos(rcds[counter], id, nav_button)
             counter += 1
 
@@ -72,7 +73,6 @@ def navigate_to(nav_button, conn, form, table_list, **kwargs):
                 ref_tbl = 'retur_en'
             else:
                 ref_tbl = table_list[0]
-
 
             for i in form:
                 if not i.id == 'csrf_token':
@@ -92,7 +92,7 @@ def navigate_to(nav_button, conn, form, table_list, **kwargs):
                         subform_rcds = sel.chld_vals(db, ref_tbl, table_list[counter],
                                 relation[counter-1][0].get('child_tbl_fld'),
                                 tgt_record.get('id'))
-
+                        #print('subform_rcds', subform_rcds)
                         #first time subform entry
                         if subform_rcds:
                             rcds.append(subform_rcds)
@@ -112,11 +112,13 @@ def navigate_to(nav_button, conn, form, table_list, **kwargs):
                             session[ii.short_name] = rcds[counter][pos].get(fld_tbl)
                             
                             if not session[ii.short_name]:
-                                ii.data = ii.default
-                                if not ii.data:
-                                    ii.data = ''
+                                ii.data = ii.default or ''
                             else:
-                                ii.data = session[ii.short_name]
+                                #print(ii.short_name +' ----->',type(session[ii.short_name]) == (int or float) or (type(session[ii.short_name]) is decimal.Decimal))
+                                if type(session[ii.short_name]) == (int or float) or (type(session[ii.short_name]) is decimal.Decimal):
+                                    ii.data = abs(session[ii.short_name])
+                                else:
+                                    ii.data = session[ii.short_name]
                         counter += 1
 
                     else:
@@ -125,9 +127,11 @@ def navigate_to(nav_button, conn, form, table_list, **kwargs):
                         
 
                         if not session[i.id]:
-                            i.data = i.default
-                            if not i.data:
-                                i.data = ''
+                            i.data = i.default or ''
                         else:
-                            i.data = session[i.id]                      
+                            i.data = session[i.id]
+                            if type(session[i.id]) == int or type(session[i.id]) == float:
+                                i.data = abs(session[i.id])
+                            else:
+                                i.data = session[i.id]                     
     return rcds, relation

@@ -28,7 +28,6 @@ def nav_pos(rcds, id, nav_button):
     elif nav_button == "next" and regd_id.index(int(id)) == last_index:
         return -1, regd_id
     elif nav_button == "out":
-        redirect(url_for('index'))
         return 0, regd_id
     else:
         return -1, regd_id    

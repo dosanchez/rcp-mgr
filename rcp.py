@@ -12,13 +12,13 @@ from wtforms.validators import DataRequired, Length, NumberRange, Optional
 #conn = mysql.connector.connect(user='sql5514428', password='C3b4Xn6K4Z',
 #                             host='sql5.freesqldatabase.com',
 #                             database='sql5514428')
-conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
-                               host='10.0.2.5',
-                               port = 3306,
-                               database='rct')
 # conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
-#                                host='192.168.100.254',
+#                                host='10.0.2.5',
+#                                port = 3306,
 #                                database='rct')
+conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
+                               host='192.168.100.254',
+                               database='rct')
 db = conn.cursor(dictionary=True, buffered=True)
 
 
@@ -562,7 +562,8 @@ def receive():
 
     #if request.form.get('nav') is None --> its a redirect 
     #--> its either an update, new or deleted record hence not necesarilly 
-    #last record should be displayed 
+    #last record should be displayed
+    print(request.form.get('nav')) 
     if request.form.get('nav'):
         nav_button =  request.form.get('nav') #saves form navigation request
         if nav_button == 'return':
@@ -590,10 +591,14 @@ def receive():
     except:
         pass  
 
+    if nav_button == "out": #go out of form
+        return redirect(url_for('index'))
+
     #Queries for Selectfields active choices
     form.lox_vend.choices = sel.ebld_choices(db, 'socio', 'soc_name', 'soc_ebld')
     form.subform.log_alm.choices = sel.ebld_choices(db, 'almacen', 'alm_name', 'alm_ebld')
     form.subform.log_sku.choices = sel.ebld_choices(db, 'sku', 'sku_name', 'sku_ebld')
+
 
     #Queries for all Selectfields choices
     lox_vend_choices = sel.all_choices(db, 'socio', 'soc_name') 
@@ -740,7 +745,8 @@ def receive():
                 
 
         if session['delete_id']:
-            dltsku = sel.all(db, 'logix_de', 'id', id = session['delete_id'])[0].get('log_sku')
+            dltsku = sel.all(db, 'logix_de', 'id', 
+                             id = session['delete_id'])[0].get('log_sku')
             idstckdupd = sel.secondfromtop(db, 'logix_de', 
                                 max = session['delete_id'], log_sku = dltsku)
             dlt.id(conn, table_list[1], session['delete_id'])
@@ -754,6 +760,7 @@ def receive():
 
             
     records, relation = navigate_to(nav_button, conn, form, table_list)
+    print('receive records-->', records)
     session['relation'] = relation
 
 
@@ -866,8 +873,6 @@ def returns():
                         ii.render_kw={'disabled':True}
         form.rtn_date.render_kw={'disabled':False}
 
-    print('form.subform.log_sku.choices-->', form.subform.log_sku.choices)
-    print('form.subform.log_alm.choices-->', form.subform.log_alm.choices)
 
     #Queries for all Selectfields choices
     lox_vend_choices = sel.all_choices(db, 'socio', 'soc_name') 
@@ -902,7 +907,10 @@ def returns():
         session['delete_id'] = int(session['delete_id'])
     except:
         pass
- 
+    
+    if nav_button == "out": #go out of form
+        return redirect(url_for('receive'))
+    
     print('form.validate_on_submit()',form.validate_on_submit())
     if form.validate_on_submit():
 
@@ -933,6 +941,7 @@ def returns():
         del listsql2 [list(listsql.keys())[0]]
         if not form.id.data: #gives form.id.data some value on very first entry
             form.id.data = 0
+    
 
         if nav_button == "submit": #not a nav post
             #creates instance to chk if record exist
@@ -1041,12 +1050,13 @@ def returns():
                                          log_sku = form.subform.log_sku.data)
             update.costupdate(conn, sku = form.subform.log_sku.data )
             return redirect(url_for('returns'))# clears POST data
-    print('rtn_enca', form.rtn_enca.data)
+
     records, relation = navigate_to(nav_button, conn, form, table_list, 
                                     rtn_enca = form.rtn_enca.data)
-    print('record-->', records)
+    
     session['relation'] = relation
     records.pop(0) #form header records not needed nav populates header
+
 
     column_names =[['Receipt items',['', '', 'SKU', 'Qty', 'Total Price',
                      'Total Tax', 'Price has tax incld', 'Warehouse']]]
@@ -1062,9 +1072,9 @@ def returns():
 
 
     #actions if return item records are present
-    print('form.id.data', form.id.data)
+ 
     rtnitmexists = dth.from_dict2sql(conn,
-                     {'logix_de':[{'log_rtrn':form.id.data or 'Null' }]}).chk_sgl_fld()
+                     {'logix_de':[{'log_rtrn':form.id.data or 0 }]}).chk_sgl_fld()
     print('rtnitmexists', rtnitmexists)
     #actions if return item records are present
     if rtnitmexists:
@@ -1092,7 +1102,7 @@ def returns():
     #updates aggregate fields in form
     #unique for this form and receive form
     aggrfields = sel.sumfields(db,'logix_de_norm','log_pric','log_tax',
-                                log_rtrn=form.id.data)[0]
+                                log_rtrn=form.id.data or 0)[0]
     
     form.rtn_sub.data =  aggrfields.get('sumoflog_pric') or 0 
     form.rtn_sub.data = abs(form.rtn_sub.data)
@@ -1116,11 +1126,6 @@ def returns():
                                            "%a, %d %b %Y %H:%M:%S %Z").strftime("%Y-%m-%d")
     form.lox_nifn.data = session.get('linkedhead').get('lox_nifn')
 
-    #setting validators so qty returned does not exceeds neither qty received nor stock present
-
-
-    print('form.subfor.log_sku.data', form.subform.log_sku.data)
-    print('form.subfor.log_alm.data', form.subform.log_alm.data)
 
     return render_template ('returns.html', form = form, records = records,
                             column_names = column_names, 

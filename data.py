@@ -175,6 +175,8 @@ class select():
             for fld, val in kwargs.items():
                 if isinstance(val, str):
                     sql += "{} = '{}' ".format(fld, val)
+                elif val is None:
+                    sql += " {} IS NULL".format(fld)
                 else:
                     sql += "{} = {} ".format(fld, val)
                 sql += "AND "
@@ -200,6 +202,8 @@ class select():
             for field, value in kwargs.items():
                 if isinstance(value, str):
                     sql += "{} = '{}' ".format(field, value)
+                elif value is None:
+                    sql += " {} IS NULL".format(field)
                 else:
                     sql += "{} = {} ".format(field, value)
                 sql += "AND "
@@ -220,6 +224,8 @@ class select():
             for field, value in kwargs.items():
                 if isinstance(value, str):
                     sql += "{} = '{}' ".format(field, value)
+                elif value is None:
+                    sql += " {} IS NULL".format(field)
                 else:
                     sql += "{} = {} ".format(field, value)
                 sql += "AND " 
@@ -242,12 +248,20 @@ class select():
         db.execute(sql)
         return db.fetchall()
 
-    def chld_vals(db, ref_tbl, chld_tbl, child_tbl_fld, ref_tbl_id_val):
+    def chld_vals(db, ref_tbl, chld_tbl, child_tbl_fld, ref_tbl_id_val, **kwargs):
         """returns a set with all child records for a given parent record id value"""
         sql = """SELECT b.* FROM {} AS h INNER JOIN {} AS b
                 ON h.id = b.{}
-                WHERE h.id = {}""".format(ref_tbl, chld_tbl, child_tbl_fld, ref_tbl_id_val)
-        db.execute(sql)
+                WHERE h.id = {} AND""".format(ref_tbl, chld_tbl, child_tbl_fld, ref_tbl_id_val)
+        for fld, value in kwargs.items():
+            if isinstance(value, str):
+                sql += " {} = '{}'".format(fld, value)
+            elif value is None:
+                sql += " {} IS NULL".format(fld)
+            else:
+                sql += " {} = {}".format(fld, value)
+            sql += " AND"   
+        db.execute(sql[:-4])
         return db.fetchall()     
 
     #Queries for active (ebld) choices
@@ -261,10 +275,12 @@ class select():
                     WHERE {} = True AND""". format(field, table, truefield)
         for fld, value in kwargs.items():
             if isinstance(value, str):
-                sql += "{} = '{}' ".format(fld, value)
+                sql += " {} = '{}'".format(fld, value)
+            elif value is None:
+                sql += " {} IS NULL".format(fld)
             else:
-                sql += "{} = {} ".format(fld, value)
-            sql += "AND "
+                sql += " {} = {}".format(fld, value)
+            sql += " AND"
         
         db.execute(sql[:-4]) #drops trailing AND
         
@@ -290,6 +306,8 @@ class select():
             for fld, value in kwargs.items():
                 if isinstance(value, str):
                     sql += "{} = '{}' ".format(fld, value)
+                elif value is None:
+                    sql += " {} IS NULL".format(fld)
                 else:
                     sql += "{} = {} ".format(fld, value)
                 sql += "AND "
@@ -316,6 +334,8 @@ class select():
         for field, value in kwargs.items():
                 if isinstance(value, str):
                     sql += "{} = '{}' ".format(field, value)
+                elif value is None:
+                    sql += " {} IS NULL".format(field)
                 else:
                     sql += "{} = {} ".format(field, value)
                 sql += "AND " 
@@ -341,6 +361,8 @@ class select():
             for field, value in kwargs.items():
                 if isinstance(value, str):
                     sql += "{} = '{}' ".format(field, value)
+                elif value is None:
+                    sql += " {} IS NULL".format(field)
                 else:
                     sql += "{} = {} ".format(field, value)
                 sql += "AND "

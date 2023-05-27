@@ -293,6 +293,10 @@
       }
 
       function Navrecord(NAV) {
+        if (NAV == "out"){
+          window.location.href = "{{ url_for('receive') }}";
+      }
+
       document.getElementById("rtn_disc").value = {{session['rtn_disc'] or 0}};
       document.getElementById("rtn_sub").value = {{session['rtn_sub'] or 0}};
       document.getElementById("rtn_tax").value = {{session['rtn_tax'] or 0}};

@@ -8,7 +8,7 @@
     <div class="row mb-3" >
       <div class="col-sm-8">
         <h2>Reception from vendor</h2>
-        <p>receive SKUs</p><button type = "button" class=" btn btn-link btn-sm" onclick="Navrecord('return')"><small>Click here for returns on this reception</small></button>
+        <p>receive SKUs</p><button type = "button" id ='toreturn' class=" btn btn-link btn-sm" onclick="Navrecord('return')"><small>Click here for returns on this reception</small></button>
       </div>
       <div class="col-sm-4" style ="float:right;">
         <button type = "button" class="btn" onclick="Navrecord('out')">
@@ -275,16 +275,18 @@
       document.getElementById("subform-log_alm").disabled = true;
       document.getElementById("updaddbtn").disabled = true;
       document.getElementById("sub").disabled = true;
-      document.getElementById("subform-log_wtax").disabled = true;  
+      document.getElementById("subform-log_wtax").disabled = true;
+      document.getElementById("toreturn").disabled = true; 
       while( skus.rows.length > 1) skus.rows[1].remove();
       }
 
       function Navrecord(NAV) {
+        document.getElementById("toreturn").disabled = false
       document.getElementById("lox_vend").value = {{session['lox_vend']}};
       document.getElementById("lox_date").value = '{{session['lox_date']}}';
-      document.getElementById("lox_doc_no").value = {{'null' if not session['lox_doc_no'] else session['lox_doc_no']}};
+      document.getElementById("lox_doc_no").value = {{session['lox_doc_no'] or 'null'}};
       document.getElementById("lox_datd").value = '{{session['lox_datd']}}';
-      document.getElementById("lox_nifn").value = {{'null' if not session['lox_nifn'] else session['lox_nifn']}};
+      document.getElementById("lox_nifn").value = {{session['lox_nifn'] or 'null'}};
       document.getElementById("lox_disc").value = {{session['lox_disc']}};
       document.getElementById("lox_sub").value = {{session['lox_sub']}};
       document.getElementById("Sub-total").value = {{session['lox_sub'] - session['lox_disc']}};
@@ -292,11 +294,11 @@
       document.getElementById("Total").value = {{session['lox_sub'] - session['lox_disc'] + session['lox_tax']}};
       document.getElementById("id").value = {{session['id']}};
       document.getElementById("submit_button").value = NAV;
-      document.getElementById("subform-log_qty").value = 1;
-      document.getElementById("subform-log_pric").value = 1;
-      document.getElementById("subform-log_tax").value = 1;
-      document.getElementById("subform-log_sku").value = {{session['log_sku']}};
-      document.getElementById("subform-log_alm").value = {{session['log_alm']}};;
+      document.getElementById("subform-log_qty").removeAttribute('required');
+      document.getElementById("subform-log_pric").removeAttribute('required');
+      document.getElementById("subform-log_tax").removeAttribute('required');
+      document.getElementById("subform-log_sku").removeAttribute('required');
+      document.getElementById("subform-log_alm").removeAttribute('required');
       document.getElementById("submit_button").click();
       }
       function Newsub() { 
@@ -312,8 +314,8 @@
       }
       else {
         document.getElementById("lbl_but_sub").innerHTML = "update ";
-        document.getElementById("subform-idx").value = {{0 if not session['idx'] else session['idx']}};
-        document.getElementById("subform-log_enca").value =  {{0 if not session['log_enca'] else session['log_enca']}};
+        document.getElementById("subform-idx").value = {{session['idx'] or 0 }};
+        document.getElementById("subform-log_enca").value =  {{session['log_enca'] or 0}};
         document.getElementById("subform-log_sku").value = {{0 if not session['log_sku'] else session['log_sku']}};
         document.getElementById("subform-log_qty").value = {{'null' if not session['log_qty'] else session['log_qty']}};
         document.getElementById("subform-log_pric").value = {{'null' if not session['log_pric'] else session['log_pric']}};

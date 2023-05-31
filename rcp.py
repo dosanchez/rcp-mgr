@@ -760,12 +760,12 @@ def receive():
 
             
     records, relation = navigate_to(nav_button, conn, form, table_list)
-    print('receive records-->', records)
     session['relation'] = relation
-
-
     records.pop(0) #form header records not needed nav populates header
+    print('receive records-->', records)
 
+    records = [item for item in records if item['log_rtrn'] is None ]
+    print('receive records-->', records)
     column_names =[['Receipt items',['', '', 'SKU', 'Qty', 'Total Price',
                      'Total Tax', 'Price has tax incld', 'Warehouse']]]
     rcd_len = len(records)

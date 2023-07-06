@@ -91,7 +91,7 @@ def navigate_to(nav_button, conn, form, table_list, **kwargs):
                         subform_rcds = sel.chld_vals(db, ref_tbl, table_list[counter],
                                 relation[counter-1][0].get('child_tbl_fld'),
                                 tgt_record.get('id'))
-                        #print('subform_rcds', subform_rcds)
+
                         #first time subform entry
                         if subform_rcds:
                             rcds.append(subform_rcds)
@@ -113,7 +113,6 @@ def navigate_to(nav_button, conn, form, table_list, **kwargs):
                             if not session[ii.short_name]:
                                 ii.data = ii.default or ''
                             else:
-                                #print(ii.short_name +' ----->',type(session[ii.short_name]) == (int or float) or (type(session[ii.short_name]) is decimal.Decimal))
                                 if type(session[ii.short_name]) == (int or float) or (type(session[ii.short_name]) is decimal.Decimal):
                                     ii.data = abs(session[ii.short_name])
                                 else:

@@ -159,8 +159,8 @@
         <div>
             <button type = "submit" value = "submit1" form ="nav_form" formmethod ="post" 
               class="btn btn-md btn-primary" name ="nav" id="updaddbtn">
-              <strong id = "lbl_but_sub">update </strong><i class="fa-solid fa-circle-arrow-down"></i>
-        </button>
+              <strong id = "lbl_but_sub">update </strong><i class="fa-solid fa-circle-arrow-down"></i>     
+            </button>
         </div>
         <div>
           <button type="button" class="btn btn-md btn-primary" id = "sub"  value = "update" onclick="Newsub()">
@@ -261,10 +261,13 @@
   {{ super() }}
   <script>
 
-
     document.getElementById("subform-log_wtax").checked = Boolean({{session['flexSwitch']}});
     document.getElementById("Sub-total").value = {{session['Sub-total']}};
     document.getElementById("Total").value = {{session['Total']}};
+    
+    if (document.getElementById("subform-log_sku").disabled){
+        document.getElementById("updaddbtn").disabled = true;
+      }
     if (document.getElementById("subform-log_sku").value == 0){
         Newsub();
         document.getElementById("sub").disabled = true;

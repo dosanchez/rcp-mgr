@@ -449,7 +449,6 @@ def sku():
     #if request.form.get('nav') in None --> its a redirect 
     #--> its either an update, new or deleted record hence not necesarilly 
     #last record should be displayed 
-    print('sesion', [(i,j) for i,j in session.items()])
 
     if request.form.get('nav'):
         nav_button =  request.form.get('nav') #saves form navigation request
@@ -563,7 +562,6 @@ def receive():
     #if request.form.get('nav') is None --> its a redirect 
     #--> its either an update, new or deleted record hence not necesarilly 
     #last record should be displayed
-    print(request.form.get('nav')) 
     if request.form.get('nav'):
         nav_button =  request.form.get('nav') #saves form navigation request
         if nav_button == 'return':
@@ -762,13 +760,14 @@ def receive():
     records, relation = navigate_to(nav_button, conn, form, table_list)
     session['relation'] = relation
     records.pop(0) #form header records not needed nav populates header
-    print('receive records-->', records)
-
-    records = [item for item in records if item['log_rtrn'] is None ]
-    print('receive records-->', records)
+    rcd_len = len(records)
+    
+    #removes from records return lines linked to reception
+    for counter in range(rcd_len):
+        records[counter] = [item for item in records[counter] if item.get('log_rtrn') is None ]
     column_names =[['Receipt items',['', '', 'SKU', 'Qty', 'Total Price',
                      'Total Tax', 'Price has tax incld', 'Warehouse']]]
-    rcd_len = len(records)
+    
 
     #checks if line items price includes tax for current vendor displayed
     #unique for this form
@@ -832,7 +831,7 @@ def returns():
 
     
     #checks if any return record exists
-    #also makes sure that only wrehouses and skus present in linked reception
+    #also makes sure that only warehouses and skus present in linked reception
     #can be selected. Also takes necessary measures if first return record
     
     rtnrcdexists = dth.from_dict2sql(conn,
@@ -841,7 +840,7 @@ def returns():
                             log_enca = form.rtn_enca.data)
     if rtnrcdexists:
         if form.subform.log_sku.data:
-            #setting wareprice and tax data for skus according to related reception record
+            #setting warehouse, price and tax data for skus according to related reception record
             form.subform.log_alm.choices = sel.all_choices(db, 'wrh4returns',
                                                            'alm_name', blank = True,
                                             log_enca = form.rtn_enca.data, log_sku = form.subform.log_sku.data)
@@ -1075,7 +1074,7 @@ def returns():
  
     rtnitmexists = dth.from_dict2sql(conn,
                      {'logix_de':[{'log_rtrn':form.id.data or 0 }]}).chk_sgl_fld()
-    print('rtnitmexists', rtnitmexists)
+    
     #actions if return item records are present
     if rtnitmexists:
         form.subform.log_wtax.data = sel.all(db, 'logix_de', 'id', 

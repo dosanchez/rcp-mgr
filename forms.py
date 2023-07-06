@@ -33,6 +33,8 @@ class Rcv_de(Form):
                             coerce= int)
     log_wtax = BooleanField('Price includes tax')
 
+    
+
 class Unitmeas(FlaskForm):
     """wtform for Units of measure"""
     id = HiddenField()
@@ -175,7 +177,7 @@ class Rcv_en(FlaskForm):
 
 class Retur_en(FlaskForm):
     id = HiddenField()
-    #oly info form part just to keep page format and related receipt info
+    #only info form part just to keep page format and related receipt info
     lox_vend = SelectField('Vendor',coerce= int, render_kw={'disabled': True,
                             "style":"background-color:WhiteSmoke"})
     lox_date = DateField('Reception Date', render_kw={'disabled':True,

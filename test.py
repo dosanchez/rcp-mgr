@@ -13,10 +13,7 @@ conn = mysql.connector.connect(user='rcp', password='kX0/_9@whS',
 db = conn.cursor(dictionary= True, buffered=True)
 
 
-a = None
-if not a == None:  
-    print('true')
-else:
-    print('false')
+a = [1,2,3,4,5,6,7]
+
 
 conn.close()
